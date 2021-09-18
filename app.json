@@ -1,0 +1,11 @@
+{
+  "expo": {
+    "name": "NEW_DEBIS",
+    "slug": "NEW_DEBIS",
+    "version": "1.0.0",
+    "assetBundlePatterns": [
+      "**/*"
+    ]
+  },
+  "name": "NEW_DEBIS"
+}
