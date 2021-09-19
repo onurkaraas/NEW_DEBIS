@@ -1,21 +1,51 @@
-import { StatusBar } from 'expo-status-bar';
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import React from "react";
+import { StyleSheet } from "react-native";
+import { createStackNavigator } from "@react-navigation/stack";
+import { DefaultTheme, NavigationContainer } from "@react-navigation/native";
 
-export default function App() {
+import { useFonts } from "expo-font";
+import Tabs from "./navigation/tabs";
+import Home from "./screens/Home";
+import { StatusBar } from "expo-status-bar";
+import { COLORS } from "./constants/theme";
+
+const Stack = createStackNavigator();
+
+const App = () => {
+  const [loaded] = useFonts({
+    "SF-Pro-Display-Medium": require("./assets/fonts/SF-Pro-Text-Medium.ttf"),
+    "SF-Pro-Display-Bold": require("./assets/fonts/SF-Pro-Display-Bold.ttf"),
+    "SF-Pro-Display-Regular": require("./assets/fonts/SF-Pro-Display-Regular.ttf"),
+  });
+
+  if (!loaded) {
+    return null;
+  }
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <NavigationContainer>
+      <Stack.Navigator
+        initialRouteName="home"
+        screenOptions={{ headerShown: false }}
+      >
+        <Stack.Screen
+          name={"a"}
+          component={Home}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen name={"home"} component={Tabs} />
+      </Stack.Navigator>
+      <StatusBar backgroundColor={COLORS.secondary} />
+    </NavigationContainer>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: "#fff",
   },
 });
+
+export default () => {
+  return <App />;
+};
