@@ -6,8 +6,11 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import Accordion from "react-native-collapsible/Accordion";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { COLORS, FONTS } from "../constants/theme";
+import { useWindowDimensions } from "react-native";
 
 const Add = () => {
+  const window = useWindowDimensions();
+
   const SECTIONS = [
     {
       title: "",
@@ -75,7 +78,10 @@ const Add = () => {
 
     _renderHeader = (section, index, isActive, sections) => {
       return (
-        <Animatable.View duration={300} style={{ backgroundColor: "fff" }}>
+        <Animatable.View
+          duration={300}
+          style={{ backgroundColor: "transparent" }}
+        >
           {
             <View
               style={{
@@ -129,11 +135,24 @@ const Add = () => {
                 </View>
 
                 <View style={{ flex: 1, alignItems: "flex-end" }}>
-                  <MaterialCommunityIcons
-                    name="heart-outline"
-                    color={"#FF575F"}
-                    size={30}
-                  />
+                  <View
+                    style={{
+                      height: 40,
+                      width: 40,
+                      backgroundColor: COLORS.white,
+                      borderRadius: 12,
+                      justifyContent: "center",
+                      alignItems: "center",
+                      borderWidth: 2,
+                      borderColor: COLORS.red,
+                    }}
+                  >
+                    <MaterialCommunityIcons
+                      name="heart-outline"
+                      color={"#FF575F"}
+                      size={30}
+                    />
+                  </View>
                 </View>
               </View>
             </View>
@@ -151,10 +170,9 @@ const Add = () => {
                 justifyContent: "center",
                 borderWidth: 2,
                 borderColor: COLORS.secondary,
-                borderRadius: 25,
+                borderBottomRightRadius: 10,
+                borderBottomLeftRadius: 10,
                 backgroundColor: COLORS.primary,
-                borderBottomLeftRadius: 25,
-                borderBottomRightRadius: 25,
               }}
             >
               <View
@@ -193,20 +211,20 @@ const Add = () => {
 const styles = StyleSheet.create({
   containere: {
     flex: 1,
-    paddingBottom: 5,
+    marginBottom: 5,
 
     backgroundColor: COLORS.primary,
   },
   head: {
-    borderBottomWidth: 1,
+    borderBottomWidth: 2,
     borderColor: "white",
-    padding: 6,
+    margin: 6,
     borderRadius: 25,
   },
   text: {
     color: "white",
     ...FONTS.body4,
-    paddingHorizontal: 4,
+    marginHorizontal: 4,
     textAlign: "center",
   },
 });

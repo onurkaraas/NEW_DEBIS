@@ -1,18 +1,27 @@
 import React from "react";
 import { List } from "react-native-paper";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  useWindowDimensions,
+  View,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { COLORS, FONTS } from "../constants/theme";
 import { useNavigation } from "@react-navigation/native";
+
 export const renderTopBar = () => {
+  const window = useWindowDimensions();
+
   return (
     <View
       style={{
         backgroundColor: COLORS.secondary,
         borderBottomLeftRadius: 25,
         borderBottomRightRadius: 25,
-        flex: 0.5,
+        height: window.height * 0.1,
       }}
     >
       <View
@@ -21,7 +30,6 @@ export const renderTopBar = () => {
           flexDirection: "row",
           flex: 1,
           alignItems: "center",
-          justifyContent: "center",
         }}
       >
         <View
@@ -76,110 +84,23 @@ export const renderTopBar = () => {
 const Home = ({ color }) => {
   const navigation = useNavigation();
 
-  function renderAcc() {
-    const [expanded, setExpanded] = React.useState(true);
-
-    const handlePress = () => setExpanded(!expanded);
-
-    return (
-      <List.Section style={{ backgroundColor: COLORS.secondary }}>
-        <List.Accordion
-          style={{
-            backgroundColor: COLORS.secondary,
-            height: 65,
-            borderTopLeftRadius: 25,
-            borderTopRightRadius: 25,
-            width: 375,
-          }}
-          titleStyle={{ color: "#fff", ...FONTS.body3 }}
-          title="Son Duyurular"
-          description={"15.09.2021"}
-          descriptionStyle={{ color: "#fff", ...FONTS.body4 }}
-          left={(props) => (
-            <View
-              style={{
-                height: 10,
-                width: 18,
-                backgroundColor: COLORS.red,
-                borderRadius: 6,
-                marginLeft: 12,
-              }}
-            />
-          )}
-        >
-          <List.Item
-            style={{
-              backgroundColor: COLORS.secondary,
-            }}
-            title="First item"
-          />
-          <List.Item
-            style={{
-              backgroundColor: COLORS.secondary,
-            }}
-            title="Second item"
-          />
-        </List.Accordion>
-
-        <List.Accordion
-          style={{
-            borderBottomLeftRadius: 25,
-            borderBottomRightRadius: 25,
-            backgroundColor: COLORS.secondary,
-            height: 65,
-          }}
-          titleStyle={{ color: "#fff", ...FONTS.body3 }}
-          title="Günün Menüsü"
-          description={"15.09.2021"}
-          descriptionStyle={{ color: "#fff", ...FONTS.body4 }}
-          left={(props) => (
-            <View
-              style={{
-                height: 10,
-                width: 18,
-                backgroundColor: COLORS.yellow,
-                borderRadius: 6,
-                marginLeft: 12,
-              }}
-            />
-          )}
-          onPress={handlePress}
-        >
-          <List.Item
-            style={{
-              backgroundColor: COLORS.secondary,
-            }}
-            title="First item"
-          />
-          <List.Item
-            style={{
-              backgroundColor: COLORS.secondary,
-              borderBottomLeftRadius: 25,
-              borderBottomRightRadius: 25,
-            }}
-            title="Second item"
-          />
-        </List.Accordion>
-      </List.Section>
-    );
-  }
-
   function renderIcons(name, category) {
+    const window = useWindowDimensions();
+
     return (
       <View
         style={{
-          flex: 1,
-
           alignItems: "center",
+          width: window.width * 0.8,
+          flex: 1,
         }}
       >
         <View
           style={{
-            marginTop: 20,
             backgroundColor: COLORS.green,
-            height: 90,
+            height: window.height * 0.135,
             alignItems: "center",
-            width: 90,
+            width: window.height * 0.135,
             borderRadius: 25,
           }}
         >
@@ -194,6 +115,7 @@ const Home = ({ color }) => {
         <View
           style={{
             flex: 1,
+            alignItems: "center",
             height: 10,
             width: 95,
           }}
@@ -201,7 +123,6 @@ const Home = ({ color }) => {
           <Text
             style={{
               textAlign: "center",
-              flex: 1,
 
               color: COLORS.white,
               fontSize: 17,
@@ -214,6 +135,7 @@ const Home = ({ color }) => {
       </View>
     );
   }
+  const window = useWindowDimensions();
 
   return (
     <SafeAreaView
@@ -223,15 +145,25 @@ const Home = ({ color }) => {
       }}
     >
       {renderTopBar()}
-      <View style={{ flex: 3, flexDirection: "column" }}>
-        <View style={{ alignItems: "center" }}>{renderAcc()}</View>
-
-        <View style={{ flex: 0.65, flexDirection: "row" }}>
+      <View
+        style={{
+          flex: 1,
+          flexDirection: "column",
+          justifyContent: "flex-end",
+          marginBottom: window.height * 0.175,
+        }}
+      >
+        <View
+          style={{
+            marginBottom: 50,
+            flexDirection: "row",
+          }}
+        >
           {renderIcons("calendar", "Akademik Takvim")}
           {renderIcons("calendar-check", "Ders Programi")}
           {renderIcons("message-draw", "Mesajlar")}
         </View>
-        <View style={{ flex: 1, flexDirection: "row" }}>
+        <View style={{ flexDirection: "row" }}>
           {renderIcons("calendar-remove", "Devamsizlik")}
           {renderIcons("food", "Yemek Menusu")}
           {renderIcons("signal-hspa-plus", "Not Bilgisi")}
@@ -242,13 +174,6 @@ const Home = ({ color }) => {
 };
 
 const styles = StyleSheet.create({
-  photos: {
-    height: 75,
-    width: 75,
-    borderRadius: 50,
-    borderWidth: 2,
-    borderColor: "red",
-  },
   container: {
     flex: 1,
     backgroundColor: "#F5FCFF",
