@@ -12,6 +12,7 @@ export const COLORS = {
   lightGray: "#eff2f5",
   gray: "#BEC1D2",
   green: "#25C685",
+  green2: "#40DF9F",
   yellow: "#FFC542",
   red: "#FF575F",
 };
@@ -24,13 +25,13 @@ export const SIZES = {
 
   // font sizes
   largeTitle: 50,
-  h1: 30,
+  h1: 26,
   h2: 22,
   h3: 16,
   h4: 14,
   body1: 30,
   body2: 22,
-  body3: 16,
+  body3: 18,
   body4: 14,
 
   // app dimensions

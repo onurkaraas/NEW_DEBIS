@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import { Table, Row, Rows } from "react-native-table-component";
 import { StyleSheet, Text, View } from "react-native";
 import * as Animatable from "react-native-animatable";
-import { SafeAreaView } from "react-native-safe-area-context";
 import Accordion from "react-native-collapsible/Accordion";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { COLORS, FONTS } from "../constants/theme";

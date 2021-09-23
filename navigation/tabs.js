@@ -1,15 +1,14 @@
 import React from "react";
 import { useWindowDimensions } from "react-native";
-import Home from "../screens/Home";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-
-import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
+import "react-native-gesture-handler";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
+import Home from "../screens/Home";
 import Search from "../screens/Search";
 import Add from "../screens/Add";
 import Profile from "../screens/Profile";
 import Notifications from "../screens/Notifications";
 import { COLORS } from "../constants/theme";
+import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
 const Tab = createMaterialBottomTabNavigator();
 
 const Tabs = () => {
@@ -65,15 +64,11 @@ const Tabs = () => {
         tabBarShowLabel: false,
       })}
     >
-      <Tab.Screen
-        options={{ headerShown: false }}
-        name="Home"
-        component={Home}
-      />
+      <Tab.Screen name="Home" component={Home} />
       <Tab.Screen
         name="Search"
         component={Search}
-        options={{ headerShown: false }}
+        screenOptions={{ headerShown: false, tabBarVisible: false }}
       />
       <Tab.Screen name="Add" component={Add} options={{ headerShown: false }} />
       <Tab.Screen

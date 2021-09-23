@@ -1,86 +1,10 @@
 import React from "react";
-import { List } from "react-native-paper";
-import {
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  useWindowDimensions,
-  View,
-} from "react-native";
+import { StyleSheet, Text, useWindowDimensions, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { COLORS, FONTS } from "../constants/theme";
 import { useNavigation } from "@react-navigation/native";
 
-export const renderTopBar = () => {
-  const window = useWindowDimensions();
-
-  return (
-    <View
-      style={{
-        backgroundColor: COLORS.secondary,
-        borderBottomLeftRadius: 25,
-        borderBottomRightRadius: 25,
-        height: window.height * 0.1,
-      }}
-    >
-      <View
-        style={{
-          padding: 5,
-          flexDirection: "row",
-          flex: 1,
-          alignItems: "center",
-        }}
-      >
-        <View
-          style={{
-            flex: 1,
-            flexDirection: "column",
-            justifyContent: "center",
-          }}
-        >
-          <Text
-            style={{
-              color: "white",
-              fontFamily: "SF-Pro-Display-Medium",
-              fontSize: 20,
-              marginLeft: 12,
-            }}
-          >
-            Hoşgeldiniz
-          </Text>
-        </View>
-        <View
-          style={{
-            flex: 1,
-            flexDirection: "column",
-            alignItems: "flex-end",
-            marginRight: 12,
-          }}
-        >
-          <Text
-            style={{
-              color: "white",
-              fontFamily: "SF-Pro-Display-Bold",
-              fontSize: 20,
-            }}
-          >
-            Onur KARAAŞ
-          </Text>
-          <Text
-            style={{
-              color: "white",
-              fontFamily: "SF-Pro-Display-Regular",
-              fontSize: 14,
-            }}
-          >
-            Yön.Bil.Sistemleri
-          </Text>
-        </View>
-      </View>
-    </View>
-  );
-};
 const Home = ({ color }) => {
   const navigation = useNavigation();
 
@@ -144,7 +68,6 @@ const Home = ({ color }) => {
         backgroundColor: COLORS.primary,
       }}
     >
-      {renderTopBar()}
       <View
         style={{
           flex: 1,

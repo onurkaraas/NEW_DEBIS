@@ -1,17 +1,19 @@
-import React from "react";
+import React, { useState } from "react";
 import { StyleSheet } from "react-native";
 import { createStackNavigator } from "@react-navigation/stack";
-import { DefaultTheme, NavigationContainer } from "@react-navigation/native";
-
+import { NavigationContainer } from "@react-navigation/native";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 import { useFonts } from "expo-font";
 import Tabs from "./navigation/tabs";
-import Home from "./screens/Home";
 import { StatusBar } from "expo-status-bar";
 import { COLORS } from "./constants/theme";
+import Search from "./screens/Search";
 
 const Stack = createStackNavigator();
-
 const App = () => {
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const a = true;
   const [loaded] = useFonts({
     "SF-Pro-Display-Medium": require("./assets/fonts/SF-Pro-Text-Medium.ttf"),
     "SF-Pro-Display-Bold": require("./assets/fonts/SF-Pro-Display-Bold.ttf"),
@@ -22,20 +24,47 @@ const App = () => {
     return null;
   }
   return (
-    <NavigationContainer>
-      <Stack.Navigator
-        initialRouteName="home"
-        screenOptions={{ headerShown: false }}
-      >
-        <Stack.Screen
-          name={"a"}
-          component={Home}
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen name={"home"} component={Tabs} />
-      </Stack.Navigator>
-      <StatusBar backgroundColor={COLORS.secondary} />
-    </NavigationContainer>
+    <SafeAreaProvider>
+      <NavigationContainer>
+        <Stack.Navigator
+          initialRouteName="home"
+          screenOptions={{
+            headerTitleAlign: "center",
+          }}
+        >
+          {a ? (
+            <>
+              <Stack.Screen
+                options={{
+                  title: "Giriş Yapınız",
+                  headerStyle: {
+                    backgroundColor: COLORS.secondary,
+                  },
+                  headerTintColor: "#fff",
+                }}
+                name={"home"}
+                component={Search}
+              />
+            </>
+          ) : (
+            <>
+              <Stack.Screen
+                options={{
+                  title: "Hoşgeldiniz",
+                  headerStyle: {
+                    backgroundColor: COLORS.secondary,
+                  },
+                  headerTintColor: "#fff",
+                }}
+                name={"home"}
+                component={Tabs}
+              />
+            </>
+          )}
+        </Stack.Navigator>
+        <StatusBar backgroundColor={COLORS.secondary} />
+      </NavigationContainer>
+    </SafeAreaProvider>
   );
 };
 

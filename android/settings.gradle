@@ -1,4 +1,4 @@
-rootProject.name = 'NEWDEBIS'
+rootProject.name = 'NEW_DEBIS'
 
 apply from: '../node_modules/react-native-unimodules/gradle.groovy'
 includeUnimodulesProjects()

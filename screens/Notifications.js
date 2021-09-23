@@ -1,4 +1,4 @@
-import React, { Component, useRef, useState } from "react";
+import React, { Component, useState } from "react";
 import {
   ScrollView,
   StyleSheet,
@@ -8,12 +8,8 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Picker } from "@react-native-picker/picker";
-import Accordion from "react-native-collapsible/Accordion";
-import { renderTopBar } from "./Home";
 import { COLORS, FONTS } from "../constants/theme";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
-import { List } from "react-native-paper";
-import ListAccordion from "react-native-paper/src/components/List/ListAccordion";
 import Add from "./Add";
 import { Row, Rows, Table } from "react-native-table-component";
 
@@ -139,8 +135,6 @@ const Notifications = () => {
         backgroundColor: COLORS.primary,
       }}
     >
-      {renderTopBar()}
-
       <View
         style={{
           flex: 1,
