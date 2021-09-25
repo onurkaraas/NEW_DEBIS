@@ -13,7 +13,7 @@ const Stack = createStackNavigator();
 const App = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const a = true;
+  const a = false;
   const [loaded] = useFonts({
     "SF-Pro-Display-Medium": require("./assets/fonts/SF-Pro-Text-Medium.ttf"),
     "SF-Pro-Display-Bold": require("./assets/fonts/SF-Pro-Display-Bold.ttf"),

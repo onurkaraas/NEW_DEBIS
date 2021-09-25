@@ -1,12 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Input } from "react-native-elements";
-import {
-  Keyboard,
-  StyleSheet,
-  Text,
-  useWindowDimensions,
-  View,
-} from "react-native";
+import { Keyboard, StyleSheet, useWindowDimensions, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { COLORS, FONTS } from "../constants/theme";
 import FastImage from "react-native-fast-image";
