@@ -1,18 +1,12 @@
 import React, { Component, useState } from "react";
-import {
-  ScrollView,
-  StyleSheet,
-  Text,
-  useWindowDimensions,
-  View,
-} from "react-native";
+import { StyleSheet, Text, useWindowDimensions, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Picker } from "@react-native-picker/picker";
 import { COLORS, FONTS } from "../constants/theme";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
-import Add from "./Add";
 import { Row, Rows, Table } from "react-native-table-component";
-
+import Collapsible from "react-native-collapsible";
+import Add from "./Add";
 const Notifications = () => {
   const [selectedLanguage, setSelectedLanguage] = useState();
   const window = useWindowDimensions();
@@ -51,6 +45,7 @@ const Notifications = () => {
       );
     }
   }
+
   function renderStudentInformations() {
     return (
       <View
@@ -70,7 +65,6 @@ const Notifications = () => {
       <View
         style={{
           justifyContent: "center",
-          marginVertical: 10,
           height: 90,
           width: 375,
           backgroundColor: COLORS.secondary,
@@ -137,15 +131,14 @@ const Notifications = () => {
     >
       <View
         style={{
-          flex: 1,
           alignItems: "center",
-          marginBottom: 40,
-          paddingTop: 20,
+          marginBottom: 30,
+          justifyContent: "center",
         }}
       >
         {renderStudentInformations()}
       </View>
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+      <View style={{ flex: 1, alignItems: "center" }}>
         <View
           style={{
             backgroundColor: "#fff",
@@ -158,33 +151,14 @@ const Notifications = () => {
           <Picker
             selectedValue={selectedLanguage}
             onValueChange={(itemValue, itemIndex) =>
-              setSelectedLanguage(itemValue)
+              setSelectedLanguage(itemIndex)
             }
           >
             <Picker.Item label="2021-2022 Guz Donemi" value="java" />
             <Picker.Item label="2021-2022 Bahar Donemi" value="js" />
           </Picker>
         </View>
-      </View>
-
-      <View
-        style={{
-          flex: 3,
-          alignItems: "center",
-          paddingBottom: window.height * 0.1,
-        }}
-      >
-        <ScrollView
-          showsVerticalScrollIndicator={false}
-          style={{
-            backgroundColor: COLORS.primary,
-          }}
-        >
-          <Add />
-          <Add />
-          <Add />
-          <Add />
-        </ScrollView>
+        <View style={{ flex: 1, width: window.width * 0.975 }}>{Add()}</View>
       </View>
     </SafeAreaView>
   );

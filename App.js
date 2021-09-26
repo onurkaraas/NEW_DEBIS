@@ -8,11 +8,8 @@ import Tabs from "./navigation/tabs";
 import { StatusBar } from "expo-status-bar";
 import { COLORS } from "./constants/theme";
 import Search from "./screens/Search";
-
 const Stack = createStackNavigator();
 const App = () => {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
   const a = false;
   const [loaded] = useFonts({
     "SF-Pro-Display-Medium": require("./assets/fonts/SF-Pro-Text-Medium.ttf"),

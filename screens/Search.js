@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Input } from "react-native-elements";
 import { Keyboard, StyleSheet, useWindowDimensions, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -7,13 +7,11 @@ import FastImage from "react-native-fast-image";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { Button, Switch } from "react-native-elements";
 import { StatusBar } from "expo-status-bar";
-import { deb } from "../backend";
 
 const Search = () => {
   const [isEnabled, setIsEnabled] = useState(false);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-
   const window = useWindowDimensions();
   const [keyboardStatus, setKeyboardStatus] = useState(undefined);
   const toggleSwitch = () => setIsEnabled((previousState) => !previousState);
@@ -71,7 +69,6 @@ const Search = () => {
       <View
         style={{ flex: 1, alignItems: "center", top: -(window.height * 0.09) }}
       >
-        <YourImage />
         <View style={{ flex: 1 }}>
           <Input
             onChangeText={(username) => setUsername(username)}
@@ -252,9 +249,7 @@ const Search = () => {
                     />
                   }
                   iconPosition={"right"}
-                  onPress={() => {
-                    console.log(username, password);
-                  }}
+                  onPress={() => console.log("qwe")}
                 />
               </View>
               <View style={{ justifyContent: "flex-end" }}>
