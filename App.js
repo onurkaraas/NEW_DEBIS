@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { StyleSheet } from "react-native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { NavigationContainer } from "@react-navigation/native";
@@ -9,8 +9,10 @@ import { StatusBar } from "expo-status-bar";
 import { COLORS } from "./constants/theme";
 import Search from "./screens/Search";
 const Stack = createStackNavigator();
+import { Provider as AuthProvider } from "./screens/AuthContext";
+
 const App = () => {
-  const a = false;
+  const isLogged = false;
   const [loaded] = useFonts({
     "SF-Pro-Display-Medium": require("./assets/fonts/SF-Pro-Text-Medium.ttf"),
     "SF-Pro-Display-Bold": require("./assets/fonts/SF-Pro-Display-Bold.ttf"),
@@ -29,7 +31,7 @@ const App = () => {
             headerTitleAlign: "center",
           }}
         >
-          {a ? (
+          {isLogged ? (
             <>
               <Stack.Screen
                 options={{
@@ -47,7 +49,7 @@ const App = () => {
             <>
               <Stack.Screen
                 options={{
-                  title: "Hoşgeldiniz",
+                  title: "Hosgeldiniz",
                   headerStyle: {
                     backgroundColor: COLORS.secondary,
                   },
@@ -73,5 +75,9 @@ const styles = StyleSheet.create({
 });
 
 export default () => {
-  return <App />;
+  return (
+    <AuthProvider>
+      <App />
+    </AuthProvider>
+  );
 };

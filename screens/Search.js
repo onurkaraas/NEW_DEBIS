@@ -7,8 +7,9 @@ import FastImage from "react-native-fast-image";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { Button, Switch } from "react-native-elements";
 import { StatusBar } from "expo-status-bar";
-
+import { Context as AuthContext } from "./AuthContext";
 const Search = () => {
+  const { state, signIn, signOut } = useContext(AuthContext);
   const [isEnabled, setIsEnabled] = useState(false);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -69,10 +70,13 @@ const Search = () => {
       <View
         style={{ flex: 1, alignItems: "center", top: -(window.height * 0.09) }}
       >
+        {YourImage()}
+
         <View style={{ flex: 1 }}>
           <Input
-            onChangeText={(username) => setUsername(username)}
+            onChangeText={setUsername}
             defaultValue={username}
+            value={username}
             inputStyle={{ color: COLORS.white }}
             containerStyle={{
               marginBottom: 8,
@@ -135,7 +139,9 @@ const Search = () => {
             }}
           />
           <Input
-            onChangeText={(password) => setPassword(password)}
+            secureTextEntry
+            value={password}
+            onChangeText={setPassword}
             defaultValue={password}
             inputContainerStyle={{
               borderBottomWidth: 0,
@@ -249,7 +255,33 @@ const Search = () => {
                     />
                   }
                   iconPosition={"right"}
-                  onPress={() => console.log("qwe")}
+                  onPress={() => signIn({ username, password })}
+                />
+                <Button
+                  title={"Cikis"}
+                  buttonStyle={{
+                    backgroundColor: COLORS.green2,
+                    height: keyboardStatus
+                      ? window.height * 0.06
+                      : window.height * 0.07,
+                    width: keyboardStatus
+                      ? window.width * 0.75
+                      : window.width * 0.65,
+                    borderRadius: 10,
+                  }}
+                  titleStyle={{
+                    ...FONTS.h2,
+                  }}
+                  icon={
+                    <MaterialCommunityIcons
+                      name={"arrow-right"}
+                      color={COLORS.white}
+                      size={26}
+                      style={{ padding: 8 }}
+                    />
+                  }
+                  iconPosition={"right"}
+                  onPress={() => signOut()}
                 />
               </View>
               <View style={{ justifyContent: "flex-end" }}>
