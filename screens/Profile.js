@@ -2,16 +2,10 @@ import React, { useEffect, useState } from "react";
 import { Keyboard, StyleSheet, Text, TextInput, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { Button } from "react-native-elements";
-
 const Profile = () => {
   return (
     <SafeAreaView style={style.container}>
-      <TextInput
-        style={style.input}
-        placeholder="Click here…"
-        onSubmitEditing={Keyboard.dismiss}
-      />
+      <Text>qwe</Text>
     </SafeAreaView>
   );
 };

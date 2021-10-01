@@ -3,7 +3,7 @@ import { Input } from "react-native-elements";
 import { Keyboard, StyleSheet, useWindowDimensions, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { COLORS, FONTS } from "../constants/theme";
-import FastImage from "react-native-fast-image";
+// import FastImage from "react-native-fast-image";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { Button, Switch } from "react-native-elements";
 import { StatusBar } from "expo-status-bar";
@@ -31,36 +31,36 @@ const Search = () => {
     };
   }, []);
 
-  const YourImage = () => (
-    <View
-      style={{
-        shadowColor: "#000",
-        flex: 1,
-        shadowOffset: {
-          width: 0,
-          height: 2,
-        },
-        shadowOpacity: 0.27,
-        borderRadius: 200,
-        elevation: 10,
-
-        marginVertical: 12,
-      }}
-    >
-      <FastImage
-        style={{
-          flex: 1,
-          width: setKeyboardStatus ? 300 : 600,
-          height: setKeyboardStatus ? 300 : 600,
-        }}
-        source={{
-          uri: "https://cdn.freelogovectors.net/wp-content/uploads/2020/03/Dokuz_Eylul_Universitesi_Logo.png",
-          priority: FastImage.priority.normal,
-        }}
-        resizeMode={"contain"}
-      />
-    </View>
-  );
+  // const YourImage = () => (
+  //   <View
+  //     style={{
+  //       shadowColor: "#000",
+  //       flex: 1,
+  //       shadowOffset: {
+  //         width: 0,
+  //         height: 2,
+  //       },
+  //       shadowOpacity: 0.27,
+  //       borderRadius: 200,
+  //       elevation: 10,
+  //
+  //       marginVertical: 12,
+  //     }}
+  //   >
+  //     <FastImage
+  //       style={{
+  //         flex: 1,
+  //         width: setKeyboardStatus ? 300 : 600,
+  //         height: setKeyboardStatus ? 300 : 600,
+  //       }}
+  //       source={{
+  //         uri: "https://cdn.freelogovectors.net/wp-content/uploads/2020/03/Dokuz_Eylul_Universitesi_Logo.png",
+  //         priority: FastImage.priority.normal,
+  //       }}
+  //       resizeMode={"contain"}
+  //     />
+  //   </View>
+  // );
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.primary }}>
@@ -70,7 +70,7 @@ const Search = () => {
       <View
         style={{ flex: 1, alignItems: "center", top: -(window.height * 0.09) }}
       >
-        {YourImage()}
+        {/*{YourImage()}*/}
 
         <View style={{ flex: 1 }}>
           <Input

@@ -1,17 +1,23 @@
 import createDataContext from "./createDataContext";
+import { useState } from "react";
 const cheerio = require("react-native-cheerio");
 const superagent = require("superagent").agent();
 const authReducer = (state, action) => {
   switch (action.type) {
     case "add_error":
       return { ...state, errorMessage: action.payload };
+    case "signin":
+      return { ...state, token: action.payload };
+    case "classe":
+      return { ...state, token: action.payload };
     default:
       return state;
   }
 };
 
-const signIn = (dispatch) => {
-  return async ({ username, password }) => {
+const signIn =
+  (dispatch) =>
+  async ({ username, password }, callback) => {
     try {
       const dashboard = await superagent
         .post("https://debis.deu.edu.tr/debis.php")
@@ -25,13 +31,12 @@ const signIn = (dispatch) => {
       const resultScreenData = dashboard.text;
       const $ = cheerio.load(resultScreenData);
       const studentName = $("body > div > div").text().slice(11);
+      dispatch({ type: "signin", payload: studentName });
       console.log(studentName);
-      console.log(username, password);
     } catch (e) {
       dispatch({ type: "add_error", payload: "signing err" });
     }
   };
-};
 
 const signOut = (dispatch) => {
   return async () => {
@@ -47,5 +52,5 @@ const signOut = (dispatch) => {
 export const { Provider, Context } = createDataContext(
   authReducer,
   { signIn, signOut },
-  { isSignedIn: false, errorMessage: "" }
+  { token: null, errorMessage: "" }
 );

@@ -1,10 +1,17 @@
 import React from "react";
-import { StyleSheet, Text, useWindowDimensions, View } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  useWindowDimensions,
+  View,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { COLORS, FONTS } from "../constants/theme";
 import { useNavigation } from "@react-navigation/native";
-
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import Pressable from "react-native/Libraries/Components/Pressable/Pressable";
 const Home = ({ color }) => {
   const navigation = useNavigation();
 
