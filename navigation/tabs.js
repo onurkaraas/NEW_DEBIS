@@ -61,7 +61,6 @@ const Tabs = () => {
               );
           }
         },
-        tabBarShowLabel: false,
       })}
     >
       <Tab.Screen name="Home" component={Home} />

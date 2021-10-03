@@ -9,7 +9,7 @@ import { Button, Switch } from "react-native-elements";
 import { StatusBar } from "expo-status-bar";
 import { Context as AuthContext } from "./AuthContext";
 const Search = () => {
-  const { state, signIn, signOut } = useContext(AuthContext);
+  const { state, signIn, signOut, signInPos } = useContext(AuthContext);
   const [isEnabled, setIsEnabled] = useState(false);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -67,9 +67,7 @@ const Search = () => {
       <StatusBar
         backgroundColor={keyboardStatus ? COLORS.secondary : COLORS.secondary}
       />
-      <View
-        style={{ flex: 1, alignItems: "center", top: -(window.height * 0.09) }}
-      >
+      <View style={{ flex: 1, alignItems: "center" }}>
         {/*{YourImage()}*/}
 
         <View style={{ flex: 1 }}>
@@ -139,7 +137,6 @@ const Search = () => {
             }}
           />
           <Input
-            secureTextEntry
             value={password}
             onChangeText={setPassword}
             defaultValue={password}
@@ -281,7 +278,7 @@ const Search = () => {
                     />
                   }
                   iconPosition={"right"}
-                  onPress={() => signOut()}
+                  onPress={() => signInPos()}
                 />
               </View>
               <View style={{ justifyContent: "flex-end" }}>

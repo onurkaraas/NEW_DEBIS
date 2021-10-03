@@ -26,6 +26,8 @@ export class ExampleThree extends Component {
         ders: val,
         ogretim_donemi_id: "273",
       })
+      .unset("User-Agent")
+
       .set("Content-Type", "application/x-www-form-urlencoded");
 
     const pickLessonData = pickLesson.text;

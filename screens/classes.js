@@ -1,160 +1,139 @@
 import React, { useState, useEffect } from "react";
-import { Text, FlatList, View, StyleSheet } from "react-native";
+import {
+  Text,
+  FlatList,
+  View,
+  StyleSheet,
+  Pressable,
+  ActivityIndicator,
+  useWindowDimensions,
+} from "react-native";
 const superagent = require("superagent").agent();
 import cheerio from "react-native-cheerio";
-import CollapsibleView from "@eliav2/react-native-collapsible-view";
-
 import { COLORS, FONTS } from "../constants/theme";
-import Add from "./Add";
-import { Col, Row, Table, TableWrapper } from "react-native-table-component";
 
-const classes = (id) => {
+import modalVise from "./modal";
+const classes = (id, id1) => {
+  const window = useWindowDimensions();
+
+  function loade() {
+    return <ActivityIndicator size="large" color="#00ff00" />;
+  }
+  const [x, setX] = useState(1);
+
   const [databases, setDatabases] = useState([]);
-  const tableHead = ["Sinav", "Sinif Ort.", "ORT2*", "Notunuz"];
-  const [val, setVal] = useState("");
-  const [tableTitle, setTableTitle] = useState([""]);
-  const [tableData2, setTableData2] = useState([""]);
-  const [tableData3, setTableData3] = useState([""]);
-  const [tableData4, setTableData4] = useState([""]);
-
+  const [val, setVal] = useState([""]);
+  const [press, setTimesPressed] = useState("");
   useEffect(() => {
-    async function asd() {
-      let pickSemester = await superagent
-        .post(
-          "https://debis.deu.edu.tr/OgrenciIsleri/Ogrenci/OgrenciNotu/index.php"
-        )
-        .send({
-          ogretim_donemi_id: id,
-        })
-        .set("Content-Type", "application/x-www-form-urlencoded");
+    try {
+      async function asd() {
+        let pickSemester = await superagent
+          .post(
+            "https://debis.deu.edu.tr/OgrenciIsleri/Ogrenci/OgrenciNotu/index.php"
+          )
+          .send({
+            ogretim_donemi_id: id,
+          })
+          .unset("User-Agent")
+          .set("Content-Type", "application/x-www-form-urlencoded");
 
-      const pickSemesterData = pickSemester.text;
-      const $ = cheerio.load(pickSemesterData);
-      const classValue = $("select[id='ders'] > option");
-      let lessonsObj = [];
-      for (let i = 1; i < classValue.length; i++) {
-        let item = classValue.eq(i);
-        let lessonCode = item.text().slice(0, 8).trim();
-        let title = item.text().slice(8).trim();
-        let value = item.attr("value");
+        const pickSemesterData = pickSemester.text;
+        const $ = cheerio.load(pickSemesterData);
+        const classValue = $("select[id='ders'] > option");
+        let lessonsObj = [];
+        const values = [];
+        for (let i = 1; i < classValue.length; i++) {
+          let item = classValue.eq(i);
+          let lessonCode = item.text().slice(0, 8).trim();
+          let title = item.text().slice(8).trim();
+          let value = item.attr("value");
 
-        lessonsObj.push({
-          value,
-          lessonCode,
-          title,
-        });
+          lessonsObj.push({
+            value,
+            lessonCode,
+            title,
+          });
+          values.push(value);
+        }
+
+        setVal(values);
+        setDatabases(lessonsObj);
       }
-      setDatabases(lessonsObj);
+      asd();
+    } catch (e) {
+      console.error(e);
     }
-    console.log(Object.entries(databases).map((x) => x[1].value));
 
-    asd();
+    // console.log(databases);
   }, [id]);
 
-  useEffect(() => {
-    async function dfg() {
-      let pickLesson = await superagent
-        .post(
-          "https://debis.deu.edu.tr/OgrenciIsleri/Ogrenci/OgrenciNotu/index.php"
-        )
-        .send({
-          ders: val,
-          ogretim_donemi_id: 255,
-        })
-        .set("Content-Type", "application/x-www-form-urlencoded");
-
-      const pickLessonData = pickLesson.text;
-
-      const $$$ = cheerio.load(pickLessonData);
-
-      const lessons = $$$(
-        "body > table:nth-child(4) > tbody > tr:nth-child(2) > td:nth-child(2) > table:nth-child(3) > tbody > tr:nth-child(3) > td > table:nth-child(1) > tbody > tr:nth-child(3) > td:nth-child(2) > table > tbody > tr"
-      );
-      const examNames = [];
-      const classAverages = [];
-      const finalAverages = [];
-      const studentResults = [];
-      const scrapeLessons = $$$(lessons).each((index, element) => {
-        if (index === 0) return true;
-        const tds = $$$(element).find("td");
-        const examName = $$$(tds[0]).text().slice(0, 15);
-        const listingDate = $$$(tds[1]).text();
-        const classAverage = $$$(tds[2]).text();
-        const finalAverage = $$$(tds[3]).text();
-        const studentResult = $$$(tds[4]).text();
-        examNames.push(examName);
-        classAverages.push(classAverage);
-        finalAverages.push(finalAverage);
-        studentResults.push(studentResult);
-      });
-      setTableTitle(examNames);
-      setTableData4(studentResults);
-      setTableData2(classAverages);
-      setTableData3(finalAverages);
-      setTableData4(studentResults);
-    }
-    dfg();
-  }, []);
-
-  const Item = ({ title }) => (
-    <CollapsibleView
-      title={
-        <Text
-          style={{
-            color: COLORS.white,
-            ...FONTS.h3,
-            paddingVertical: 20,
-          }}
-        >
-          {title.slice(0, 20)}
-        </Text>
-      }
-      style={{
-        borderWidth: 0,
-        backgroundColor: COLORS.secondary,
-        borderRadius: 25,
-      }}
-      arrowStyling={{
-        size: 35,
-        thickness: 6,
-        color: "white",
+  const Item = ({ title, value, code }) => (
+    <Pressable
+      onPress={() => {
+        setTimesPressed(value);
+        setX(x + 1);
       }}
     >
-      <View style={styles.container2}>
-        <Table
-          borderStyle={{
-            borderRadius: 25,
-            borderBottomWidth: 1,
-            borderColor: "#c8e1ff",
+      <View
+        style={{
+          borderWidth: 0,
+          backgroundColor: COLORS.secondary,
+          borderRadius: 25,
+          marginHorizontal: 12,
+          marginBottom: 18,
+          paddingVertical: 18,
+        }}
+      >
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "center",
           }}
         >
-          <Row data={tableHead} style={styles.head} textStyle={styles.text} />
-          <TableWrapper style={styles.wrapper}>
-            <Col
-              data={tableTitle}
-              style={styles.title}
-              textStyle={styles.text}
-            />
-            <Col data={tableData2} style={styles.row} textStyle={styles.text} />
-            <Col
-              data={tableData3}
-              style={styles.title3}
-              textStyle={styles.text}
-            />
-            <Col data={tableData4} style={styles.row} textStyle={styles.text} />
-          </TableWrapper>
-        </Table>
+          <View
+            style={{
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <View style={{ alignItems: "center" }}>
+              <Text
+                style={{ color: COLORS.red, ...FONTS.body3, marginBottom: 6 }}
+              >
+                {code}
+              </Text>
+            </View>
+            <View style={{ flex: 1, alignItems: "center" }}>
+              <Text
+                style={{
+                  color: COLORS.white,
+                  ...FONTS.body3,
+                }}
+              >
+                {title}
+              </Text>
+            </View>
+          </View>
+        </View>
       </View>
-    </CollapsibleView>
+    </Pressable>
   );
-  const renderItem = ({ item }) => <Item title={item.title} />;
+  const renderItem = ({ item }) => (
+    <Item code={item.lessonCode} title={item.title} value={item.value} />
+  );
 
   return (
-    <FlatList
-      data={databases}
-      renderItem={renderItem}
-      keyExtractor={(item) => item.value}
-    />
+    <View style={{ marginBottom: window.height * 0.1 }}>
+      <FlatList
+        data={databases}
+        renderItem={renderItem}
+        keyExtractor={(item) => item.value}
+      />
+
+      {modalVise(`${press}`, `${id1}`, `${x}`)}
+    </View>
   );
 };
 
@@ -166,7 +145,6 @@ const styles = StyleSheet.create({
   },
 
   container2: {
-    flex: 1,
     backgroundColor: "#2A3C44",
     textAlign: "center",
   },
@@ -203,6 +181,40 @@ const styles = StyleSheet.create({
     marginHorizontal: 4,
     textAlign: "center",
     borderRadius: 25,
+  },
+  centeredView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  modalView: {
+    backgroundColor: COLORS.primary,
+    borderRadius: 25,
+    padding: 15,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  openButton: {
+    backgroundColor: "#F194FF",
+    borderRadius: 20,
+    padding: 10,
+    elevation: 2,
+  },
+  textStyle: {
+    color: "white",
+    fontWeight: "bold",
+    textAlign: "center",
+  },
+  modalText: {
+    marginBottom: 15,
+    textAlign: "center",
   },
 });
 

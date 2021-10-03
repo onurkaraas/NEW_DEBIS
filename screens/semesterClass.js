@@ -3,81 +3,104 @@ import { StyleSheet, View } from "react-native";
 import { Col, Row, Table, TableWrapper } from "react-native-table-component";
 import { FONTS } from "../constants/theme";
 import { Picker } from "@react-native-picker/picker";
-import classes from "./classes";
 const cheerio = require("react-native-cheerio");
 const superagent = require("superagent").agent();
 
-export class semesterListClass extends Component {
+export class SemesterListClass extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      value: [],
-      title: [],
+      tableHead: ["Sinav", "Sinif Ort.", "ORT2*", "Notunuz"],
+      tableTitle: [],
+      tableData1: [],
+      tableData2: [],
+      tableData3: [],
+      tableData4: [],
     };
   }
-
   async componentDidMount() {
-    const [data, setData] = useState([]);
-    const [semesterValue, setSemesterValue] = useState([]);
-    let resultScreen = await superagent
+    let pickLesson = await superagent
       .post(
         "https://debis.deu.edu.tr/OgrenciIsleri/Ogrenci/OgrenciNotu/index.php"
       )
+      .send({
+        ders: "B_CC _3_1176_96_1_",
+        ogretim_donemi_id: "244",
+      })
       .set("Content-Type", "application/x-www-form-urlencoded");
-    const resultScreenData = resultScreen.text;
-    const $ = cheerio.load(resultScreenData);
-    const semesterSelect = $("select[id='ogretim_donemi_id'] > option");
-    let semestersObj = [];
-    let semesterValues = [];
-    for (let i = 1; i < semesterSelect.length; i++) {
-      let item = semesterSelect.eq(i);
-      let title = item.text();
-      let values = item.attr("value");
-      semestersObj.push(title);
+    const pickLessonData = pickLesson.text;
 
-      setData(semestersObj);
-      semesterValues.push(values);
-      setSemesterValue(semesterValues);
-      this.setState({ title: semestersObj });
-      this.setState({ tableData1: semesterValues });
-    }
+    const $$$ = cheerio.load(pickLessonData);
+
+    const lessons = $$$(
+      "body > table:nth-child(4) > tbody > tr:nth-child(2) > td:nth-child(2) > table:nth-child(3) > tbody > tr:nth-child(3) > td > table:nth-child(1) > tbody > tr:nth-child(3) > td:nth-child(2) > table > tbody > tr"
+    );
+    const examNames = [];
+    const classAverages = [];
+    const finalAverages = [];
+    const studentResults = [];
+    const datas = [];
+    const scrapeLessons = $$$(lessons).each((index, element) => {
+      if (index === 0) return true;
+      const tds = $$$(element).find("td");
+      const examName = $$$(tds[0]).text().slice(0, 15);
+      const listingDate = $$$(tds[1]).text();
+      const classAverage = $$$(tds[2]).text();
+      const finalAverage = $$$(tds[3]).text();
+      const studentResult = $$$(tds[4]).text();
+      examNames.push(examName);
+      classAverages.push(classAverage);
+      finalAverages.push(finalAverage);
+      studentResults.push(studentResult);
+      datas.push({ examName, classAverage, finalAverage, studentResult });
+      this.setState({ tableTitle: examNames });
+      this.setState({ tableData1: studentResults });
+      this.setState({ tableData2: classAverages });
+      this.setState({ tableData3: finalAverages });
+      this.setState({ tableData4: studentResults });
+    });
   }
 
   render() {
-    const [selectedLanguage, setSelectedLanguage] = useState();
-
     const state = this.state;
+
     return (
-      <View style={{ flex: 1 }}>
-        <View style={{ flex: 1, alignItems: "center" }}>
-          <View
-            style={{
-              backgroundColor: "#fff",
-              borderRadius: 25,
-              height: 45,
-              width: 375,
-              justifyContent: "center",
-            }}
-          >
-            <Picker
-              selectedValue={selectedLanguage}
-              onValueChange={(itemValue, itemIndex) =>
-                setSelectedLanguage(itemIndex)
-              }
-            >
-              {this.state.title.map((item, index) => {
-                return (
-                  <Picker.Item
-                    label={item}
-                    value={this.state.value}
-                    key={index}
-                  />
-                );
-              })}
-            </Picker>
-          </View>
-        </View>
-        <View style={{ flex: 6 }}>{classes("274")}</View>
+      <View style={styles.container2}>
+        <Table
+          borderStyle={{
+            borderRadius: 25,
+            borderBottomWidth: 1,
+            borderColor: "#c8e1ff",
+          }}
+        >
+          <Row
+            data={state.tableHead}
+            style={styles.head}
+            textStyle={styles.text}
+          />
+          <TableWrapper style={styles.wrapper}>
+            <Col
+              data={state.tableTitle}
+              style={styles.row}
+              textStyle={styles.text}
+            />
+            <Col
+              data={state.tableData2}
+              style={styles.row}
+              textStyle={styles.text}
+            />
+            <Col
+              data={state.tableData3}
+              style={styles.row}
+              textStyle={styles.text}
+            />
+            <Col
+              data={state.tableData4}
+              style={styles.row}
+              textStyle={styles.text}
+            />
+          </TableWrapper>
+        </Table>
       </View>
     );
   }
@@ -119,7 +142,7 @@ const styles = StyleSheet.create({
     borderRadius: 25,
   },
 
-  row: { height: 45 },
+  row: { height: 200 },
   text: {
     color: "white",
 
