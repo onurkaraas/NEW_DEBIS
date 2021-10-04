@@ -3,8 +3,8 @@
 .DS_Store
 
 # Xcode
-android
-ios
+android/
+ios/
 .buckconfig
 .gitattributes
 .gitignore
