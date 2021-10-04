@@ -1,5 +1,5 @@
 import createDataContext from "./createDataContext";
-import { useState } from "react";
+
 import AsyncStorage from "@react-native-async-storage/async-storage";
 const cheerio = require("react-native-cheerio");
 const superagent = require("superagent").agent();
@@ -13,6 +13,8 @@ const authReducer = (state, action) => {
       return { ...state, token: action.payload };
     case "signinpos":
       return { ...state, token: action.payload };
+    case "signinax":
+      return { ...state, token: action.payload };
     default:
       return state;
   }
@@ -20,8 +22,9 @@ const authReducer = (state, action) => {
 
 const signIn =
   (dispatch) =>
-  async ({ username, password }, callback) => {
+  async ({ username, password }) => {
     try {
+      let get = await superagent.get("https://debis.deu.edu.tr/debis.php");
       const dashboard = await superagent
         .post("https://debis.deu.edu.tr/debis.php")
         .send({
@@ -35,7 +38,10 @@ const signIn =
       await AsyncStorage.setItem("token", `${username && password}`);
       const resultScreenData = dashboard.text;
       const $ = cheerio.load(resultScreenData);
+
       const studentName = $("body > div > div").text().slice(11);
+      console.log(studentName);
+
       dispatch({ type: "signin", payload: `${username && password}` });
     } catch (e) {
       dispatch({ type: "add_error", payload: "signing err" });
@@ -56,7 +62,7 @@ const signInPos = (dispatch) => async () => {
     const resultScreenData = dashboard.text;
     const $ = cheerio.load(resultScreenData);
     const studentName = $("body > div > div").text().slice(11);
-    console.log(resultScreenData);
+    console.log(studentName);
   } catch (e) {
     dispatch({ type: "add_error", payload: "signing err" });
   }

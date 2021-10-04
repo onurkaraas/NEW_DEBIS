@@ -3,7 +3,6 @@ import React from "react";
 import { StyleSheet, View, Text } from "react-native";
 
 import { Dimensions } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 
 import Pdf from "react-native-pdf";
 import { COLORS } from "../constants/theme";
@@ -38,7 +37,7 @@ class PDFExample extends React.Component {
   }
 }
 
-const Add = () => {
+const TranscriptScreen = () => {
   return <PDFExample />;
 };
 const styles = StyleSheet.create({
@@ -55,4 +54,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Add;
+export default TranscriptScreen;

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
 import { Input } from "react-native-elements";
-import { Keyboard, StyleSheet, useWindowDimensions, View } from "react-native";
+import { Keyboard, useWindowDimensions, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { COLORS, FONTS } from "../constants/theme";
 // import FastImage from "react-native-fast-image";
@@ -8,8 +8,8 @@ import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityI
 import { Button, Switch } from "react-native-elements";
 import { StatusBar } from "expo-status-bar";
 import { Context as AuthContext } from "./AuthContext";
-const Search = () => {
-  const { state, signIn, signOut, signInPos } = useContext(AuthContext);
+const LogInScreen = () => {
+  const { signIn, signOut } = useContext(AuthContext);
   const [isEnabled, setIsEnabled] = useState(false);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -278,7 +278,7 @@ const Search = () => {
                     />
                   }
                   iconPosition={"right"}
-                  onPress={() => signInPos()}
+                  onPress={() => signOut()}
                 />
               </View>
               <View style={{ justifyContent: "flex-end" }}>
@@ -297,20 +297,4 @@ const Search = () => {
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 36,
-  },
-  input: {
-    padding: 10,
-    borderWidth: 0.5,
-    borderRadius: 4,
-  },
-  status: {
-    padding: 10,
-    textAlign: "center",
-  },
-});
-
-export default Search;
+export default LogInScreen;

@@ -3,10 +3,10 @@ import { useWindowDimensions } from "react-native";
 import "react-native-gesture-handler";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import Home from "../screens/Home";
-import Search from "../screens/Search";
-import Add from "../screens/Add";
+import LogInScreen from "../screens/LogInScreen";
+import TranscriptScreen from "../screens/TranscriptScreen";
 import Profile from "../screens/Profile";
-import Notifications from "../screens/Notifications";
+import LessonResultScreen from "../screens/LessonResultScreen";
 import { COLORS } from "../constants/theme";
 import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
 const Tab = createMaterialBottomTabNavigator();
@@ -35,7 +35,7 @@ const Tabs = () => {
               return (
                 <MaterialCommunityIcons color={color} name="home" size={26} />
               );
-            case "Search":
+            case "LogInScreen":
               return (
                 <MaterialCommunityIcons
                   name="arrow-right"
@@ -43,11 +43,11 @@ const Tabs = () => {
                   size={26}
                 />
               );
-            case "Add":
+            case "TranscriptScreen":
               return (
                 <MaterialCommunityIcons name="plus" color={color} size={26} />
               );
-            case "Notifications":
+            case "LessonResultScreen":
               return (
                 <MaterialCommunityIcons name="alarm" color={color} size={26} />
               );
@@ -64,22 +64,10 @@ const Tabs = () => {
       })}
     >
       <Tab.Screen name="Home" component={Home} />
-      <Tab.Screen
-        name="Search"
-        component={Search}
-        screenOptions={{ headerShown: false, tabBarVisible: false }}
-      />
-      <Tab.Screen name="Add" component={Add} options={{ headerShown: false }} />
-      <Tab.Screen
-        name="Notifications"
-        component={Notifications}
-        options={{ headerShown: false }}
-      />
-      <Tab.Screen
-        name="Profile"
-        component={Profile}
-        options={{ headerShown: false }}
-      />
+      <Tab.Screen name="LogInScreen" component={LogInScreen} />
+      <Tab.Screen name="TranscriptScreen" component={TranscriptScreen} />
+      <Tab.Screen name="LessonResultScreen" component={LessonResultScreen} />
+      <Tab.Screen name="Profile" component={Profile} />
     </Tab.Navigator>
   );
 };

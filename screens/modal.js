@@ -1,10 +1,8 @@
 import React, { useEffect, useState } from "react";
 import cheerio from "react-native-cheerio";
 import {
-  ActivityIndicator,
   StyleSheet,
   Text,
-  TouchableHighlight,
   TouchableOpacity,
   useWindowDimensions,
   View,
@@ -15,8 +13,7 @@ import Modal from "react-native-modal";
 
 const superagent = require("superagent").agent();
 
-const modalVise = (presse, id1) => {
-  const [press, setTimesPressed] = useState("");
+const modalVise = (presse, id1, ch) => {
   const [res, setRes] = useState([""]);
   const [modalVisible, setModalVisible] = useState(false);
   const [lessone, setLesson] = useState([""]);
@@ -30,6 +27,9 @@ const modalVise = (presse, id1) => {
   useEffect(() => {
     try {
       async function cvb() {
+        let get = await superagent.get(
+          "https://debis.deu.edu.tr/OgrenciIsleri/Ogrenci/OgrenciNotu/index.php"
+        );
         let pickLesson = await superagent
           .post(
             "https://debis.deu.edu.tr/OgrenciIsleri/Ogrenci/OgrenciNotu/index.php"
@@ -92,13 +92,13 @@ const modalVise = (presse, id1) => {
           setRes(reso);
         });
 
-        await setModalVisible(true);
+        setModalVisible(true);
       }
       cvb();
     } catch (e) {
       console.error(e);
     }
-  }, [presse]);
+  }, [presse, ch]);
 
   return (
     <Modal
@@ -108,84 +108,82 @@ const modalVise = (presse, id1) => {
       isVisible={modalVisible}
       style={{ textAlign: "center", alignItems: "center" }}
     >
-      <View style={styles.centeredView}>
-        <View
-          style={[
-            styles.modalView,
-            res[0] === "BAŞARISIZ"
-              ? { ...styles.modalRed }
-              : res[0] === "BAŞARILI"
-              ? { ...styles.modalGreen }
-              : { ...styles.modalView },
-          ]}
-        >
-          <View style={styles.container2}>
-            <View
-              style={{
-                width: window.width * 0.9,
-                height: window.height * 0.55,
-                justifyContent: "center",
+      <View
+        style={[
+          styles.modalView,
+          res[0] === "BAŞARISIZ"
+            ? { ...styles.modalRed }
+            : res[0] === "BAŞARILI"
+            ? { ...styles.modalGreen }
+            : { ...styles.modalView },
+        ]}
+      >
+        <View style={styles.container2}>
+          <View
+            style={{
+              width: window.width * 0.9,
+              height: window.height * 0.57,
+              justifyContent: "center",
+            }}
+          >
+            <Table
+              borderStyle={{
+                borderBottomWidth: 1,
+                borderColor: "#c8e1ff",
               }}
             >
-              <Table
-                borderStyle={{
-                  borderBottomWidth: 1,
-                  borderColor: "#c8e1ff",
-                }}
-              >
-                <Row
-                  data={lessone}
-                  style={styles.head}
-                  textStyle={[
-                    styles.text2,
-                    res[0] === "BAŞARISIZ"
-                      ? { ...styles.textRed }
-                      : res[0] === "BAŞARILI"
-                      ? { ...styles.textGreen }
-                      : { ...styles.text2 },
-                  ]}
-                />
-                <Row
-                  data={tableHead}
-                  style={styles.head}
+              <Row
+                data={lessone}
+                style={styles.head}
+                textStyle={[
+                  styles.text2,
+                  res[0] === "BAŞARISIZ"
+                    ? { ...styles.textRed }
+                    : res[0] === "BAŞARILI"
+                    ? { ...styles.textGreen }
+                    : { ...styles.text2 },
+                ]}
+              />
+              <Row
+                data={tableHead}
+                style={styles.head}
+                textStyle={styles.text}
+              />
+              <TableWrapper style={styles.wrapper}>
+                <Col
+                  data={tableTitle}
+                  style={{
+                    width: window.width * 0.2,
+                    height: window.height * 0.35,
+                  }}
                   textStyle={styles.text}
                 />
-                <TableWrapper style={styles.wrapper}>
-                  <Col
-                    data={tableTitle}
-                    style={{
-                      width: window.width * 0.2,
-                      height: window.height * 0.35,
-                    }}
-                    textStyle={styles.text}
-                  />
-                  <Col
-                    data={tableData2}
-                    style={{
-                      width: window.width * 0.2,
-                      height: window.height * 0.35,
-                    }}
-                    textStyle={styles.text}
-                  />
-                  <Col
-                    data={tableData3}
-                    style={{
-                      width: window.width * 0.2,
-                      height: window.height * 0.35,
-                    }}
-                    textStyle={styles.text}
-                  />
-                  <Col
-                    data={tableData4}
-                    style={{
-                      width: window.width * 0.2,
-                      height: window.height * 0.35,
-                    }}
-                    textStyle={styles.text1}
-                  />
-                </TableWrapper>
-              </Table>
-            </View>
+                <Col
+                  data={tableData2}
+                  style={{
+                    width: window.width * 0.2,
+                    height: window.height * 0.35,
+                  }}
+                  textStyle={styles.text}
+                />
+                <Col
+                  data={tableData3}
+                  style={{
+                    width: window.width * 0.2,
+                    height: window.height * 0.35,
+                  }}
+                  textStyle={styles.text}
+                />
+                <Col
+                  data={tableData4}
+                  style={{
+                    width: window.width * 0.2,
+                    height: window.height * 0.35,
+                  }}
+                  textStyle={styles.text1}
+                />
+              </TableWrapper>
+            </Table>
           </View>
         </View>
       </View>
@@ -242,14 +240,12 @@ const styles = StyleSheet.create({
   head: {
     borderBottomWidth: 2,
     borderColor: "white",
-
     padding: 12,
     borderRadius: 25,
   },
 
   wrapper: {
     flexDirection: "row",
-    paddingVertical: 12,
     paddingHorizontal: 6,
     height: 260,
   },

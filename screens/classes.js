@@ -3,9 +3,7 @@ import {
   Text,
   FlatList,
   View,
-  StyleSheet,
   Pressable,
-  ActivityIndicator,
   useWindowDimensions,
 } from "react-native";
 const superagent = require("superagent").agent();
@@ -16,10 +14,7 @@ import modalVise from "./modal";
 const classes = (id, id1) => {
   const window = useWindowDimensions();
 
-  function loade() {
-    return <ActivityIndicator size="large" color="#00ff00" />;
-  }
-  const [x, setX] = useState(1);
+  const [x, setX] = useState(0);
 
   const [databases, setDatabases] = useState([]);
   const [val, setVal] = useState([""]);
@@ -27,6 +22,9 @@ const classes = (id, id1) => {
   useEffect(() => {
     try {
       async function asd() {
+        let get = await superagent.get(
+          "https://debis.deu.edu.tr/OgrenciIsleri/Ogrenci/OgrenciNotu/index.php"
+        );
         let pickSemester = await superagent
           .post(
             "https://debis.deu.edu.tr/OgrenciIsleri/Ogrenci/OgrenciNotu/index.php"
@@ -59,7 +57,9 @@ const classes = (id, id1) => {
         setVal(values);
         setDatabases(lessonsObj);
       }
-      asd();
+      asd().then((result) => {
+        console.log(result);
+      });
     } catch (e) {
       console.error(e);
     }
@@ -100,7 +100,11 @@ const classes = (id, id1) => {
           >
             <View style={{ alignItems: "center" }}>
               <Text
-                style={{ color: COLORS.red, ...FONTS.body3, marginBottom: 6 }}
+                style={{
+                  color: COLORS.red,
+                  ...FONTS.body3,
+                  marginBottom: 6,
+                }}
               >
                 {code}
               </Text>
@@ -110,6 +114,7 @@ const classes = (id, id1) => {
                 style={{
                   color: COLORS.white,
                   ...FONTS.body3,
+                  textAlign: "center",
                 }}
               >
                 {title}
@@ -127,6 +132,7 @@ const classes = (id, id1) => {
   return (
     <View style={{ marginBottom: window.height * 0.1 }}>
       <FlatList
+        showsVerticalScrollIndicator={false}
         data={databases}
         renderItem={renderItem}
         keyExtractor={(item) => item.value}
@@ -136,86 +142,5 @@ const classes = (id, id1) => {
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    textAlign: "center",
-    justifyContent: "center",
-  },
-
-  container2: {
-    backgroundColor: "#2A3C44",
-    textAlign: "center",
-  },
-  head: {
-    borderBottomWidth: 2,
-    borderColor: "white",
-    marginLeft: 8,
-    padding: 16,
-    borderRadius: 25,
-  },
-  wrapper: { flexDirection: "row" },
-  title: {
-    flex: 2,
-    backgroundColor: "#2A3C44",
-    borderRadius: 25,
-  },
-
-  title3: {
-    flex: 1,
-    backgroundColor: "#2A3C44",
-    borderRadius: 25,
-  },
-  title4: {
-    flex: 2,
-    backgroundColor: "#2A3C44",
-    borderRadius: 25,
-  },
-
-  row: { height: 200 },
-  text: {
-    color: "white",
-
-    ...FONTS.body4,
-    marginHorizontal: 4,
-    textAlign: "center",
-    borderRadius: 25,
-  },
-  centeredView: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  modalView: {
-    backgroundColor: COLORS.primary,
-    borderRadius: 25,
-    padding: 15,
-    alignItems: "center",
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
-  },
-  openButton: {
-    backgroundColor: "#F194FF",
-    borderRadius: 20,
-    padding: 10,
-    elevation: 2,
-  },
-  textStyle: {
-    color: "white",
-    fontWeight: "bold",
-    textAlign: "center",
-  },
-  modalText: {
-    marginBottom: 15,
-    textAlign: "center",
-  },
-});
 
 export default classes;
