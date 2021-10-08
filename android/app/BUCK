@@ -35,12 +35,12 @@ android_library(
 
 android_build_config(
     name = "build_config",
-    package = "debisio.expo.client",
+    package = "com.debis_last",
 )
 
 android_resource(
     name = "res",
-    package = "debisio.expo.client",
+    package = "com.debis_last",
     res = "src/main/res",
 )
 

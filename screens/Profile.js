@@ -1,11 +1,16 @@
-import React, { useEffect, useState } from "react";
-import { Keyboard, StyleSheet, Text, TextInput, View } from "react-native";
-import TopBar from "../topBar";
-import { SafeAreaView } from "react-native-safe-area-context";
-
+import React from 'react';
+import {StyleSheet, View} from 'react-native';
+import TopBar from '../topBar';
+import {SafeAreaView} from 'react-native-safe-area-context';
+import User from '../dataScrapping/mod';
 const Profile = () => {
   return (
-    <SafeAreaView style={style.container}>{TopBar("Profil")}</SafeAreaView>
+    <SafeAreaView style={style.container}>
+      {TopBar('Profil')}
+      <View style={{flex: 1}}>
+        <User />
+      </View>
+    </SafeAreaView>
   );
 };
 
@@ -21,7 +26,7 @@ const style = StyleSheet.create({
   },
   status: {
     padding: 10,
-    textAlign: "center",
+    textAlign: 'center',
   },
 });
 

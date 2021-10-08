@@ -1,14 +1,14 @@
-import React from "react";
-import { useWindowDimensions } from "react-native";
-import "react-native-gesture-handler";
-import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
-import Home from "../screens/Home";
-import LogInScreen from "../screens/LogInScreen";
-import TranscriptScreen from "../screens/TranscriptScreen";
-import Profile from "../screens/Profile";
-import LessonResultScreen from "../screens/LessonResultScreen";
-import { COLORS } from "../constants/theme";
-import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
+import React from 'react';
+import {useWindowDimensions} from 'react-native';
+import 'react-native-gesture-handler';
+import Home from '../screens/Home';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+
+import TranscriptScreen from '../screens/TranscriptScreen';
+import Profile from '../screens/Profile';
+import LessonResultScreen from '../screens/LessonResultScreen';
+import {COLORS} from '../constants/theme';
+import {createMaterialBottomTabNavigator} from '@react-navigation/material-bottom-tabs';
 const Tab = createMaterialBottomTabNavigator();
 
 const Tabs = () => {
@@ -17,41 +17,37 @@ const Tabs = () => {
   return (
     <Tab.Navigator
       activeColor={COLORS.green}
-      inactiveColor={"#96A7AF"}
+      inactiveColor={'#96A7AF'}
       barStyle={{
         backgroundColor: COLORS.secondary,
         height: window.height * 0.1,
-        position: "absolute",
-        overflow: "hidden",
+        position: 'absolute',
+        overflow: 'hidden',
         borderTopLeftRadius: 25,
         borderTopRightRadius: 25,
-        justifyContent: "center",
+        justifyContent: 'center',
       }}
       labeled={false}
-      screenOptions={({ route }) => ({
-        tabBarIcon: ({ color, size }) => {
+      screenOptions={({route}) => ({
+        tabBarIcon: ({color, size}) => {
           switch (route.name) {
-            case "Home":
-              return (
-                <MaterialCommunityIcons color={color} name="home" size={26} />
-              );
-            case "LogInScreen":
+            case 'Home':
               return (
                 <MaterialCommunityIcons
-                  name="arrow-right"
+                  name="home-outline"
                   color={color}
                   size={26}
                 />
               );
-            case "TranscriptScreen":
+            case 'TranscriptScreen':
               return (
                 <MaterialCommunityIcons name="plus" color={color} size={26} />
               );
-            case "LessonResultScreen":
+            case 'LessonResultScreen':
               return (
                 <MaterialCommunityIcons name="alarm" color={color} size={26} />
               );
-            case "Profile":
+            case 'Profile':
               return (
                 <MaterialCommunityIcons
                   name="account-circle"
@@ -61,10 +57,8 @@ const Tabs = () => {
               );
           }
         },
-      })}
-    >
+      })}>
       <Tab.Screen name="Home" component={Home} />
-      <Tab.Screen name="LogInScreen" component={LogInScreen} />
       <Tab.Screen name="TranscriptScreen" component={TranscriptScreen} />
       <Tab.Screen name="LessonResultScreen" component={LessonResultScreen} />
       <Tab.Screen name="Profile" component={Profile} />

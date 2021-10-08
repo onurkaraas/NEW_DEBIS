@@ -1,44 +1,45 @@
-import React from "react";
-import { createStackNavigator } from "@react-navigation/stack";
-import { NavigationContainer } from "@react-navigation/native";
-import { SafeAreaProvider } from "react-native-safe-area-context";
-import Tabs from "./navigation/tabs";
-import { StatusBar } from "expo-status-bar";
-import { COLORS } from "./constants/theme";
-import LogInScreen from "./screens/LogInScreen";
-const Stack = createStackNavigator();
-import { Provider as AuthProvider } from "./context/AuthContext";
+import React, {useContext, useEffect, useState} from 'react';
+import {StatusBar} from 'react-native';
 
+import {SafeAreaProvider} from 'react-native-safe-area-context';
+
+import Providers from './context';
+import {COLORS} from './constants/theme';
+import SplashScreen from 'react-native-splash-screen';
+import {AuthContext} from './context/AuthContext';
+const cheerio = require('react-native-cheerio');
+const request = require('superagent');
+const superagent = request.agent();
 const App = () => {
-  const isLogged = false;
+  const [load, setLoad] = useState(false);
 
-  return (
-    <NavigationContainer>
-      <Stack.Navigator
-        screenOptions={{ headerShown: false }}
-        initialRouteName="home"
-      >
-        {isLogged ? (
-          <>
-            <Stack.Screen name={"home"} component={LogInScreen} />
-          </>
-        ) : (
-          <>
-            <Stack.Screen name={"Hosgeldiniz"} component={Tabs} />
-          </>
-        )}
-      </Stack.Navigator>
-      <StatusBar backgroundColor={COLORS.secondary} />
-    </NavigationContainer>
-  );
-};
+  useEffect(() => {
+    (async () => {
+      await setLoad(true);
+      await superagent
+        .get('https://debis.deu.edu.tr/debis.php')
+        .end(async (err, res) => {
+          const resultScreenData = await res.text;
+          const $ = await cheerio.load(resultScreenData);
+          const studentName = await $('body > div > div').text().slice(11);
+          console.log(studentName.length);
+          if (studentName.length !== 0) {
+            setLoad(false);
+          } else {
+            setLoad(true);
+          }
+        });
+    })();
 
-export default () => {
+    return () => setLoad(false);
+  }, []);
   return (
     <SafeAreaProvider>
-      <AuthProvider>
-        <App />
-      </AuthProvider>
+      {load ? SplashScreen.show() : SplashScreen.hide()}
+
+      <Providers />
     </SafeAreaProvider>
   );
 };
+
+export default App;

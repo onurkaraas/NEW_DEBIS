@@ -1,78 +1,52 @@
-import React, { useEffect } from "react";
-import { useWindowDimensions } from "react-native";
-import { COLORS, FONTS } from "../constants/theme";
-import { useState } from "react";
-const cheerio = require("react-native-cheerio");
-import { View } from "react-native";
-const request = require("superagent");
-const superagent = request.agent();
-import { Picker } from "@react-native-picker/picker";
-import classes from "../dataScraping/classes";
-import { SafeAreaView } from "react-native-safe-area-context";
-import TopBar from "../topBar";
+import React, {useContext, useEffect, useLayoutEffect} from 'react';
+import {useWindowDimensions} from 'react-native';
+import {COLORS, FONTS} from '../constants/theme';
+import {useState} from 'react';
+import {View} from 'react-native';
+import {Picker} from '@react-native-picker/picker';
+import Classes from '../dataScrapping/classes';
+import {SafeAreaView} from 'react-native-safe-area-context';
+import TopBar from '../topBar';
+import {AuthContext} from '../context/AuthContext';
+
 const LessonResultScreen = () => {
   const window = useWindowDimensions();
-
-  const [selectedLanguage, setSelectedLanguage] = useState();
-  const [semesterValue, setSemesterValue] = useState([]);
-  useEffect(() => {
-    try {
-      async function qwe() {
-        let resultScreen = await superagent.get(
-          "https://debis.deu.edu.tr/OgrenciIsleri/Ogrenci/OgrenciNotu/index.php"
-        );
-        const resultScreenData = resultScreen.text;
-        const $ = cheerio.load(resultScreenData);
-        const semesterSelect = $("select[id='ogretim_donemi_id'] > option");
-        let semestersObj = [];
-        let semesterValues = [];
-        let semesterSelected = [];
-        for (let i = 0; i < semesterSelect.length; i++) {
-          let item = semesterSelect.eq(i);
-          let title = item.text();
-          let values = item.attr("value");
-          semestersObj.push(title);
-          semesterValues.push([values, title]);
-          setSemesterValue(semesterValues);
-        }
-      }
-      qwe();
-    } catch (e) {
-      console.log(e);
-    }
-  }, []);
+  const {
+    selectedLanguage,
+    setSelectedLanguage,
+    semesterValue,
+    setSemesterValue,
+  } = useContext(AuthContext);
 
   return (
-    <SafeAreaView
+    <View
+      renderToHardwareTextureAndroid={true}
       style={{
         backgroundColor: COLORS.primary,
         flex: 1,
         ...FONTS.h2,
-      }}
-    >
-      {TopBar("Not Bilgileri")}
-      <View style={{ alignItems: "center", padding: 22 }}>
+      }}>
+      {TopBar('Not Bilgileri')}
+      <View style={{alignItems: 'center', padding: 22}}>
         <View
           style={{
-            backgroundColor: "#fff",
+            backgroundColor: '#fff',
             borderRadius: 25,
             height: 45,
             width: window.width * 0.9,
-            justifyContent: "center",
-            textAlign: "center",
-          }}
-        >
+            justifyContent: 'center',
+            textAlign: 'center',
+          }}>
           <Picker
             itemStyle={{
-              textAlign: "center",
-              alignItems: "center",
+              textAlign: 'center',
+              alignItems: 'center',
             }}
             style={{
               ...FONTS.h2,
             }}
             selectedValue={selectedLanguage}
-            onValueChange={(itemValue) => setSelectedLanguage(itemValue)}
-          >
+            onValueChange={itemValue => setSelectedLanguage(itemValue)}>
             {semesterValue.map((item, index) => {
               return (
                 <Picker.Item
@@ -88,10 +62,10 @@ const LessonResultScreen = () => {
           </Picker>
         </View>
       </View>
-      <View style={{ flex: 6 }}>
-        {classes(`${selectedLanguage}`, `${selectedLanguage}`)}
+      <View style={{flex: 6}}>
+        {Classes(`${selectedLanguage}`, `${selectedLanguage}`)}
       </View>
-    </SafeAreaView>
+    </View>
   );
 };
 

@@ -1,14 +1,4 @@
 {
-  "expo": {
-    "name": "NEW_DEBIS",
-    "slug": "NEW_DEBIS",
-    "version": "1.0.0",
-    "assetBundlePatterns": [
-      "**/*"
-    ],
-    "android": {
-      "package": "debisio.expo.client"
-    }
-  },
-  "name": "NEW_DEBIS"
+  "name": "DEBIS_LAST",
+  "displayName": "DEBIS_LAST"
 }

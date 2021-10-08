@@ -1,17 +1,17 @@
-import React from "react";
+import React from 'react';
 
-import { StyleSheet, View, Text } from "react-native";
+import {StyleSheet, View} from 'react-native';
 
-import { Dimensions } from "react-native";
+import {Dimensions} from 'react-native';
 
-import Pdf from "react-native-pdf";
-import { COLORS } from "../constants/theme";
+import Pdf from 'react-native-pdf';
+import {COLORS} from '../constants/theme';
 
 class PDFExample extends React.Component {
   render() {
     const source = {
-      uri: "https://debis.deu.edu.tr/OgrenciIsleri/Rapor/ogrenci_bazli_listeler/en_yeni_transcript/transcript.php",
-      cache: true,
+      uri: 'https://debis.deu.edu.tr/OgrenciIsleri/Rapor/ogrenci_bazli_listeler/en_yeni_transcript/transcript.php',
+      cache: false,
     };
 
     return (
@@ -24,10 +24,10 @@ class PDFExample extends React.Component {
           onPageChanged={(page, numberOfPages) => {
             console.log(`current page: ${page}`);
           }}
-          onError={(error) => {
+          onError={error => {
             console.log(error);
           }}
-          onPressLink={(uri) => {
+          onPressLink={uri => {
             console.log(`Link presse: ${uri}`);
           }}
           style={styles.pdf}
@@ -44,13 +44,13 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: COLORS.secondary,
     flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   pdf: {
     flex: 1,
-    width: Dimensions.get("window").width,
-    height: Dimensions.get("window").height,
+    width: Dimensions.get('window').width,
+    height: Dimensions.get('window').height,
   },
 });
 

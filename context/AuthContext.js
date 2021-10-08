@@ -1,85 +1,140 @@
-import createDataContext from "./createDataContext";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-const cheerio = require("react-native-cheerio");
-const request = require("superagent");
+import React, {
+  createContext,
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useState,
+} from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {showMessage} from 'react-native-flash-message';
+import SplashScreen from 'react-native-splash-screen';
+
+const cheerio = require('react-native-cheerio');
+const request = require('superagent');
 const superagent = request.agent();
-//
-const authReducer = (state, action) => {
-  switch (action.type) {
-    case "add_error":
-      return {
-        ...state,
-        errorMessage: action.payload,
-      };
-    case "signin":
-      return { ...state, token: action.payload };
-    case "signout":
-      return { ...state, token: action.payload };
-    default:
-      return state;
-  }
-};
 
-const signIn =
-  (dispatch, callback) =>
-  async ({ username, password }) => {
+export const AuthContext = createContext();
+export const AuthProvider = ({children}) => {
+  const [auth, setAuth] = useState(false);
+  const [name, setName] = useState('');
+  const [saveUser, setSaveUser] = useState(false);
+  const [selectedLanguage, setSelectedLanguage] = useState();
+  const [semesterValue, setSemesterValue] = useState([]);
+
+  const gett = () => {
     try {
-      let get = await superagent
-        .get("https://debis.deu.edu.tr/debis.php")
-        .unset("User-Agent");
-      const dashboard = await superagent
-        .post("https://debis.deu.edu.tr/debis.php")
-        .unset("User-Agent")
-        .send({
-          username: `${username}`,
-          password: `${password}`,
-          emailHost: "ogr.deu.edu.tr",
-          tamam: "Gonder",
-        })
-        .set("Content-Type", "application/x-www-form-urlencoded")
-        .end((err, res) => {
-          if (err) {
-            console.log(err);
+      (async function qwe() {
+        let resultScreen = await superagent.get(
+          'https://debis.deu.edu.tr/OgrenciIsleri/Ogrenci/OgrenciNotu/index.php',
+        );
+        const resultScreenData = await resultScreen.text;
+        const $ = await cheerio.load(resultScreenData);
+        const semesterSelect = await $(
+          "select[id='ogretim_donemi_id'] > option",
+        );
+        let semestersObj = [];
+        let semesterValues = [];
+        for (let i = 0; i < semesterSelect.length; i++) {
+          let item = await semesterSelect.eq(i);
+          let title = await item.text();
+          let values = await item.attr('value');
+          semestersObj.push(title);
+          semesterValues.push([values, title]);
+          setSemesterValue(semesterValues);
+        }
+      })();
+    } catch (e) {
+      console.log(e, 'HATAAAAAAAA');
+    }
+  };
+  useEffect(() => {
+    let isSubscribed = true;
+
+    const text = async () => {
+      await superagent
+        .get('https://debis.deu.edu.tr/debis.php')
+        .end(async (err, res) => {
+          const resultScreenData = await res.text;
+          const $ = await cheerio.load(resultScreenData);
+          const studentName = await $('body > div > div').text().slice(11);
+          if (isSubscribed && studentName.length !== 0) {
+            await setName(studentName);
+            await setAuth(true);
+            await SplashScreen.hide();
+          } else {
+            setAuth(false);
+            SplashScreen.hide();
           }
-          const resultScreenData = res.text;
-          const $ = cheerio.load(resultScreenData);
-          const studentName = $("body > div > div").text().slice(11);
-          console.log(studentName);
         });
+    };
+    text().then(() => gett());
+    return () => (isSubscribed = false);
+  }, []);
 
-      await AsyncStorage.setItem("token", `qwe`);
+  return (
+    <AuthContext.Provider
+      value={{
+        auth,
+        setAuth,
+        name,
+        semesterValue,
+        setSemesterValue,
+        setName,
+        saveUser,
+        setSelectedLanguage,
+        selectedLanguage,
+        setSaveUser,
+        signOut: async () => {
+          try {
+            await superagent
+              .get('https://debis.deu.edu.tr/php_library/Cikis.php')
+              .unset('User-Agent')
+              .then(setAuth(false));
+          } catch (e) {
+            console.log('giris hata');
+          }
+        },
 
-      dispatch({
-        type: "signin",
-        payload: `qwe`,
-      });
-    } catch (e) {
-      console.log("giris hata");
-      dispatch({
-        type: "add_error",
-        payload: "signing err",
-      });
-    }
-  };
+        signIn: async ({username, password}) => {
+          try {
+            await superagent
+              .post('https://debis.deu.edu.tr/debis.php')
+              .unset('User-Agent')
+              .send({
+                username: `${username}`,
+                password: `${password}`,
+                emailHost: 'ogr.deu.edu.tr',
+                tamam: 'Gonder',
+              })
+              .set('Content-Type', 'application/x-www-form-urlencoded')
+              .end(async (err, res) => {
+                const resultScreenData = await res.text;
+                const $ = await cheerio.load(resultScreenData);
+                const studentName = await $('body > div > div')
+                  .text()
+                  .slice(11);
+                if (studentName.length !== 0) {
+                  setName(studentName);
+                  setAuth(true);
+                } else {
+                  setAuth(false);
+                  showMessage({
+                    type: 'danger',
+                    message:
+                      'Giris yapilamadi, Lutfen Kullanici yapilamadi ve Sifrenizi Kontrol Edin.',
+                  });
+                }
+              });
 
-const signOut = (dispatch, callback) => {
-  return async () => {
-    try {
-      const out = await superagent
-        .get("https://debis.deu.edu.tr/php_library/Cikis.php")
-        .unset("User-Agent");
-    } catch (e) {
-      console.log("giris hata");
-
-      dispatch({
-        type: "add_error",
-        payload: "signout err",
-      });
-    }
-  };
+            const name = await AsyncStorage.getItem('name');
+            const pass = await AsyncStorage.getItem('pass');
+            console.log(name, pass);
+          } catch (e) {
+            console.log(e, 'AAAAAAAAAAAAA');
+          }
+        },
+      }}>
+      {children}
+    </AuthContext.Provider>
+  );
 };
-export const { Provider, Context } = createDataContext(
-  authReducer,
-  { signIn, signOut },
-  { token: null, errorMessage: "xzc" }
-);
