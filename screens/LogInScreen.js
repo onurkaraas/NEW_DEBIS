@@ -7,7 +7,8 @@ import { COLORS, FONTS } from "../constants/theme";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { Button, Switch } from "react-native-elements";
 import { StatusBar } from "expo-status-bar";
-import { Context as AuthContext } from "./AuthContext";
+import { Context as AuthContext } from "../context/AuthContext";
+import TopBar from "../topBar";
 const LogInScreen = () => {
   const { signIn, signOut } = useContext(AuthContext);
   const [isEnabled, setIsEnabled] = useState(false);
@@ -67,6 +68,7 @@ const LogInScreen = () => {
       <StatusBar
         backgroundColor={keyboardStatus ? COLORS.secondary : COLORS.secondary}
       />
+        {TopBar('Lütfen Giriş Yapınız')}
       <View style={{ flex: 1, alignItems: "center" }}>
         {/*{YourImage()}*/}
 

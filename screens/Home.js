@@ -1,19 +1,102 @@
 import React from "react";
-import { Text, useWindowDimensions, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { Text, useWindowDimensions, View, Pressable } from "react-native";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
-import { COLORS } from "../constants/theme";
-const Home = () => {
-  function renderIcons(name, category) {
-    const window = useWindowDimensions();
+import { COLORS, FONTS } from "../constants/theme";
+import { useNavigation } from "@react-navigation/native";
+import LogInScreen from "./LogInScreen";
+import LessonResultScreen from "./LessonResultScreen";
+import Profile from "./Profile";
+import TranscriptScreen from "./TranscriptScreen";
+import { SafeAreaView } from "react-native-safe-area-context";
+import TopBar from "../topBar";
 
+const Home = () => {
+  const navigation = useNavigation();
+  function renderStudentInfo() {
     return (
       <View
         style={{
-          alignItems: "center",
-          width: window.width * 0.8,
-          flex: 1,
+          height: window.height * 0.25,
+          width: window.width * 0.9,
+          backgroundColor: "white",
+          justifyContent: "center",
+          borderRadius: 25,
+          padding: 12,
         }}
+      >
+        <View
+          style={{
+            justifyContent: "center",
+            flex: 0.3,
+            borderColor: "gray",
+          }}
+        >
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "space-between",
+            }}
+          >
+            <View style={{ justifyContent: "space-between" }}>
+              <Text style={FONTS.h3}>ADI SOYADI </Text>
+            </View>
+            <View>
+              <Text>qweeqqew</Text>
+            </View>
+          </View>
+        </View>
+        <View
+          style={{
+            justifyContent: "center",
+            flex: 0.3,
+            borderColor: "gray",
+          }}
+        >
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "space-between",
+            }}
+          >
+            <View style={{ justifyContent: "space-between" }}>
+              <Text style={FONTS.h3}>ÖĞRENCİ NO:</Text>
+            </View>
+            <View>
+              <Text>qweeqqew</Text>
+            </View>
+          </View>
+        </View>
+
+        <View
+          style={{
+            justifyContent: "center",
+            flex: 0.3,
+            borderColor: "gray",
+          }}
+        >
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "space-between",
+            }}
+          >
+            <View style={{ justifyContent: "space-between" }}>
+              <Text style={FONTS.h3}>KÜMÜLATİF:</Text>
+            </View>
+            <View>
+              <Text>qweeqqew</Text>
+            </View>
+          </View>
+        </View>
+      </View>
+    );
+  }
+  function renderIcons(name, category, navigate) {
+    const window = useWindowDimensions();
+    return (
+      <Pressable
+        style={{ flex: 1, alignItems: "center" }}
+        onPress={() => navigation.navigate(navigate)}
       >
         <View
           style={{
@@ -32,18 +115,11 @@ const Home = () => {
             />
           </View>
         </View>
-        <View
-          style={{
-            flex: 1,
-            alignItems: "center",
-            height: 10,
-            width: 95,
-          }}
-        >
+        <View>
           <Text
             style={{
+              marginTop: 12,
               textAlign: "center",
-
               color: COLORS.white,
               fontSize: 17,
               fontFamily: "SF-Pro-Display-Bold",
@@ -52,7 +128,7 @@ const Home = () => {
             {category}
           </Text>
         </View>
-      </View>
+      </Pressable>
     );
   }
   const window = useWindowDimensions();
@@ -62,82 +138,45 @@ const Home = () => {
       style={{
         flex: 1,
         backgroundColor: COLORS.primary,
+        flexDirection: "column",
       }}
     >
-      <View style={{ justifyContent: "center", alignItems: "center" }}>
-        <View
-          style={{
-            height: window.height * 0.25,
-            width: window.width * 0.9,
-            backgroundColor: "white",
-            justifyContent: "center",
-            alignItems: "center",
-            borderRadius: 25,
-          }}
-        >
-          <View
-            style={{
-              justifyContent: "center",
-              flex: 0.3,
-              borderBottomWidth: 1,
-              borderColor: "gray",
-              flexDirection: "column",
-            }}
-          >
-            <View
-              style={{ flexDirection: "row", justifyContent: "flex-start" }}
-            >
-              <Text>qweeqqew</Text>
-            </View>
-            <View style={{ justifyContent: "flex-end" }}>
-              <Text>qweeqqew</Text>
-            </View>
-          </View>
-          <View
-            style={{
-              justifyContent: "center",
-              flex: 0.3,
-              borderBottomWidth: 1,
-              borderColor: "gray",
-            }}
-          >
-            <Text>qweeqqew</Text>
-          </View>
-          <View
-            style={{
-              justifyContent: "center",
-              flex: 0.3,
-              borderBottomWidth: 1,
-              borderColor: "gray",
-            }}
-          >
-            <Text>qweeqqew</Text>
-          </View>
-        </View>
+      {TopBar("Hoşgeldiniz")}
+      <View
+        style={{
+          marginVertical: window.height * 0.05,
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        {renderStudentInfo()}
       </View>
 
       <View
         style={{
-          flex: 1,
           flexDirection: "column",
-          justifyContent: "flex-end",
-          marginBottom: window.height * 0.175,
+          justifyContent: "center",
         }}
       >
         <View
           style={{
-            marginBottom: 50,
             flexDirection: "row",
           }}
         >
-          {renderIcons("calendar", "Akademik Takvim")}
-          {renderIcons("calendar-check", "Ders Programi")}
-          {renderIcons("message-draw", "Mesajlar")}
+          {renderIcons("calendar", "Akademik Takvim", Home)}
+          {renderIcons("calendar-remove", "Devamsizlik", TranscriptScreen)}
+          {renderIcons("calendar-check", "Ders Programi", LogInScreen)}
         </View>
-        <View style={{ flexDirection: "row" }}>
-          {renderIcons("calendar-remove", "Devamsizlik")}
+
+        <View
+          style={{
+            flexDirection: "row",
+            marginVertical: window.height * 0.025,
+          }}
+        >
           {renderIcons("food", "Yemek Menusu")}
-          {renderIcons("signal-hspa-plus", "Not Bilgisi")}
+          {renderIcons("message-draw", "Mesajlar", Profile)}
+          {renderIcons("signal-hspa-plus", "Not Bilgisi", LessonResultScreen)}
         </View>
       </View>
     </SafeAreaView>

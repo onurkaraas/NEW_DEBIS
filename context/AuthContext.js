@@ -1,19 +1,19 @@
 import createDataContext from "./createDataContext";
-
 import AsyncStorage from "@react-native-async-storage/async-storage";
 const cheerio = require("react-native-cheerio");
-const superagent = require("superagent").agent();
+const request = require("superagent");
+const superagent = request.agent();
+//
 const authReducer = (state, action) => {
   switch (action.type) {
     case "add_error":
-      return { ...state, errorMessage: action.payload };
+      return {
+        ...state,
+        errorMessage: action.payload,
+      };
     case "signin":
       return { ...state, token: action.payload };
-    case "classe":
-      return { ...state, token: action.payload };
-    case "signinpos":
-      return { ...state, token: action.payload };
-    case "signinax":
+    case "signout":
       return { ...state, token: action.payload };
     default:
       return state;
@@ -21,66 +21,65 @@ const authReducer = (state, action) => {
 };
 
 const signIn =
-  (dispatch) =>
+  (dispatch, callback) =>
   async ({ username, password }) => {
     try {
-      let get = await superagent.get("https://debis.deu.edu.tr/debis.php");
+      let get = await superagent
+        .get("https://debis.deu.edu.tr/debis.php")
+        .unset("User-Agent");
       const dashboard = await superagent
         .post("https://debis.deu.edu.tr/debis.php")
+        .unset("User-Agent")
         .send({
           username: `${username}`,
           password: `${password}`,
           emailHost: "ogr.deu.edu.tr",
           tamam: "Gonder",
         })
-        .unset("User-Agent")
-        .set("Content-Type", "application/x-www-form-urlencoded");
-      await AsyncStorage.setItem("token", `${username && password}`);
-      const resultScreenData = dashboard.text;
-      const $ = cheerio.load(resultScreenData);
+        .set("Content-Type", "application/x-www-form-urlencoded")
+        .end((err, res) => {
+          if (err) {
+            console.log(err);
+          }
+          const resultScreenData = res.text;
+          const $ = cheerio.load(resultScreenData);
+          const studentName = $("body > div > div").text().slice(11);
+          console.log(studentName);
+        });
 
-      const studentName = $("body > div > div").text().slice(11);
-      console.log(studentName);
+      await AsyncStorage.setItem("token", `qwe`);
 
-      dispatch({ type: "signin", payload: `${username && password}` });
+      dispatch({
+        type: "signin",
+        payload: `qwe`,
+      });
     } catch (e) {
-      dispatch({ type: "add_error", payload: "signing err" });
+      console.log("giris hata");
+      dispatch({
+        type: "add_error",
+        payload: "signing err",
+      });
     }
   };
 
-const signInPos = (dispatch) => async () => {
-  try {
-    const dashboard = await superagent
-      .post("https://pos.deu.edu.tr/index.php")
-      .send({
-        kullanici_posta: "onur.karaas",
-        kullanici_parola: "080103003On",
-        kullanici_tipi: "O",
-      })
-      .set("Content-Type", "application/x-www-form-urlencoded");
-
-    const resultScreenData = dashboard.text;
-    const $ = cheerio.load(resultScreenData);
-    const studentName = $("body > div > div").text().slice(11);
-    console.log(studentName);
-  } catch (e) {
-    dispatch({ type: "add_error", payload: "signing err" });
-  }
-};
-
-const signOut = (dispatch) => {
+const signOut = (dispatch, callback) => {
   return async () => {
     try {
       const out = await superagent
         .get("https://debis.deu.edu.tr/php_library/Cikis.php")
         .unset("User-Agent");
     } catch (e) {
-      dispatch({ type: "add_error", payload: "signout err" });
+      console.log("giris hata");
+
+      dispatch({
+        type: "add_error",
+        payload: "signout err",
+      });
     }
   };
 };
 export const { Provider, Context } = createDataContext(
   authReducer,
-  { signIn, signOut, signInPos },
+  { signIn, signOut },
   { token: null, errorMessage: "xzc" }
 );

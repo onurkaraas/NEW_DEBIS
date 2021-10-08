@@ -2,12 +2,14 @@ import React, { useEffect } from "react";
 import { useWindowDimensions } from "react-native";
 import { COLORS, FONTS } from "../constants/theme";
 import { useState } from "react";
-import cheerio from "react-native-cheerio";
+const cheerio = require("react-native-cheerio");
 import { View } from "react-native";
-const superagent = require("superagent").agent();
+const request = require("superagent");
+const superagent = request.agent();
 import { Picker } from "@react-native-picker/picker";
-import classes from "./classes";
-
+import classes from "../dataScraping/classes";
+import { SafeAreaView } from "react-native-safe-area-context";
+import TopBar from "../topBar";
 const LessonResultScreen = () => {
   const window = useWindowDimensions();
 
@@ -19,7 +21,6 @@ const LessonResultScreen = () => {
         let resultScreen = await superagent.get(
           "https://debis.deu.edu.tr/OgrenciIsleri/Ogrenci/OgrenciNotu/index.php"
         );
-
         const resultScreenData = resultScreen.text;
         const $ = cheerio.load(resultScreenData);
         const semesterSelect = $("select[id='ogretim_donemi_id'] > option");
@@ -42,7 +43,14 @@ const LessonResultScreen = () => {
   }, []);
 
   return (
-    <View style={{ backgroundColor: COLORS.primary, flex: 1, ...FONTS.h2 }}>
+    <SafeAreaView
+      style={{
+        backgroundColor: COLORS.primary,
+        flex: 1,
+        ...FONTS.h2,
+      }}
+    >
+      {TopBar("Not Bilgileri")}
       <View style={{ alignItems: "center", padding: 22 }}>
         <View
           style={{
@@ -83,7 +91,7 @@ const LessonResultScreen = () => {
       <View style={{ flex: 6 }}>
         {classes(`${selectedLanguage}`, `${selectedLanguage}`)}
       </View>
-    </View>
+    </SafeAreaView>
   );
 };
 

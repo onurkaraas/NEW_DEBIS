@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
-import cheerio from "react-native-cheerio";
+const cheerio = require("react-native-cheerio");
 import {
+  ActivityIndicator,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -34,68 +35,86 @@ const modalVise = (presse, id1, ch) => {
           .post(
             "https://debis.deu.edu.tr/OgrenciIsleri/Ogrenci/OgrenciNotu/index.php"
           )
+          .unset("User-Agent")
           .send({
             ders: presse,
             ogretim_donemi_id: id1,
           })
-          .unset("User-Agent")
-          .set("Content-Type", "application/x-www-form-urlencoded");
-        const pickLessonData = await pickLesson.text;
-        const $$$ = await cheerio.load(pickLessonData);
-        const result = await $$$(
-          "body > table:nth-child(4) > tbody > tr:nth-child(2) > td:nth-child(2) > table:nth-child(3) > tbody > tr:nth-child(3) > td > table:nth-child(1) > tbody > tr:nth-child(4) > td > b"
-        );
-        const lessons = await $$$(
-          "body > table:nth-child(4) > tbody > tr:nth-child(2) > td:nth-child(2) > table:nth-child(3) > tbody > tr:nth-child(3) > td > table:nth-child(1) > tbody > tr:nth-child(3) > td:nth-child(2) > table > tbody > tr"
-        );
-        const lessonName = await $$$(
-          "body > table:nth-child(4) > tbody > tr:nth-child(2) > td:nth-child(2) > table:nth-child(3) > tbody > tr:nth-child(3) > td > table:nth-child(1) > tbody > tr:nth-child(1)"
-        );
-        const reso = [];
-        const examNames = [];
-        const lessonsNames = [];
-        const classAverages = [];
-        const finalAverages = [];
-        const studentResults = [];
-        const datas = [];
-        await setRes(result.text());
-        const scrapeLessons = await $$$(lessons).each((index, element) => {
-          if (index === 0) return true;
-          const tds = $$$(element).find("td");
-          const examName = $$$(tds[0]).text().slice(0, 14);
-          const listingDate = $$$(tds[1]).text();
-          const classAverage = $$$(tds[2]).text();
-          const finalAverage = $$$(tds[3]).text();
-          const studentResult = $$$(tds[4]).text();
-          examNames.push(examName);
-          classAverages.push(classAverage);
-          finalAverages.push(finalAverage);
-          studentResults.push(studentResult);
-          datas.push({ examName, classAverage, finalAverage, studentResult });
-          setTableTitle(examNames);
-          setTableData2(finalAverages);
-          setTableData3(classAverages);
-          setTableData4(studentResults);
-        });
-        const scrapeLessonNamee = await $$$(lessonName).each(
-          (index, element) => {
-            const tds = $$$(element).find("td");
-            const lessonNameee = $$$(tds[0]).text();
-            lessonsNames.push(lessonNameee);
-            setLesson(lessonsNames);
-          }
-        );
-        const scrapeLessonNameee = await $$$(result).each((index, element) => {
-          const tds = $$$(element);
-          const ress = $$$(tds[0]).text();
-          reso.push(ress);
-          setRes(reso);
-        });
+          .set("Content-Type", "application/x-www-form-urlencoded")
+          .end((err, res) => {
+            if (err) {
+              console.log(err);
+            }
+            async function qweeqqew() {
+              const pickLessonData = await res.text;
+              const $$$ = await cheerio.load(pickLessonData);
+              const result = await $$$(
+                "body > table:nth-child(4) > tbody > tr:nth-child(2) > td:nth-child(2) > table:nth-child(3) > tbody > tr:nth-child(3) > td > table:nth-child(1) > tbody > tr:nth-child(4) > td > b"
+              );
+              const lessons = await $$$(
+                "body > table:nth-child(4) > tbody > tr:nth-child(2) > td:nth-child(2) > table:nth-child(3) > tbody > tr:nth-child(3) > td > table:nth-child(1) > tbody > tr:nth-child(3) > td:nth-child(2) > table > tbody > tr"
+              );
+              const lessonName = await $$$(
+                "body > table:nth-child(4) > tbody > tr:nth-child(2) > td:nth-child(2) > table:nth-child(3) > tbody > tr:nth-child(3) > td > table:nth-child(1) > tbody > tr:nth-child(1)"
+              );
+              const reso = [];
+              const examNames = [];
+              const lessonsNames = [];
+              const classAverages = [];
+              const finalAverages = [];
+              const studentResults = [];
+              const datas = [];
+              await setRes(result.text());
+              const scrapeLessons = await $$$(lessons).each(
+                (index, element) => {
+                  if (index === 0) return true;
+                  const tds = $$$(element).find("td");
+                  const examName = $$$(tds[0]).text().slice(0, 14);
+                  const listingDate = $$$(tds[1]).text();
+                  const classAverage = $$$(tds[2]).text();
+                  const finalAverage = $$$(tds[3]).text();
+                  const studentResult = $$$(tds[4]).text();
+                  examNames.push(examName);
+                  classAverages.push(classAverage);
+                  finalAverages.push(finalAverage);
+                  studentResults.push(studentResult);
+                  datas.push({
+                    examName,
+                    classAverage,
+                    finalAverage,
+                    studentResult,
+                  });
+                  setTableTitle(examNames);
+                  setTableData2(finalAverages);
+                  setTableData3(classAverages);
+                  setTableData4(studentResults);
+                }
+              );
+              const scrapeLessonNamee = await $$$(lessonName).each(
+                (index, element) => {
+                  const tds = $$$(element).find("td");
+                  const lessonNameee = $$$(tds[0]).text();
+                  lessonsNames.push(lessonNameee);
+                  setLesson(lessonsNames);
+                }
+              );
+              const scrapeLessonNameee = await $$$(result).each(
+                (index, element) => {
+                  const tds = $$$(element);
+                  const ress = $$$(tds[0]).text();
+                  reso.push(ress);
+                  setRes(reso);
+                }
+              );
 
-        setModalVisible(true);
+              setModalVisible(true);
+            }
+            qweeqqew();
+          });
       }
       cvb();
     } catch (e) {
+      console.log("modal error");
       console.error(e);
     }
   }, [presse, ch]);

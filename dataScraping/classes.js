@@ -6,10 +6,9 @@ import {
   Pressable,
   useWindowDimensions,
 } from "react-native";
-const superagent = require("superagent").agent();
-import cheerio from "react-native-cheerio";
+const cheerio = require("react-native-cheerio");
 import { COLORS, FONTS } from "../constants/theme";
-
+const superagent = require("superagent").agent();
 import modalVise from "./modal";
 const classes = (id, id1) => {
   const window = useWindowDimensions();
@@ -22,45 +21,45 @@ const classes = (id, id1) => {
   useEffect(() => {
     try {
       async function asd() {
-        let get = await superagent.get(
-          "https://debis.deu.edu.tr/OgrenciIsleri/Ogrenci/OgrenciNotu/index.php"
-        );
         let pickSemester = await superagent
           .post(
             "https://debis.deu.edu.tr/OgrenciIsleri/Ogrenci/OgrenciNotu/index.php"
           )
+          .unset("User-Agent")
           .send({
             ogretim_donemi_id: id,
           })
-          .unset("User-Agent")
-          .set("Content-Type", "application/x-www-form-urlencoded");
+          .set("Content-Type", "application/x-www-form-urlencoded")
+          .end((err, res) => {
+            if (err) {
+              console.log(err);
+            }
+            const pickSemesterData = res.text;
+            const $ = cheerio.load(`${pickSemesterData}`);
+            const classValue = $("select[id='ders'] > option");
+            let lessonsObj = [];
+            const values = [];
+            for (let i = 1; i < classValue.length; i++) {
+              let item = classValue.eq(i);
+              let lessonCode = item.text().slice(0, 8).trim();
+              let title = item.text().slice(8).trim();
+              let value = item.attr("value");
 
-        const pickSemesterData = pickSemester.text;
-        const $ = cheerio.load(pickSemesterData);
-        const classValue = $("select[id='ders'] > option");
-        let lessonsObj = [];
-        const values = [];
-        for (let i = 1; i < classValue.length; i++) {
-          let item = classValue.eq(i);
-          let lessonCode = item.text().slice(0, 8).trim();
-          let title = item.text().slice(8).trim();
-          let value = item.attr("value");
-
-          lessonsObj.push({
-            value,
-            lessonCode,
-            title,
+              lessonsObj.push({
+                value,
+                lessonCode,
+                title,
+              });
+              values.push(value);
+              setVal(values);
+              setDatabases(lessonsObj);
+            }
           });
-          values.push(value);
-        }
-
-        setVal(values);
-        setDatabases(lessonsObj);
       }
-      asd().then((result) => {
-        console.log(result);
-      });
+
+      asd();
     } catch (e) {
+      console.log("classes error");
       console.error(e);
     }
 
