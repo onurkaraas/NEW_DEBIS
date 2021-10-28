@@ -11,8 +11,8 @@ import {AuthContext} from './AuthContext';
 const Stack = createStackNavigator();
 
 const Routes = () => {
-  const {auth} = useContext(AuthContext);
-
+  const {auth, tex1} = useContext(AuthContext);
+  tex1();
   return (
     <NavigationContainer>
       {auth ? (

@@ -47,29 +47,6 @@ export const AuthProvider = ({children}) => {
       console.log(e, 'HATAAAAAAAA');
     }
   };
-  useEffect(() => {
-    let isSubscribed = true;
-
-    const text = async () => {
-      await superagent
-        .get('https://debis.deu.edu.tr/debis.php')
-        .end(async (err, res) => {
-          const resultScreenData = await res.text;
-          const $ = await cheerio.load(resultScreenData);
-          const studentName = await $('body > div > div').text().slice(11);
-          if (isSubscribed && studentName.length !== 0) {
-            await setName(studentName);
-            await setAuth(true);
-            await SplashScreen.hide();
-          } else {
-            setAuth(false);
-            SplashScreen.hide();
-          }
-        });
-    };
-    text().then(() => gett());
-    return () => (isSubscribed = false);
-  }, []);
 
   return (
     <AuthContext.Provider
@@ -132,6 +109,24 @@ export const AuthProvider = ({children}) => {
           } catch (e) {
             console.log(e, 'AAAAAAAAAAAAA');
           }
+        },
+        tex1: async () => {
+          await superagent
+            .get('https://debis.deu.edu.tr/debis.php')
+            .end(async (err, res) => {
+              const resultScreenData = await res.text;
+              const $ = await cheerio.load(resultScreenData);
+              const studentName = await $('body > div > div').text().slice(11);
+              if (studentName.length !== 0) {
+                setName(studentName);
+                setAuth(true);
+                SplashScreen.hide();
+              } else {
+                setAuth(false);
+                SplashScreen.hide();
+              }
+            });
+          gett();
         },
       }}>
       {children}

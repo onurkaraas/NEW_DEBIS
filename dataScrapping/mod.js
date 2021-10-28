@@ -7,7 +7,13 @@ import {
   useWindowDimensions,
   View,
 } from 'react-native';
-import React, {useContext, useEffect, useReducer, useState} from 'react';
+import React, {
+  useContext,
+  useEffect,
+  useLayoutEffect,
+  useReducer,
+  useState,
+} from 'react';
 const cheerio = require('react-native-cheerio');
 const request = require('superagent');
 const superagent = request.agent();
@@ -28,7 +34,6 @@ const userDetailsReducer = (state, action) => {
       return {
         ...state,
         loading: true,
-        modalVisible: true,
       };
     }
     case ACTIONS.SUCCESS: {
@@ -36,7 +41,6 @@ const userDetailsReducer = (state, action) => {
         ...state,
         loading: false,
         modalVisible: action.x,
-
         datas: action.data,
       };
     }
@@ -52,7 +56,6 @@ const userDetailsReducer = (state, action) => {
         ...state,
         loading: false,
         datas: [''],
-        modalVisible: false,
       };
     }
   }
@@ -71,12 +74,10 @@ const User = (presse, id1) => {
   const {datas, loading, error, modalVisible, tableHead} = state;
   const window = useWindowDimensions();
 
-  useEffect(() => {
+  useLayoutEffect(() => {
+    console.log(presse);
+
     if (presse.length === 0) {
-      function qwe() {
-        dispatch({type: ACTIONS.DONE});
-      }
-      qwe;
     } else {
       (async () => {
         await dispatch({type: ACTIONS.CALL_API});
@@ -90,22 +91,22 @@ const User = (presse, id1) => {
             ogretim_donemi_id: id1,
           })
           .set('Content-Type', 'application/x-www-form-urlencoded')
-          .end(async (err, res) => {
+          .end((err, res) => {
             if (err) {
               showMessage({
                 type: 'danger',
                 message: 'Debis Sisteminden Veri Alinirken Hata Olustu.',
               });
             }
-            const pickLessonData = await res.text;
-            const $$$ = await cheerio.load(pickLessonData);
-            const result = await $$$(
+            const pickLessonData = res.text;
+            const $$$ = cheerio.load(pickLessonData);
+            const result = $$$(
               'body > table:nth-child(4) > tbody > tr:nth-child(2) > td:nth-child(2) > table:nth-child(3) > tbody > tr:nth-child(3) > td > table:nth-child(1) > tbody > tr:nth-child(4) > td > b',
             );
-            const lessons = await $$$(
+            const lessons = $$$(
               'body > table:nth-child(4) > tbody > tr:nth-child(2) > td:nth-child(2) > table:nth-child(3) > tbody > tr:nth-child(3) > td > table:nth-child(1) > tbody > tr:nth-child(3) > td:nth-child(2) > table > tbody > tr',
             );
-            const lessonName = await $$$(
+            const lessonName = $$$(
               'body > table:nth-child(4) > tbody > tr:nth-child(2) > td:nth-child(2) > table:nth-child(3) > tbody > tr:nth-child(3) > td > table:nth-child(1) > tbody > tr:nth-child(1)',
             );
             const reso = [];
@@ -115,7 +116,7 @@ const User = (presse, id1) => {
             const studentResults = [];
             const lessonsNames = [];
 
-            const scrapeLessons = await $$$(lessons).each((index, element) => {
+            const scrapeLessons = $$$(lessons).each((index, element) => {
               if (index === 0) return true;
               const tds = $$$(element).find('td');
               const examName = $$$(tds[0]).text().slice(0, 14);
@@ -128,21 +129,17 @@ const User = (presse, id1) => {
               finalAverages.push(finalAverage);
               studentResults.push(studentResult);
             });
-            const scrapeLessonNamee = await $$$(lessonName).each(
-              (index, element) => {
-                const tds = $$$(element).find('td');
-                const lessonNameee = $$$(tds[0]).text();
-                lessonsNames.push(lessonNameee);
-              },
-            );
-            const scrapeLessonNameee = await $$$(result).each(
-              (index, element) => {
-                const tds = $$$(element);
-                const ress = $$$(tds[0]).text();
-                reso.push(ress);
-              },
-            );
-            await dispatch({
+            const scrapeLessonNamee = $$$(lessonName).each((index, element) => {
+              const tds = $$$(element).find('td');
+              const lessonNameee = $$$(tds[0]).text();
+              lessonsNames.push(lessonNameee);
+            });
+            const scrapeLessonNameee = $$$(result).each((index, element) => {
+              const tds = $$$(element);
+              const ress = $$$(tds[0]).text();
+              reso.push(ress);
+            });
+            dispatch({
               type: ACTIONS.SUCCESS,
               data: [
                 examNames,
@@ -157,6 +154,8 @@ const User = (presse, id1) => {
           });
       })();
     }
+
+    return () => dispatch({type: ACTIONS.DONE});
   }, [presse, id1]);
 
   return (

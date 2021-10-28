@@ -33,11 +33,7 @@ const Tabs = () => {
           switch (route.name) {
             case 'Home':
               return (
-                <MaterialCommunityIcons
-                  name="home-outline"
-                  color={color}
-                  size={26}
-                />
+                <MaterialCommunityIcons name="plus" color={color} size={26} />
               );
             case 'TranscriptScreen':
               return (
@@ -45,15 +41,11 @@ const Tabs = () => {
               );
             case 'LessonResultScreen':
               return (
-                <MaterialCommunityIcons name="alarm" color={color} size={26} />
+                <MaterialCommunityIcons name="plus" color={color} size={26} />
               );
             case 'Profile':
               return (
-                <MaterialCommunityIcons
-                  name="account-circle"
-                  color={color}
-                  size={26}
-                />
+                <MaterialCommunityIcons name="plus" color={color} size={26} />
               );
           }
         },
