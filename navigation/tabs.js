@@ -1,14 +1,18 @@
 import React from 'react';
-import {useWindowDimensions} from 'react-native';
+import {useWindowDimensions, View} from 'react-native';
 import 'react-native-gesture-handler';
 import Home from '../screens/Home';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
-import TranscriptScreen from '../screens/TranscriptScreen';
+import PdfFunc from '../screens/PdfFunc';
 import Profile from '../screens/Profile';
 import LessonResultScreen from '../screens/LessonResultScreen';
 import {COLORS} from '../constants/theme';
 import {createMaterialBottomTabNavigator} from '@react-navigation/material-bottom-tabs';
+import Schedule from '../screens/Schedule';
+import TranscriptScreen from '../screens/TranscriptScreen';
+import MealMenu from '../screens/MealMenu';
+import VeganMenu from '../screens/VeganMenu';
 const Tab = createMaterialBottomTabNavigator();
 
 const Tabs = () => {
@@ -20,7 +24,7 @@ const Tabs = () => {
       inactiveColor={'#96A7AF'}
       barStyle={{
         backgroundColor: COLORS.secondary,
-        height: window.height * 0.1,
+        height: window.height * 0.09,
         position: 'absolute',
         overflow: 'hidden',
         borderTopLeftRadius: 25,
@@ -33,27 +37,45 @@ const Tabs = () => {
           switch (route.name) {
             case 'Home':
               return (
-                <MaterialCommunityIcons name="plus" color={color} size={26} />
+                <MaterialCommunityIcons
+                  name="home-outline"
+                  color={color}
+                  size={26}
+                />
               );
             case 'TranscriptScreen':
               return (
-                <MaterialCommunityIcons name="plus" color={color} size={26} />
+                <MaterialCommunityIcons
+                  name="file-document"
+                  color={color}
+                  size={26}
+                />
               );
             case 'LessonResultScreen':
               return (
-                <MaterialCommunityIcons name="plus" color={color} size={26} />
+                <MaterialCommunityIcons
+                  name="alpha-a-box"
+                  color={color}
+                  size={26}
+                />
               );
-            case 'Profile':
-              return (
-                <MaterialCommunityIcons name="plus" color={color} size={26} />
-              );
+            // case 'Profile':
+            //   return (
+            //     <MaterialCommunityIcons
+            //       name="account-circle"
+            //       color={color}
+            //       size={26}
+            //     />
+            //   );
           }
         },
       })}>
       <Tab.Screen name="Home" component={Home} />
       <Tab.Screen name="TranscriptScreen" component={TranscriptScreen} />
       <Tab.Screen name="LessonResultScreen" component={LessonResultScreen} />
-      <Tab.Screen name="Profile" component={Profile} />
+      {/*<Tab.Screen name="Profile" component={Profile} />*/}
+
+
     </Tab.Navigator>
   );
 };

@@ -27,7 +27,7 @@ export const SIZES = {
   largeTitle: 50,
   h1: 26,
   h2: 22,
-  h3: 16,
+  h3: 18,
   h4: 14,
   body1: 30,
   body2: 22,
@@ -73,7 +73,18 @@ export const FONTS = {
     lineHeight: 22,
   },
 };
-
-const appTheme = {COLORS, SIZES, FONTS};
+export const SHADOWS = {
+  shadow1: {
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.27,
+    shadowRadius: 12,
+    elevation: 12,
+  },
+};
+const appTheme = {COLORS, SIZES, FONTS,SHADOWS};
 
 export default appTheme;

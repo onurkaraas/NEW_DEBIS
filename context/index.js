@@ -1,20 +1,23 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React from 'react';
 
-import {AuthProvider, AuthContext} from './AuthContext';
+import {AuthProvider} from './AuthContext';
 import FlashMessage from 'react-native-flash-message';
-import {StatusBar, View} from 'react-native';
+import { StatusBar, useWindowDimensions } from "react-native";
 import {SafeAreaView} from 'react-native-safe-area-context';
 
 import {COLORS} from '../constants/theme';
 import Routes from './Routes';
+import {useKeyboard} from '@react-native-community/hooks';
 
 const Providers = () => {
+  const keyboard = useKeyboard();
+
   return (
     <SafeAreaView style={{flex: 1}}>
       <AuthProvider>
         <Routes />
         <FlashMessage position="top" />
-        <StatusBar backgroundColor={COLORS.secondary} />
+        <StatusBar backgroundColor={keyboard.keyboardShown ? COLORS.primary : COLORS.secondary } />
       </AuthProvider>
     </SafeAreaView>
   );

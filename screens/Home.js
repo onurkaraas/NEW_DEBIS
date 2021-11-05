@@ -1,20 +1,39 @@
-import React, {useContext, useEffect} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {Text, useWindowDimensions, View, Pressable} from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {COLORS, FONTS} from '../constants/theme';
-import {useNavigation} from '@react-navigation/native';
 import LogInScreen from './LogInScreen';
+import {Button, Switch} from 'react-native-elements';
 
 import LessonResultScreen from './LessonResultScreen';
 import Profile from './Profile';
-import TranscriptScreen from './TranscriptScreen';
+import PdfFunc from './PdfFunc';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import TopBar from '../topBar';
 import {AuthContext} from '../context/AuthContext';
+import {useNavigation} from '@react-navigation/native';
+import Modal from 'react-native-modal';
+
+import Schedule from './Schedule';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import TranscriptScreen from './TranscriptScreen';
+import ModalPdf from './ModalPdf';
+import SplashScreen from 'react-native-splash-screen';
 
 const Home = () => {
   const window = useWindowDimensions();
-  const {signOut} = useContext(AuthContext);
+  const navigation = useNavigation();
+  const {
+    studentNumber,
+    department,
+    year,
+    advisor,
+    isModalVisible,
+    toggleModal,
+  } = useContext(AuthContext);
+
+  const uri =
+    'https://sks.deu.edu.tr/wp-content/uploads/2021/10/11KASIM-AYI-YEMEK-KALORISI-1.pdf';
   function renderStudentInfo() {
     return (
       <View
@@ -30,18 +49,20 @@ const Home = () => {
           style={{
             justifyContent: 'center',
             flex: 0.3,
-            borderColor: 'gray',
           }}>
           <View
             style={{
               flexDirection: 'row',
               justifyContent: 'space-between',
+              marginHorizontal: 12,
             }}>
             <View style={{justifyContent: 'space-between'}}>
-              <Text style={FONTS.h3}>ADI eSOYADI </Text>
+              <Text style={{...FONTS.h3, fontWeight: '800'}}>ÖĞRENCİ NO:</Text>
             </View>
             <View>
-              <Text>qweeqqew</Text>
+              <Text style={{...FONTS.h3, color: 'black', fontWeight: '700'}}>
+                {studentNumber}
+              </Text>
             </View>
           </View>
         </View>
@@ -49,38 +70,62 @@ const Home = () => {
           style={{
             justifyContent: 'center',
             flex: 0.3,
-            borderColor: 'gray',
           }}>
           <View
             style={{
               flexDirection: 'row',
               justifyContent: 'space-between',
+              marginHorizontal: 12,
             }}>
             <View style={{justifyContent: 'space-between'}}>
-              <Text style={FONTS.h3}>ÖĞRENCİ NO:</Text>
+              <Text style={{...FONTS.h3, fontWeight: '800'}}>SINIF:</Text>
             </View>
             <View>
-              <Text>qweeqqew</Text>
+              <Text style={{...FONTS.h3, color: 'black', fontWeight: '700'}}>
+                {year}
+              </Text>
             </View>
           </View>
         </View>
-
         <View
           style={{
             justifyContent: 'center',
             flex: 0.3,
-            borderColor: 'gray',
           }}>
           <View
             style={{
               flexDirection: 'row',
               justifyContent: 'space-between',
+              marginHorizontal: 12,
             }}>
             <View style={{justifyContent: 'space-between'}}>
-              <Text style={FONTS.h3}>KÜMÜLATİF:</Text>
+              <Text style={{...FONTS.h3, fontWeight: '800'}}>BÖLÜM:</Text>
             </View>
             <View>
-              <Text>qweeqqew</Text>
+              <Text style={{...FONTS.h3, color: 'black', fontWeight: '700'}}>
+                {department}
+              </Text>
+            </View>
+          </View>
+        </View>
+        <View
+          style={{
+            justifyContent: 'center',
+            flex: 0.3,
+          }}>
+          <View
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              marginHorizontal: 12,
+            }}>
+            <View style={{justifyContent: 'space-between'}}>
+              <Text style={{...FONTS.h3, fontWeight: '800'}}>DANIŞMAN:</Text>
+            </View>
+            <View>
+              <Text style={{...FONTS.h3, color: 'black', fontWeight: '700'}}>
+                {advisor}
+              </Text>
             </View>
           </View>
         </View>
@@ -97,7 +142,12 @@ const Home = () => {
           flex: 1,
           alignItems: 'center',
         }}
-        onPress={() => signOut()}>
+        onPress={
+          category !== 'Yemek Menusu'
+            ? () => navigation.navigate(navigate)
+            : toggleModal
+        }>
+        {/*onPress={() => signOut()}>*/}
         <View
           style={{
             backgroundColor: COLORS.green,
@@ -116,19 +166,18 @@ const Home = () => {
         </View>
         <View
           style={{
-            width: '100%',
+            width: window.height * 0.135,
+            height: window.height * 0.075,
             alignItems: 'center',
             justifyContent: 'center',
           }}>
           <Text
             style={{
-              marginTop: 12,
               textAlign: 'center',
-              alignItems: 'center',
-              justifyContent: 'center',
               color: COLORS.white,
               fontSize: 17,
               fontFamily: 'SF-Pro-Display-Bold',
+              fontWeight: 'bold',
             }}>
             {category}
           </Text>
@@ -147,6 +196,7 @@ const Home = () => {
       {TopBar('Hoşgeldiniz')}
       <View
         style={{
+          flex: 0.4,
           marginVertical: window.height * 0.05,
           justifyContent: 'center',
           alignItems: 'center',
@@ -157,28 +207,38 @@ const Home = () => {
       <View
         style={{
           flexDirection: 'column',
-          alignItems: 'center',
-
-          justifyContent: 'center',
+          flex: 1,
         }}>
         <View
           style={{
             flexDirection: 'row',
+            flex: 0.41,
+            alignItems: 'center',
           }}>
           {renderIcons('calendar', 'Akademik Takvim', TranscriptScreen)}
-          {renderIcons('calendar-remove', 'Devamsizlik', TranscriptScreen)}
-          {renderIcons('calendar-check', 'Ders Programi', LogInScreen)}
+          {renderIcons('calendar-remove', 'Devamsizlik', PdfFunc)}
+          {renderIcons('calendar-check', 'Ders Programi', Schedule)}
         </View>
 
         <View
           style={{
             flexDirection: 'row',
+            flex: 0.41,
             alignItems: 'center',
           }}>
           {renderIcons('food', 'Yemek Menusu')}
           {renderIcons('message-draw', 'Mesajlar', Profile)}
-          {renderIcons('signal-hspa-plus', 'Not Bilgisi', LessonResultScreen)}
+          {renderIcons('alpha-a-box', 'Not Bilgisi', LessonResultScreen)}
         </View>
+        <Modal
+          hideModalContentWhileAnimating={true}
+          isVisible={isModalVisible}
+          backdropOpacity={0.6}
+          onBackdropPress={toggleModal}>
+          <View style={{flex: 1, justifyContent: 'center'}}>
+            {ModalPdf({uri}, 'Yemek Menusu')}
+          </View>
+        </Modal>
       </View>
     </SafeAreaView>
   );

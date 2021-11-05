@@ -1,50 +1,82 @@
-import React, {
-  createContext,
-  useCallback,
-  useEffect,
-  useLayoutEffect,
-  useState,
-} from 'react';
+import React, {createContext, useEffect, useState} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {showMessage} from 'react-native-flash-message';
 import SplashScreen from 'react-native-splash-screen';
 
-const cheerio = require('react-native-cheerio');
+const cheerio = require('cheerio');
 const request = require('superagent');
 const superagent = request.agent();
 
 export const AuthContext = createContext();
 export const AuthProvider = ({children}) => {
-  const [auth, setAuth] = useState(false);
+  const [auth, setAuth] = useState(null);
   const [name, setName] = useState('');
+  const [load, setLoad] = useState(true);
   const [saveUser, setSaveUser] = useState(false);
   const [selectedLanguage, setSelectedLanguage] = useState();
   const [semesterValue, setSemesterValue] = useState([]);
+  const [department, setDepartment] = useState('');
+  const [studentNumber, setStudentNumber] = useState('');
+  const [year, setYear] = useState('');
+  const [advisor, setAdvisor] = useState('');
+  const [clicked, setClicked] = useState(false);
+  const [isModalVisible, setModalVisible] = useState(false);
+  const [isModalVisible2, setModalVisible2] = useState(false);
+  const [press, setTimesPressed] = useState('');
+
+  const toggleModal = () => setModalVisible(!isModalVisible);
+
+  const toggleModal2 = () => setModalVisible2(!isModalVisible2);
 
   const gett = () => {
     try {
-      (async function qwe() {
+      (async () => {
         let resultScreen = await superagent.get(
           'https://debis.deu.edu.tr/OgrenciIsleri/Ogrenci/OgrenciNotu/index.php',
         );
         const resultScreenData = await resultScreen.text;
         const $ = await cheerio.load(resultScreenData);
-        const semesterSelect = await $(
-          "select[id='ogretim_donemi_id'] > option",
-        );
-        let semestersObj = [];
-        let semesterValues = [];
-        for (let i = 0; i < semesterSelect.length; i++) {
-          let item = await semesterSelect.eq(i);
-          let title = await item.text();
-          let values = await item.attr('value');
-          semestersObj.push(title);
-          semesterValues.push([values, title]);
+
+        const studentName = $(
+          'body > table:nth-child(4) > tbody > tr:nth-child(2) > td:nth-child(2) > form > table > tbody > tr:nth-child(1) > td:nth-child(3)',
+        ).text();
+        if (studentName.length !== 0) {
+          setAuth(true);
+          const departmentName = $(
+            'body > table:nth-child(4) > tbody > tr:nth-child(2) > td:nth-child(2) > form > table > tbody > tr:nth-child(5) > td:nth-child(3)',
+          ).text();
+          const stuNum = $(
+            'body > table:nth-child(4) > tbody > tr:nth-child(2) > td:nth-child(2) > form > table > tbody > tr:nth-child(2) > td:nth-child(3)',
+          ).text();
+          const year1 = $(
+            'body > table:nth-child(4) > tbody > tr:nth-child(2) > td:nth-child(2) > form > table > tbody > tr:nth-child(3) > td:nth-child(3)',
+          ).text();
+          const prof = $(
+            'body > table:nth-child(4) > tbody > tr:nth-child(2) > td:nth-child(2) > form > table > tbody > tr:nth-child(7) > td:nth-child(3)\n',
+          ).text();
+          const semesterSelect = await $(
+            "select[id='ogretim_donemi_id'] > option",
+          );
+          let semesterValues = [];
+          for (let i = 1; i < semesterSelect.length; i++) {
+            let item = semesterSelect.eq(i);
+            let title = item.text();
+            let values = item.attr('value');
+            semesterValues.push([values, title]);
+          }
           setSemesterValue(semesterValues);
+          setAdvisor(prof);
+          setYear(year1);
+          setStudentNumber(stuNum);
+          setName(studentName);
+          setDepartment(departmentName);
+        } else {
+          setAuth(false);
         }
+
       })();
     } catch (e) {
-      console.log(e, 'HATAAAAAAAA');
+      showMessage(e, 'Error while getting data');
     }
   };
 
@@ -52,21 +84,40 @@ export const AuthProvider = ({children}) => {
     <AuthContext.Provider
       value={{
         auth,
+        gett,
         setAuth,
         name,
+        load,
+        press,
+        setTimesPressed,
+        setLoad,
+        setClicked,
+        clicked,
         semesterValue,
         setSemesterValue,
         setName,
+        studentNumber,
+        setStudentNumber,
         saveUser,
+        year,
+        advisor,
         setSelectedLanguage,
         selectedLanguage,
         setSaveUser,
+        department,
+        setDepartment,
+        isModalVisible,
+        setModalVisible,
+        toggleModal,
+        isModalVisible2,
+        setModalVisible2,
+        toggleModal2,
         signOut: async () => {
           try {
             await superagent
               .get('https://debis.deu.edu.tr/php_library/Cikis.php')
               .unset('User-Agent')
-              .then(setAuth(false));
+              .then(setAuth(false) && setName(''));
           } catch (e) {
             console.log('giris hata');
           }
@@ -84,49 +135,12 @@ export const AuthProvider = ({children}) => {
                 tamam: 'Gonder',
               })
               .set('Content-Type', 'application/x-www-form-urlencoded')
-              .end(async (err, res) => {
-                const resultScreenData = await res.text;
-                const $ = await cheerio.load(resultScreenData);
-                const studentName = await $('body > div > div')
-                  .text()
-                  .slice(11);
-                if (studentName.length !== 0) {
-                  setName(studentName);
-                  setAuth(true);
-                } else {
-                  setAuth(false);
-                  showMessage({
-                    type: 'danger',
-                    message:
-                      'Giris yapilamadi, Lutfen Kullanici yapilamadi ve Sifrenizi Kontrol Edin.',
-                  });
-                }
+              .end(() => {
+                gett();
               });
-
-            const name = await AsyncStorage.getItem('name');
-            const pass = await AsyncStorage.getItem('pass');
-            console.log(name, pass);
           } catch (e) {
-            console.log(e, 'AAAAAAAAAAAAA');
+            showMessage('Error while trying to sign in');
           }
-        },
-        tex1: async () => {
-          await superagent
-            .get('https://debis.deu.edu.tr/debis.php')
-            .end(async (err, res) => {
-              const resultScreenData = await res.text;
-              const $ = await cheerio.load(resultScreenData);
-              const studentName = await $('body > div > div').text().slice(11);
-              if (studentName.length !== 0) {
-                setName(studentName);
-                setAuth(true);
-                SplashScreen.hide();
-              } else {
-                setAuth(false);
-                SplashScreen.hide();
-              }
-            });
-          gett();
         },
       }}>
       {children}

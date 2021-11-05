@@ -1,70 +1,55 @@
 import React, {useState, useEffect, useContext} from 'react';
-import {View, Text, useWindowDimensions} from 'react-native';
+import {
+  View,
+  Text,
+  useWindowDimensions,
+  StatusBar,
+  StyleSheet,
+} from 'react-native';
 import {COLORS, FONTS} from './constants/theme';
 import {AuthContext} from './context/AuthContext';
-const cheerio = require('react-native-cheerio');
+const cheerio = require('cheerio');
 const superagent = require('superagent').agent();
+import {useDimensions, useKeyboard} from '@react-native-community/hooks';
 
 const TopBar = headerTitle => {
-  const {height, width} = useWindowDimensions();
-  const {name} = useContext(AuthContext);
-  const [x, setX] = useState('');
-  useEffect(() => {
-    try {
-      (async function dg() {
-        let getXName = await superagent
-          .get(
-            'https://debis.deu.edu.tr/OgrenciIsleri/Ogrenci/OgrenciNotu/index.php',
-          )
-          .unset('User-Agent');
-
-        const studentXData = getXName.text;
-        const $$ = cheerio.load(studentXData);
-        const xName = $$(
-          'body > table:nth-child(4) > tbody > tr:nth-child(2) > td:nth-child(2) > form > table > tbody > tr:nth-child(5) > td:nth-child(3)',
-        ).text();
-        setX(xName);
-      })();
-      return () => setX('');
-    } catch (e) {
-      console.log(e);
-    }
-  }, []);
+  const {width, height} = useDimensions().window;
+  const {name, department} = useContext(AuthContext);
+  const keyboard = useKeyboard();
 
   return (
     <View
       style={{
+        ...styles.container,
         width: width,
-        height: height * 0.1,
-        backgroundColor: COLORS.secondary,
-        borderBottomRightRadius: 25,
-        borderBottomLeftRadius: 25,
-        flexDirection: 'row',
-        paddingHorizontal: 8,
+        height: keyboard.keyboardShown ? 0 : height * 0.1,
+        justifyContent: name.length === 0 ? 'center' : 'space-between',
       }}>
-      <View style={{flex: 1, justifyContent: 'center'}} r>
-        <Text style={{...FONTS.h2, color: COLORS.white}}>{headerTitle}</Text>
-      </View>
-
-      <View style={{alignItems: 'flex-end', justifyContent: 'center'}}>
-        <Text
-          style={{
-            ...FONTS.body3,
-            color: COLORS.white,
-            marginBottom: 8,
-          }}>
-          {name}
+      <View style={{justifyContent: 'center', alignItems: 'center'}}>
+        <Text style={{...FONTS.h2, color: COLORS.white, fontWeight: '800'}}>
+          {headerTitle}
         </Text>
-
-        <Text
-          style={{
-            ...FONTS.body3,
-            color: COLORS.white,
-          }}>
-          {x}
+      </View>
+      <View
+        style={{
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}>
+        <Text style={{...FONTS.h2, color: COLORS.white, fontWeight: '800'}}>
+          {name}
         </Text>
       </View>
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    backgroundColor: COLORS.secondary,
+    borderBottomRightRadius: 25,
+    borderBottomLeftRadius: 25,
+    flexDirection: 'row',
+    paddingHorizontal: 12,
+  },
+});
 export default TopBar;

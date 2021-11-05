@@ -1,18 +1,32 @@
-import React, {useState, useEffect, useRef, useLayoutEffect} from 'react';
-import {Text, FlatList, View, useWindowDimensions} from 'react-native';
+import React, {useState, useEffect, useContext} from 'react';
+import {
+  Text,
+  FlatList,
+  View,
+  useWindowDimensions,
+  RefreshControl,
+  Pressable,
+  TouchableHighlight,
+  StyleSheet,
+} from 'react-native';
 import {COLORS, FONTS} from '../constants/theme';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import User from '../dataScrapping/mod';
+import {AuthContext} from '../context/AuthContext';
 
 const superagent = require('superagent').agent();
-const cheerio = require('react-native-cheerio');
+const cheerio = require('cheerio');
 const Classes = (id, id1) => {
   const window = useWindowDimensions();
-
+  const [refreshing, setRefreshing] = useState(false);
   const [databases, setDatabases] = useState([]);
-  const [clicked, setClicked] = useState(false);
+  const {toggleModal2} = useContext(AuthContext);
   const [press, setTimesPressed] = useState('');
-  useLayoutEffect(() => {
+
+  const refresh = () => {
+    setRefreshing(!refreshing);
+  };
+  useEffect(() => {
     (async function asd() {
       await superagent
         .post(
@@ -44,57 +58,43 @@ const Classes = (id, id1) => {
             });
             values.push(value);
             setDatabases(lessonsObj);
-            setClicked(true);
           }
         });
     })();
+    return setRefreshing(false);
 
     // console.log(databases);
-  }, [id, id1]);
-
+  }, [id, id1, refreshing]);
+  const clicked =  value => {
+     toggleModal2();
+     setTimesPressed(value);
+  };
   const Item = ({title, value, code}) => (
-    <TouchableOpacity onPress={() => setTimesPressed(value)}>
-      <View
-        style={{
-          borderWidth: 0,
-          backgroundColor: COLORS.secondary,
-          borderRadius: 25,
-          marginHorizontal: 12,
-          marginBottom: 18,
-          paddingVertical: 18,
-        }}>
+    <TouchableOpacity onPress={()=>clicked(value)}>
+      <View style={styles.container}>
         <View
           style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'center',
+            flexDirection: 'column',
           }}>
-          <View
-            style={{
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}>
-            <View style={{alignItems: 'center'}}>
-              <Text
-                style={{
-                  color: COLORS.red,
-                  ...FONTS.body3,
-                  marginBottom: 6,
-                }}>
-                {code}
-              </Text>
-            </View>
-            <View style={{flex: 1, alignItems: 'center'}}>
-              <Text
-                style={{
-                  color: COLORS.white,
-                  ...FONTS.body3,
-                  textAlign: 'center',
-                }}>
-                {title}
-              </Text>
-            </View>
+          <View style={{alignItems: 'center'}}>
+            <Text
+              style={{
+                color: COLORS.red,
+                ...FONTS.body3,
+                marginBottom: 6,
+              }}>
+              {code}
+            </Text>
+          </View>
+          <View style={{flex: 1, alignItems: 'center'}}>
+            <Text
+              style={{
+                color: COLORS.white,
+                ...FONTS.body3,
+                textAlign: 'center',
+              }}>
+              {title}
+            </Text>
           </View>
         </View>
       </View>
@@ -105,16 +105,29 @@ const Classes = (id, id1) => {
   );
 
   return (
-    <View style={{marginBottom: window.height * 0.1}}>
+    <View style={{marginBottom: window.height * 0.09}}>
       <FlatList
         showsVerticalScrollIndicator={false}
         data={databases}
         renderItem={renderItem}
         keyExtractor={item => item.value}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={refresh} />
+        }
       />
       {User(`${press}`, `${id1}`)}
     </View>
   );
 };
 
+const styles = StyleSheet.create({
+  container: {
+    backgroundColor: COLORS.secondary,
+    borderRadius: 25,
+    marginHorizontal: 12,
+    marginBottom: 18,
+    paddingVertical: 18,
+    justifyContent: 'center',
+  },
+});
 export default Classes;

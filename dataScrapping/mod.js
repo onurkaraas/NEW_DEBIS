@@ -4,23 +4,19 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
-  useWindowDimensions,
   View,
 } from 'react-native';
-import React, {
-  useContext,
-  useEffect,
-  useLayoutEffect,
-  useReducer,
-  useState,
-} from 'react';
-const cheerio = require('react-native-cheerio');
-const request = require('superagent');
-const superagent = request.agent();
+
+import React, {useContext, useEffect, useReducer} from 'react';
+import {useDimensions} from '@react-native-community/hooks';
 import {showMessage} from 'react-native-flash-message';
 import {COLORS, FONTS} from '../constants/theme';
 import Modal from 'react-native-modal';
 import {Col, Row, Table, TableWrapper} from 'react-native-table-component';
+import {AuthContext} from '../context/AuthContext';
+const cheerio = require('cheerio');
+const request = require('superagent');
+const superagent = request.agent();
 
 const ACTIONS = {
   CALL_API: 'call-api',
@@ -32,16 +28,16 @@ const userDetailsReducer = (state, action) => {
   switch (action.type) {
     case ACTIONS.CALL_API: {
       return {
-        ...state,
         loading: true,
       };
     }
     case ACTIONS.SUCCESS: {
       return {
         ...state,
-        loading: false,
-        modalVisible: action.x,
         datas: action.data,
+        result: action.res,
+        name: action.name,
+        loading: false,
       };
     }
     case ACTIONS.ERROR: {
@@ -54,7 +50,6 @@ const userDetailsReducer = (state, action) => {
     case ACTIONS.DONE: {
       return {
         ...state,
-        loading: false,
         datas: [''],
       };
     }
@@ -64,145 +59,169 @@ const userDetailsReducer = (state, action) => {
 const initialState = {
   datas: [''],
   tableHead: ['Sinav', 'Sinif Ort.', 'ORT2*', 'Notunuz'],
-  loading: false,
+  result: '',
+  name: '',
+  loading: null,
   error: null,
-  modalVisible: false,
 };
 
 const User = (presse, id1) => {
   const [state, dispatch] = useReducer(userDetailsReducer, initialState);
-  const {datas, loading, error, modalVisible, tableHead} = state;
-  const window = useWindowDimensions();
+  const {datas, tableHead, result, name, loading} = state;
+  const {isModalVisible2, setModalVisible2, toggleModal2} =
+    useContext(AuthContext);
+  const {width, height} = useDimensions().window;
 
-  useLayoutEffect(() => {
-    console.log(presse);
+  const visible = () => {
+    toggleModal2();
+    dispatch({type: ACTIONS.DONE});
+  };
 
-    if (presse.length === 0) {
-    } else {
-      (async () => {
-        await dispatch({type: ACTIONS.CALL_API});
+  const resultModals = async () => {
+    await dispatch({type: ACTIONS.CALL_API});
 
-        await superagent
-          .post(
-            'https://debis.deu.edu.tr/OgrenciIsleri/Ogrenci/OgrenciNotu/index.php',
-          )
-          .send({
-            ders: presse,
-            ogretim_donemi_id: id1,
-          })
-          .set('Content-Type', 'application/x-www-form-urlencoded')
-          .end((err, res) => {
-            if (err) {
-              showMessage({
-                type: 'danger',
-                message: 'Debis Sisteminden Veri Alinirken Hata Olustu.',
-              });
-            }
-            const pickLessonData = res.text;
-            const $$$ = cheerio.load(pickLessonData);
-            const result = $$$(
-              'body > table:nth-child(4) > tbody > tr:nth-child(2) > td:nth-child(2) > table:nth-child(3) > tbody > tr:nth-child(3) > td > table:nth-child(1) > tbody > tr:nth-child(4) > td > b',
-            );
-            const lessons = $$$(
-              'body > table:nth-child(4) > tbody > tr:nth-child(2) > td:nth-child(2) > table:nth-child(3) > tbody > tr:nth-child(3) > td > table:nth-child(1) > tbody > tr:nth-child(3) > td:nth-child(2) > table > tbody > tr',
-            );
-            const lessonName = $$$(
-              'body > table:nth-child(4) > tbody > tr:nth-child(2) > td:nth-child(2) > table:nth-child(3) > tbody > tr:nth-child(3) > td > table:nth-child(1) > tbody > tr:nth-child(1)',
-            );
-            const reso = [];
-            const examNames = [];
-            const classAverages = [];
-            const finalAverages = [];
-            const studentResults = [];
-            const lessonsNames = [];
-
-            const scrapeLessons = $$$(lessons).each((index, element) => {
-              if (index === 0) return true;
-              const tds = $$$(element).find('td');
-              const examName = $$$(tds[0]).text().slice(0, 14);
-              const listingDate = $$$(tds[1]).text();
-              const classAverage = $$$(tds[2]).text();
-              const finalAverage = $$$(tds[3]).text();
-              const studentResult = $$$(tds[4]).text();
-              examNames.push(examName);
-              classAverages.push(classAverage);
-              finalAverages.push(finalAverage);
-              studentResults.push(studentResult);
-            });
-            const scrapeLessonNamee = $$$(lessonName).each((index, element) => {
-              const tds = $$$(element).find('td');
-              const lessonNameee = $$$(tds[0]).text();
-              lessonsNames.push(lessonNameee);
-            });
-            const scrapeLessonNameee = $$$(result).each((index, element) => {
-              const tds = $$$(element);
-              const ress = $$$(tds[0]).text();
-              reso.push(ress);
-            });
-            dispatch({
-              type: ACTIONS.SUCCESS,
-              data: [
-                examNames,
-                classAverages,
-                finalAverages,
-                studentResults,
-                reso,
-                lessonsNames,
-              ],
-              x: true,
-            });
+    await superagent
+      .post(
+        'https://debis.deu.edu.tr/OgrenciIsleri/Ogrenci/OgrenciNotu/index.php',
+      )
+      .send({
+        ders: presse,
+        ogretim_donemi_id: id1,
+      })
+      .set('Content-Type', 'application/x-www-form-urlencoded')
+      .end((err, res) => {
+        if (err) {
+          showMessage({
+            type: 'danger',
+            message: 'Debis Sisteminden Veri Alinirken Hata Olustu.',
           });
-      })();
-    }
+        }
+        const pickLessonData = res.text;
+        const $$$ = cheerio.load(pickLessonData);
+        const result = $$$(
+          'body > table:nth-child(4) > tbody > tr:nth-child(2) > td:nth-child(2) > table:nth-child(3) > tbody > tr:nth-child(3) > td > table:nth-child(1) > tbody > tr:nth-child(4) > td > b',
+        );
+        const lessons = $$$(
+          'body > table:nth-child(4) > tbody > tr:nth-child(2) > td:nth-child(2) > table:nth-child(3) > tbody > tr:nth-child(3) > td > table:nth-child(1) > tbody > tr:nth-child(3) > td:nth-child(2) > table > tbody > tr',
+        );
+        const lessonName = $$$(
+          'body > table:nth-child(4) > tbody > tr:nth-child(2) > td:nth-child(2) > table:nth-child(3) > tbody > tr:nth-child(3) > td > table:nth-child(1) > tbody > tr:nth-child(1)',
+        );
+        const reso = [];
+        const examNames = [];
+        const classAverages = [];
+        const finalAverages = [];
+        const studentResults = [];
+        const lessonsNames = [];
 
-    return () => dispatch({type: ACTIONS.DONE});
-  }, [presse, id1]);
+        const scrapeLessons = $$$(lessons).each((index, element) => {
+          if (index === 0) return true;
+          const tds = $$$(element).find('td');
+          const examName = $$$(tds[0]).text();
+          const listingDate = $$$(tds[1]).text();
+          const classAverage = $$$(tds[2]).text();
+          const finalAverage = $$$(tds[3]).text();
+          const studentResult = $$$(tds[4]).text();
+          examNames.push(examName);
+          classAverages.push(classAverage);
+          finalAverages.push(finalAverage);
+          studentResults.push(studentResult);
+        });
+        $$$(lessonName).each((index, element) => {
+          const tds = $$$(element).find('td');
+          const lessonNameee = $$$(tds[0]).text();
+          lessonsNames.push(lessonNameee);
+        });
+        $$$(result).each((index, element) => {
+          const tds = $$$(element);
+          const ress = $$$(tds[0]).text();
+          reso.push(ress);
+        });
+        dispatch({
+          type: ACTIONS.SUCCESS,
+          data: [examNames, classAverages, finalAverages, studentResults, reso],
+          res: reso,
+          name: lessonsNames,
+        });
+      });
+  };
+  useEffect(() => {
+    if (presse.length !== 0) {
+      resultModals();
+    } else {
+      null;
+    }
+    dispatch({type: ACTIONS.DONE});
+  }, [presse]);
+
+  const modalStyles = {
+    colStyle: {
+      marginBottom: 6,
+      width: width * 0.2,
+      height: height * (datas[0].length * 0.06),
+    },
+    tableView: {
+      width: width * 0.9,
+      height:
+        datas[0].length === 0
+          ? height * 0.5
+          : datas[0].length <= 4
+          ? height * (datas[0].length * 0.1)
+          : height * (datas[0].length * 0.08),
+      justifyContent: 'center',
+    },
+  };
+
 
   return (
     <View style={{flex: 1}}>
       {loading ? (
-        <View style={{flex: 1}}>
-          <ActivityIndicator size={'large'} color={'red'} />
-        </View>
-      ) : (
-        <View>
+        <View
+          style={{
+            flex: 1,
+            justifyContent: 'center',
+            height: height,
+            width: width,
+          }}>
           <Modal
-            backdropOpacity={0.4}
-            hideModalContentWhileAnimating={true}
-            onBackdropPress={() => dispatch({type: ACTIONS.DONE})}
-            isVisible={modalVisible}
-            style={{textAlign: 'center', alignItems: 'center'}}>
+              backdropOpacity={0.4}
+              isVisible={true}>
+          <ActivityIndicator color={'red'} size={'large'} />
+        </Modal>
+        </View>
+      ) : isModalVisible2 ? (
+        <Modal
+          hideModalContentWhileAnimating={true}
+          backdropOpacity={0.4}
+          onBackdropPress={toggleModal2}
+          isVisible={isModalVisible2}>
+          <View>
             <View
               style={[
                 styles.modalView,
-                datas[4] === 'BAŞARISIZ'
-                  ? {...styles.modalRed}
-                  : datas[4] === 'BAŞARILI'
-                  ? {...styles.modalGreen}
-                  : {...styles.modalView},
+                result[0] === 'BAŞARISIZ'
+                  ? styles.modalRed
+                  : result[0] === 'BAŞARILI'
+                  ? styles.modalGreen
+                  : styles.modalView,
               ]}>
-              <View style={styles.container2}>
-                <View
-                  style={{
-                    width: window.width * 0.9,
-                    height: window.height * 0.57,
-                    justifyContent: 'center',
-                  }}>
+              <View style={styles.container}>
+                <View style={modalStyles.tableView}>
                   <Table
                     borderStyle={{
                       borderBottomWidth: 1,
                       borderColor: '#c8e1ff',
                     }}>
                     <Row
-                      data={datas[5]}
-                      style={styles.head}
+                      data={name}
+                      style={styles.headName}
                       textStyle={[
                         styles.text2,
-                        datas[4] === 'BAŞARISIZ'
-                          ? {...styles.textRed}
-                          : datas[4] === 'BAŞARILI'
-                          ? {...styles.textGreen}
-                          : {...styles.text2},
+                        result[0] === 'BAŞARISIZ'
+                          ? styles.textRed
+                          : result[0] === 'BAŞARILI'
+                          ? styles.textGreen
+                          : styles.text2,
                       ]}
                     />
                     <Row
@@ -210,37 +229,29 @@ const User = (presse, id1) => {
                       style={styles.head}
                       textStyle={styles.text}
                     />
-                    <TableWrapper style={styles.wrapper}>
+                    <TableWrapper
+                      style={{
+                        ...styles.wrapper,
+                      }}>
                       <Col
                         data={datas[0]}
-                        style={{
-                          width: window.width * 0.2,
-                          height: window.height * 0.35,
-                        }}
-                        textStyle={styles.text}
+                        style={modalStyles.colStyle}
+                        textStyle={styles.textNames}
                       />
                       <Col
                         data={datas[2]}
-                        style={{
-                          width: window.width * 0.2,
-                          height: window.height * 0.35,
-                        }}
+                        style={modalStyles.colStyle}
                         textStyle={styles.text}
                       />
                       <Col
                         data={datas[1]}
-                        style={{
-                          width: window.width * 0.2,
-                          height: window.height * 0.35,
-                        }}
+                        style={modalStyles.colStyle}
                         textStyle={styles.text}
                       />
+
                       <Col
                         data={datas[3]}
-                        style={{
-                          width: window.width * 0.2,
-                          height: window.height * 0.35,
-                        }}
+                        style={modalStyles.colStyle}
                         textStyle={styles.text1}
                       />
                     </TableWrapper>
@@ -252,33 +263,32 @@ const User = (presse, id1) => {
               <TouchableOpacity
                 style={[
                   {
-                    width: window.width * 0.5,
+                    width: width * 0.5,
                     backgroundColor: '#fff',
                   },
                   styles.openButton,
-
-                  datas[4] === 'BAŞARISIZ'
-                    ? {...styles.buttonRed}
-                    : datas[4] === 'BAŞARILI'
-                    ? {...styles.buttonGreen}
-                    : {...styles.openButton},
+                  result[0] === 'BAŞARISIZ'
+                    ? styles.buttonRed
+                    : styles.buttonGreen,
                 ]}
-                onPress={() => dispatch({type: ACTIONS.DONE})}>
+                onPress={visible}>
                 <Text
                   style={[
-                    styles.textRed,
-                    datas[4] === 'BAŞARISIZ'
-                      ? {...styles.textRed}
-                      : datas[4] === 'BAŞARILI'
-                      ? {...styles.textGreen}
-                      : {...styles.textStyle},
+                    styles.textStyle,
+                    result[0] === 'BAŞARISIZ'
+                      ? styles.textRed
+                      : result[0] === 'BAŞARILI'
+                      ? styles.textGreen
+                      : styles.textStyle,
                   ]}>
-                  {datas[4]}
+                  {result[0]}
                 </Text>
               </TouchableOpacity>
             </View>
-          </Modal>
-        </View>
+          </View>
+        </Modal>
+      ) : (
+        <Text>qwe</Text>
       )}
     </View>
   );
@@ -286,36 +296,50 @@ const User = (presse, id1) => {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    textAlign: 'center',
-    justifyContent: 'center',
-  },
-
-  container2: {
     backgroundColor: '#2A3C44',
     textAlign: 'center',
     borderRadius: 25,
     flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   head: {
     borderBottomWidth: 2,
     borderColor: 'white',
     padding: 12,
+    marginBottom: 6,
+    justifyContent: 'center',
+    alignItems: 'center',
     borderRadius: 25,
+  },
+  headName: {
+    borderBottomWidth: 2,
+    borderColor: 'white',
+    padding: 12,
+    borderRadius: 25,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 
   wrapper: {
     flexDirection: 'row',
     paddingHorizontal: 6,
-    height: 260,
   },
 
   text: {
     color: 'white',
     ...FONTS.body4,
-    marginHorizontal: 4,
-    marginVertical: 6,
+    marginHorizontal: 8,
     textAlign: 'center',
+  },
+  textNames: {
+    color: 'white',
+    ...FONTS.body4,
+    marginHorizontal: 2,
+    textAlign: 'center',
+    fontWeight: '800',
+    borderBottomColor: 'white',
+    borderBottomWidth: 0.5,
   },
   text1: {
     color: 'white',
@@ -326,9 +350,10 @@ const styles = StyleSheet.create({
   },
   text2: {
     color: 'white',
-    ...FONTS.h2,
+    ...FONTS.h3,
     fontSize: 20,
     marginHorizontal: 4,
+    fontWeight: 'bold',
     textAlign: 'center',
   },
   modalView: {
@@ -344,6 +369,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     elevation: 5,
+    justifyContent: 'center',
   },
   modalGreen: {
     backgroundColor: COLORS.green,
