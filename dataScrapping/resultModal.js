@@ -1,4 +1,4 @@
-// user component using useReducer
+import React, {useContext, useEffect, useReducer} from 'react';
 import {
   ActivityIndicator,
   Dimensions,
@@ -7,14 +7,13 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-
-import React, {useContext, useEffect, useReducer} from 'react';
 import {useDimensions} from '@react-native-community/hooks';
 import {showMessage} from 'react-native-flash-message';
 import {COLORS, FONTS, LAYOUT} from '../constants/theme';
 import Modal from 'react-native-modal';
 import {Col, Row, Table, TableWrapper} from 'react-native-table-component';
 import {AuthContext} from '../context/AuthContext';
+
 const cheerio = require('cheerio');
 const request = require('superagent');
 const superagent = request.agent();
@@ -66,7 +65,7 @@ const initialState = {
   error: null,
 };
 
-const User = (presse, id) => {
+const resultModal = (presse, id) => {
   const [state, dispatch] = useReducer(userDetailsReducer, initialState);
   const {datas, tableHead, result, name, loading} = state;
   const {isModalVisible2, setModalVisible2, toggleModal2} =
@@ -396,4 +395,4 @@ const styles = StyleSheet.create({
     color: COLORS.red,
   },
 });
-export default User;
+export default resultModal;

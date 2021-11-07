@@ -2,15 +2,15 @@ import React, {useState, useEffect, useContext} from 'react';
 import {Text, FlatList, View, RefreshControl, StyleSheet} from 'react-native';
 import {COLORS, FONTS, LAYOUT} from '../constants/theme';
 import {TouchableOpacity} from 'react-native-gesture-handler';
-import User from '../dataScrapping/mod';
+import resultModal from './resultModal';
 import {AuthContext} from '../context/AuthContext';
 
 const superagent = require('superagent').agent();
 const cheerio = require('cheerio');
 
-const Classes = (id) => {
+const Classes = id => {
   const [refreshing, setRefreshing] = useState(false);
-  const [databases, setDatabases] = useState([]);
+  const [database, setDatabase] = useState([]);
   const {toggleModal2} = useContext(AuthContext);
   const [press, setTimesPressed] = useState('');
 
@@ -35,7 +35,6 @@ const Classes = (id) => {
           const $ = await cheerio.load(`${pickSemesterData}`);
           const classValue = await $("select[id='ders'] > option");
           let lessonsObj = [];
-          const values = [];
           for (let i = 1; i < classValue.length; i++) {
             let item = classValue.eq(i);
             let lessonCode = item.text().slice(0, 8).trim();
@@ -46,8 +45,7 @@ const Classes = (id) => {
               lessonCode,
               title,
             });
-            values.push(value);
-            setDatabases(lessonsObj);
+            setDatabase(lessonsObj);
           }
         });
     })();
@@ -77,14 +75,14 @@ const Classes = (id) => {
     <View style={LAYOUT.marginBottomNavigator}>
       <FlatList
         showsVerticalScrollIndicator={false}
-        data={databases}
+        data={database}
         renderItem={renderItem}
         keyExtractor={item => item.value}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={refresh} />
         }
       />
-      {User(`${press}`, `${id}`)}
+      {resultModal(`${press}`, `${id}`)}
     </View>
   );
 };

@@ -3,7 +3,7 @@ import {StyleSheet} from 'react-native';
 import {COLORS, FONTS} from '../constants/theme';
 import {View} from 'react-native';
 import Classes from '../dataScrapping/classes';
-import TopBar from '../topBar';
+import {TopBar} from '../components';
 import {AuthContext} from '../context/AuthContext';
 import RNPickerSelect from 'react-native-picker-select';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -22,7 +22,7 @@ const LessonResultScreen = () => {
     const data = semesterValue.map((item, index) => ({
       label: item[1],
       value: item[0],
-      key: (index + 1),
+      key: index + 1,
     }));
     setPickerData(data);
     console.log(pickerData);

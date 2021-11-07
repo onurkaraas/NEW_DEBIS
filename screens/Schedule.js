@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 
 import {ScrollView, Text, View} from 'react-native';
-import TopBar from '../topBar';
+import {TopBar} from '../components';
 import {COLORS} from '../constants/theme';
 const cheerio = require('cheerio');
 const request = require('superagent');

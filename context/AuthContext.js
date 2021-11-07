@@ -1,7 +1,6 @@
-import React, {createContext, useEffect, useState} from 'react';
+import React, {createContext, useState} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {showMessage} from 'react-native-flash-message';
-import SplashScreen from 'react-native-splash-screen';
 import {isNonEmptyString} from '../helpers/checks';
 
 const cheerio = require('cheerio');
@@ -41,9 +40,9 @@ export const AuthProvider = ({children}) => {
           'body > table:nth-child(4) > tbody > tr:nth-child(2) > td:nth-child(2) > form > table > tbody > tr:nth-child(1) > td:nth-child(3)',
         ).text();
         if (studentName.length !== 0) {
-            setError(false);
-            setAuth(true);
-            const departmentName = $(
+          setError(false);
+          setAuth(true);
+          const departmentName = $(
             'body > table:nth-child(4) > tbody > tr:nth-child(2) > td:nth-child(2) > form > table > tbody > tr:nth-child(5) > td:nth-child(3)',
           ).text();
           const stuNum = $(

@@ -10,7 +10,7 @@ import {Button, Switch} from 'react-native-elements';
 import {AuthContext} from '../context/AuthContext';
 import {useKeyboard} from '@react-native-community/hooks';
 import {useDimensions} from '@react-native-community/hooks';
-import TopBar from '../topBar';
+import {TopBar} from '../components';
 
 const LogInScreen = () => {
   const {signIn, saveUser, setSaveUser, auth} = useContext(AuthContext);

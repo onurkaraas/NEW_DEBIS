@@ -1,18 +1,10 @@
-import React, {useState, useEffect, useContext} from 'react';
-import {
-  View,
-  Text,
-  useWindowDimensions,
-  StatusBar,
-  StyleSheet,
-} from 'react-native';
-import {COLORS, FONTS} from './constants/theme';
-import {AuthContext} from './context/AuthContext';
-const cheerio = require('cheerio');
-const superagent = require('superagent').agent();
+import React, {useContext} from 'react';
+import {View, Text, StyleSheet} from 'react-native';
 import {useDimensions, useKeyboard} from '@react-native-community/hooks';
+import {COLORS, FONTS} from '../constants/theme';
+import {AuthContext} from '../context/AuthContext';
 
-const TopBar = headerTitle => {
+export const TopBar = headerTitle => {
   const {width, height} = useDimensions().window;
   const {name, department} = useContext(AuthContext);
   const keyboard = useKeyboard();
@@ -52,4 +44,3 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
   },
 });
-export default TopBar;

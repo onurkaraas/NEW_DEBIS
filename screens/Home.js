@@ -1,19 +1,18 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useContext} from 'react';
 import {View, StyleSheet, Dimensions} from 'react-native';
-import {COLORS, FONTS} from '../constants/theme';
-import {homeButton} from '../components/homeButton';
-import LessonResultScreen from './LessonResultScreen';
-import LoadingScreen from './LoadingScreen';
+import {AuthContext} from '../context/AuthContext';
+
+import {COLORS, LAYOUT} from '../constants/theme';
+import Modal from 'react-native-modal';
 import PdfFunc from './pdfScreens/PdfFunc';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import TopBar from '../topBar';
-import {AuthContext} from '../context/AuthContext';
-import Modal from 'react-native-modal';
-import {infoTable} from '../components/infoTable';
+import {TopBar, infoTable, homeButton} from '../components';
 import Schedule from './Schedule';
-import TranscriptScreen from './TranscriptScreen';
 import ModalPdf from './pdfScreens/ModalPdf';
-import {LAYOUT} from '../constants/theme';
+import LessonResultScreen from './LessonResultScreen';
+import LoadingScreen from './LoadingScreen';
+import TranscriptScreen from './TranscriptScreen';
+
 const Home = () => {
   const {isModalVisible, toggleModal} = useContext(AuthContext);
 
