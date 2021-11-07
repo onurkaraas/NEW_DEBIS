@@ -4,15 +4,15 @@ import 'react-native-gesture-handler';
 import Home from '../screens/Home';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
-import PdfFunc from '../screens/PdfFunc';
-import Profile from '../screens/Profile';
+import PdfFunc from '../screens/pdfScreens/PdfFunc';
+import LoadingScreen from '../screens/LoadingScreen';
 import LessonResultScreen from '../screens/LessonResultScreen';
 import {COLORS} from '../constants/theme';
 import {createMaterialBottomTabNavigator} from '@react-navigation/material-bottom-tabs';
 import Schedule from '../screens/Schedule';
 import TranscriptScreen from '../screens/TranscriptScreen';
-import MealMenu from '../screens/MealMenu';
-import VeganMenu from '../screens/VeganMenu';
+import MealMenu from '../screens/pdfScreens/MealMenu';
+import VeganMenu from '../screens/pdfScreens/VeganMenu';
 const Tab = createMaterialBottomTabNavigator();
 
 const Tabs = () => {
@@ -59,7 +59,7 @@ const Tabs = () => {
                   size={26}
                 />
               );
-            // case 'Profile':
+            // case 'LoadingScreen':
             //   return (
             //     <MaterialCommunityIcons
             //       name="account-circle"
@@ -73,9 +73,7 @@ const Tabs = () => {
       <Tab.Screen name="Home" component={Home} />
       <Tab.Screen name="TranscriptScreen" component={TranscriptScreen} />
       <Tab.Screen name="LessonResultScreen" component={LessonResultScreen} />
-      {/*<Tab.Screen name="Profile" component={Profile} />*/}
-
-
+      {/*<Tab.Screen name="LoadingScreen" component={LoadingScreen} />*/}
     </Tab.Navigator>
   );
 };

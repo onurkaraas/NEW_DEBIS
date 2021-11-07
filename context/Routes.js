@@ -13,19 +13,19 @@ import {StatusBar} from 'react-native';
 import {COLORS} from '../constants/theme';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {val} from 'cheerio/lib/api/attributes';
-import MealMenu from '../screens/MealMenu';
-import VeganMenu from '../screens/VeganMenu';
+import MealMenu from '../screens/pdfScreens/MealMenu';
+import VeganMenu from '../screens/pdfScreens/VeganMenu';
 import TranscriptScreen from '../screens/TranscriptScreen';
-import Profile from '../screens/Profile';
+import LoadingScreen from '../screens/LoadingScreen';
 
 const Stack = createStackNavigator();
 
 const Routes = () => {
-  const {auth, gett, signIn, load, setLoad} = useContext(AuthContext);
+  const {auth, gett} = useContext(AuthContext);
 
   useEffect(() => {
     gett();
-    SplashScreen.hide()
+    SplashScreen.hide();
   }, []);
 
   return (
@@ -33,8 +33,8 @@ const Routes = () => {
       {auth === null ? (
         <Stack.Navigator
           screenOptions={{headerShown: false}}
-          initialRouteName="Profile">
-          <Stack.Screen name={'Profile'} component={Profile} />
+          initialRouteName="LoadingScreen">
+          <Stack.Screen name={'LoadingScreen'} component={LoadingScreen} />
         </Stack.Navigator>
       ) : auth === true ? (
         <Stack.Navigator

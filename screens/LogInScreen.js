@@ -1,28 +1,25 @@
 import React, {useState, useEffect, useContext} from 'react';
 import {Input} from 'react-native-elements';
-import {
-  Keyboard,
-  Text,
-  useWindowDimensions,
-  View,
-  Animated,
-} from 'react-native';
+import {Keyboard, Text, View, Animated} from 'react-native';
+import {TouchableOpacity} from 'react-native-gesture-handler';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import {COLORS, FONTS} from '../constants/theme';
+import {COLORS, FONTS, SHADOWS} from '../constants/theme';
 import FastImage from 'react-native-fast-image';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {Button, Switch} from 'react-native-elements';
 import {AuthContext} from '../context/AuthContext';
 import {useKeyboard} from '@react-native-community/hooks';
-
+import {useDimensions} from '@react-native-community/hooks';
 import TopBar from '../topBar';
+
 const LogInScreen = () => {
-  const {signIn, signOut, saveUser, setSaveUser, auth} =
-    useContext(AuthContext);
+  const {signIn, saveUser, setSaveUser, auth} = useContext(AuthContext);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const window = useWindowDimensions();
+  const [secureText, setSecureText] = useState(true);
   const toggleSwitch = () => setSaveUser(previousState => !previousState);
+  const secureTextToggle = () => setSecureText(previousState => !previousState);
+  const {width, height} = useDimensions().window;
   const keyboard = useKeyboard();
 
   return (
@@ -37,8 +34,8 @@ const LogInScreen = () => {
           }}>
           <FastImage
             style={{
-              width: keyboard.keyboardShown ? 200 : 300,
-              height: keyboard.keyboardShown ? 200 : 300,
+              width: keyboard.keyboardShown ? width * 0.55 : width * 0.7,
+              height: keyboard.keyboardShown ? width * 0.55 : width * 0.7,
             }}
             source={{
               uri: 'https://cdn.freelogovectors.net/wp-content/uploads/2020/03/Dokuz_Eylul_Universitesi_Logo.png',
@@ -56,31 +53,14 @@ const LogInScreen = () => {
             inputStyle={{color: COLORS.white}}
             containerStyle={{
               marginBottom: 8,
-              shadowColor: '#000',
-              shadowOffset: {
-                width: 0,
-                height: 2,
-              },
-
-              shadowOpacity: 0.27,
-              shadowRadius: 12,
-              borderRadius: 12,
-              elevation: 5,
-              height: keyboard.keyboardShown
-                ? window.height * 0.1
-                : window.height * 0.095,
-              width: keyboard.keyboardShown
-                ? window.width * 0.95
-                : window.width * 0.925,
+              ...SHADOWS.input,
+              height: keyboard.keyboardShown ? height * 0.1 : height * 0.095,
+              width: keyboard.keyboardShown ? width * 0.95 : width * 0.925,
               backgroundColor: COLORS.primary,
             }}
             style={{
-              height: keyboard.keyboardShown
-                ? window.height * 0.1
-                : window.height * 0.095,
-              width: keyboard.keyboardShown
-                ? window.width * 0.95
-                : window.width * 0.925,
+              height: keyboard.keyboardShown ? height * 0.1 : height * 0.095,
+              width: keyboard.keyboardShown ? width * 0.95 : width * 0.925,
               flex: 1,
               borderRadius: 12,
               padding: 8,
@@ -124,30 +104,15 @@ const LogInScreen = () => {
             }}
             containerStyle={{
               marginBottom: keyboard.keyboardShown ? 8 : 16,
-              shadowColor: '#000',
-              shadowOffset: {
-                width: 0,
-                height: 2,
-              },
-              height: keyboard.keyboardShown
-                ? window.height * 0.1
-                : window.height * 0.095,
-              width: keyboard.keyboardShown
-                ? window.width * 0.95
-                : window.width * 0.925,
-              shadowOpacity: 0.27,
-              shadowRadius: 12,
+              ...SHADOWS.input,
               borderRadius: 12,
-              elevation: 5,
+              height: keyboard.keyboardShown ? height * 0.1 : height * 0.095,
+              width: keyboard.keyboardShown ? width * 0.95 : width * 0.925,
               backgroundColor: COLORS.primary,
             }}
             style={{
-              height: keyboard.keyboardShown
-                ? window.height * 0.095
-                : window.height * 0.1,
-              width: keyboard.keyboardShown
-                ? window.width * 0.925
-                : window.width * 0.95,
+              height: keyboard.keyboardShown ? height * 0.095 : height * 0.1,
+              width: keyboard.keyboardShown ? width * 0.925 : width * 0.95,
               flex: 1,
               borderRadius: 12,
               padding: 8,
@@ -173,17 +138,19 @@ const LogInScreen = () => {
               </View>
             }
             rightIcon={
-              <MaterialCommunityIcons
-                style={{marginRight: 8}}
-                name={'eye'}
-                color={COLORS.secondary}
-                size={30}
-              />
+              <TouchableOpacity onPress={secureTextToggle}>
+                <MaterialCommunityIcons
+                  style={{marginRight: 8}}
+                  name={'eye'}
+                  color={COLORS.secondary}
+                  size={32}
+                />
+              </TouchableOpacity>
             }
+            secureTextEntry={secureText}
             placeholder="*******"
             inputStyle={{color: COLORS.white}}
           />
-
           <View
             style={{
               marginTop: 10,
@@ -194,17 +161,14 @@ const LogInScreen = () => {
                 title={'Giriş Yap'}
                 buttonStyle={{
                   justifyContent: 'center',
-                  backgroundColor: COLORS.green2,
-                  height: keyboard.keyboardShown
-                    ? window.height * 0.07
-                    : window.height * 0.07,
-                  width: keyboard.keyboardShown
-                    ? window.width * 0.85
-                    : window.width * 0.85,
+                  backgroundColor: COLORS.green,
+                  height: height * 0.07,
+                  width: width * 0.7,
                   borderRadius: 10,
                 }}
                 titleStyle={{
                   ...FONTS.h2,
+                  fontWeight: 'bold',
                 }}
                 icon={
                   <MaterialCommunityIcons
@@ -228,7 +192,7 @@ const LogInScreen = () => {
                   fontWeight: 'bold',
                   marginRight: 12,
                 }}>
-                Beni Hatirla
+                Beni Hatırla
               </Text>
               <Switch
                 style={{transform: [{scaleX: 1.4}, {scaleY: 1.4}]}}

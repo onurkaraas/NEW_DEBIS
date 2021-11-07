@@ -29,7 +29,7 @@ export const SIZES = {
   h2: 22,
   h3: 18,
   h4: 14,
-  body1: 30,
+  body1: 26,
   body2: 22,
   body3: 18,
   body4: 14,
@@ -84,7 +84,31 @@ export const SHADOWS = {
     shadowRadius: 12,
     elevation: 12,
   },
+  input: {
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.27,
+    shadowRadius: 12,
+    elevation: 5,
+  },
 };
-const appTheme = {COLORS, SIZES, FONTS,SHADOWS};
+export const LAYOUT = {
+  alignCenter: {
+    alignItems: 'center',
+  },
+  justifyCenter: {
+    justifyContent: 'center',
+  },
+  setFlex1: {
+    flex: 1,
+  },
+  marginBottomNavigator: {
+    marginBottom: Dimensions.get('window').height * 0.09,
+  },
+};
+const appTheme = {COLORS, SIZES, FONTS, SHADOWS};
 
 export default appTheme;

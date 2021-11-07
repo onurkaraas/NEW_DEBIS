@@ -1,23 +1,14 @@
 import React, {useState, useEffect, useContext} from 'react';
-import {
-  Text,
-  FlatList,
-  View,
-  useWindowDimensions,
-  RefreshControl,
-  Pressable,
-  TouchableHighlight,
-  StyleSheet,
-} from 'react-native';
-import {COLORS, FONTS} from '../constants/theme';
+import {Text, FlatList, View, RefreshControl, StyleSheet} from 'react-native';
+import {COLORS, FONTS, LAYOUT} from '../constants/theme';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import User from '../dataScrapping/mod';
 import {AuthContext} from '../context/AuthContext';
 
 const superagent = require('superagent').agent();
 const cheerio = require('cheerio');
-const Classes = (id, id1) => {
-  const window = useWindowDimensions();
+
+const Classes = (id) => {
   const [refreshing, setRefreshing] = useState(false);
   const [databases, setDatabases] = useState([]);
   const {toggleModal2} = useContext(AuthContext);
@@ -38,7 +29,7 @@ const Classes = (id, id1) => {
         .set('Content-Type', 'application/x-www-form-urlencoded')
         .end(async (err, res) => {
           if (err) {
-            console.log(err, 'ERRRRRRORRRRRRRRRRRRRRRRRRR');
+            console.log(err, 'Error while get lessons');
           }
           const pickSemesterData = await res.text;
           const $ = await cheerio.load(`${pickSemesterData}`);
@@ -50,7 +41,6 @@ const Classes = (id, id1) => {
             let lessonCode = item.text().slice(0, 8).trim();
             let title = item.text().slice(8).trim();
             let value = item.attr('value');
-
             lessonsObj.push({
               value,
               lessonCode,
@@ -62,39 +52,18 @@ const Classes = (id, id1) => {
         });
     })();
     return setRefreshing(false);
-
-    // console.log(databases);
-  }, [id, id1, refreshing]);
-  const clicked =  value => {
-     toggleModal2();
-     setTimesPressed(value);
+  }, [id, refreshing]);
+  const clicked = value => {
+    toggleModal2();
+    setTimesPressed(value);
   };
   const Item = ({title, value, code}) => (
-    <TouchableOpacity onPress={()=>clicked(value)}>
+    <TouchableOpacity onPress={() => clicked(value)}>
       <View style={styles.container}>
-        <View
-          style={{
-            flexDirection: 'column',
-          }}>
-          <View style={{alignItems: 'center'}}>
-            <Text
-              style={{
-                color: COLORS.red,
-                ...FONTS.body3,
-                marginBottom: 6,
-              }}>
-              {code}
-            </Text>
-          </View>
-          <View style={{flex: 1, alignItems: 'center'}}>
-            <Text
-              style={{
-                color: COLORS.white,
-                ...FONTS.body3,
-                textAlign: 'center',
-              }}>
-              {title}
-            </Text>
+        <View style={styles.flexDirectionColumn}>
+          <View style={LAYOUT.alignCenter}>
+            <Text style={styles.codeTextStyle}>{code}</Text>
+            <Text style={styles.titleStyle}>{title}</Text>
           </View>
         </View>
       </View>
@@ -105,7 +74,7 @@ const Classes = (id, id1) => {
   );
 
   return (
-    <View style={{marginBottom: window.height * 0.09}}>
+    <View style={LAYOUT.marginBottomNavigator}>
       <FlatList
         showsVerticalScrollIndicator={false}
         data={databases}
@@ -115,7 +84,7 @@ const Classes = (id, id1) => {
           <RefreshControl refreshing={refreshing} onRefresh={refresh} />
         }
       />
-      {User(`${press}`, `${id1}`)}
+      {User(`${press}`, `${id}`)}
     </View>
   );
 };
@@ -128,6 +97,19 @@ const styles = StyleSheet.create({
     marginBottom: 18,
     paddingVertical: 18,
     justifyContent: 'center',
+  },
+  flexDirectionColumn: {
+    flexDirection: 'column',
+  },
+  codeTextStyle: {
+    color: COLORS.red,
+    ...FONTS.body3,
+    marginBottom: 6,
+  },
+  titleStyle: {
+    color: COLORS.white,
+    ...FONTS.body3,
+    textAlign: 'center',
   },
 });
 export default Classes;

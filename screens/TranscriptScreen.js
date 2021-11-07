@@ -1,9 +1,9 @@
 import React from 'react';
 
 import {View} from 'react-native';
-import PdfFunc from './PdfFunc';
+import PdfFunc from './pdfScreens/PdfFunc';
 
-const TranscriptScreen   = () => {
+const TranscriptScreen = () => {
   const uri =
     'https://debis.deu.edu.tr/OgrenciIsleri/Rapor/ogrenci_bazli_listeler/en_yeni_transcript/transcript.php';
 

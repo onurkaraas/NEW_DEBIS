@@ -1,12 +1,8 @@
 import React, {useEffect, useState} from 'react';
-
-import {StyleSheet, View} from 'react-native';
-
-import {Dimensions} from 'react-native';
-
+import {StyleSheet, View,Dimensions} from 'react-native';
 import Pdf from 'react-native-pdf';
-import {COLORS} from '../constants/theme';
-import TopBar from '../topBar';
+import {COLORS} from '../../constants/theme';
+import TopBar from '../../topBar';
 
 const PdfFunc = (uri, head) => {
   const [source, setSource] = useState({});

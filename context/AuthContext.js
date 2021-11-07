@@ -2,6 +2,7 @@ import React, {createContext, useEffect, useState} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {showMessage} from 'react-native-flash-message';
 import SplashScreen from 'react-native-splash-screen';
+import {isNonEmptyString} from '../helpers/checks';
 
 const cheerio = require('cheerio');
 const request = require('superagent');
@@ -11,7 +12,6 @@ export const AuthContext = createContext();
 export const AuthProvider = ({children}) => {
   const [auth, setAuth] = useState(null);
   const [name, setName] = useState('');
-  const [load, setLoad] = useState(true);
   const [saveUser, setSaveUser] = useState(false);
   const [selectedLanguage, setSelectedLanguage] = useState();
   const [semesterValue, setSemesterValue] = useState([]);
@@ -19,10 +19,10 @@ export const AuthProvider = ({children}) => {
   const [studentNumber, setStudentNumber] = useState('');
   const [year, setYear] = useState('');
   const [advisor, setAdvisor] = useState('');
-  const [clicked, setClicked] = useState(false);
   const [isModalVisible, setModalVisible] = useState(false);
   const [isModalVisible2, setModalVisible2] = useState(false);
   const [press, setTimesPressed] = useState('');
+  const [error, setError] = useState(null);
 
   const toggleModal = () => setModalVisible(!isModalVisible);
 
@@ -41,8 +41,9 @@ export const AuthProvider = ({children}) => {
           'body > table:nth-child(4) > tbody > tr:nth-child(2) > td:nth-child(2) > form > table > tbody > tr:nth-child(1) > td:nth-child(3)',
         ).text();
         if (studentName.length !== 0) {
-          setAuth(true);
-          const departmentName = $(
+            setError(false);
+            setAuth(true);
+            const departmentName = $(
             'body > table:nth-child(4) > tbody > tr:nth-child(2) > td:nth-child(2) > form > table > tbody > tr:nth-child(5) > td:nth-child(3)',
           ).text();
           const stuNum = $(
@@ -72,11 +73,15 @@ export const AuthProvider = ({children}) => {
           setDepartment(departmentName);
         } else {
           setAuth(false);
+          setError(true);
         }
-
       })();
     } catch (e) {
-      showMessage(e, 'Error while getting data');
+      showMessage({
+        message: 'Hata',
+        description: 'Beklenmedik bir hata oluştu.',
+        type: 'danger',
+      });
     }
   };
 
@@ -87,12 +92,8 @@ export const AuthProvider = ({children}) => {
         gett,
         setAuth,
         name,
-        load,
         press,
         setTimesPressed,
-        setLoad,
-        setClicked,
-        clicked,
         semesterValue,
         setSemesterValue,
         setName,
@@ -112,6 +113,41 @@ export const AuthProvider = ({children}) => {
         isModalVisible2,
         setModalVisible2,
         toggleModal2,
+        error,
+        setError,
+        signIn: async ({username, password}) => {
+          try {
+            !isNonEmptyString(username && password)
+              ? showMessage({
+                  message: 'Hata',
+                  description: 'Kullanıcı adı veya şifre boş olamaz',
+                  type: 'danger',
+                })
+              : await superagent
+                  .post('https://debis.deu.edu.tr/debis.php')
+                  .unset('User-Agent')
+                  .send({
+                    username: `${username}`,
+                    password: `${password}`,
+                    emailHost: 'ogr.deu.edu.tr',
+                    tamam: 'Gonder',
+                  })
+                  .set('Content-Type', 'application/x-www-form-urlencoded')
+                  .end(() => {
+                    gett();
+                    error
+                      ? showMessage({
+                          message: 'Giriş yaparken hata oluştu.',
+                          description:
+                            'Lütfen bilgileriniz kontrol edip tekrar deneyiniz',
+                          type: 'danger',
+                        })
+                      : null;
+                  });
+          } catch (e) {
+            showMessage('Error while trying to sign in');
+          }
+        },
         signOut: async () => {
           try {
             await superagent
@@ -120,26 +156,6 @@ export const AuthProvider = ({children}) => {
               .then(setAuth(false) && setName(''));
           } catch (e) {
             console.log('giris hata');
-          }
-        },
-
-        signIn: async ({username, password}) => {
-          try {
-            await superagent
-              .post('https://debis.deu.edu.tr/debis.php')
-              .unset('User-Agent')
-              .send({
-                username: `${username}`,
-                password: `${password}`,
-                emailHost: 'ogr.deu.edu.tr',
-                tamam: 'Gonder',
-              })
-              .set('Content-Type', 'application/x-www-form-urlencoded')
-              .end(() => {
-                gett();
-              });
-          } catch (e) {
-            showMessage('Error while trying to sign in');
           }
         },
       }}>

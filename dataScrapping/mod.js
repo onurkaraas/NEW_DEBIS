@@ -1,6 +1,7 @@
 // user component using useReducer
 import {
   ActivityIndicator,
+  Dimensions,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -10,7 +11,7 @@ import {
 import React, {useContext, useEffect, useReducer} from 'react';
 import {useDimensions} from '@react-native-community/hooks';
 import {showMessage} from 'react-native-flash-message';
-import {COLORS, FONTS} from '../constants/theme';
+import {COLORS, FONTS, LAYOUT} from '../constants/theme';
 import Modal from 'react-native-modal';
 import {Col, Row, Table, TableWrapper} from 'react-native-table-component';
 import {AuthContext} from '../context/AuthContext';
@@ -65,7 +66,7 @@ const initialState = {
   error: null,
 };
 
-const User = (presse, id1) => {
+const User = (presse, id) => {
   const [state, dispatch] = useReducer(userDetailsReducer, initialState);
   const {datas, tableHead, result, name, loading} = state;
   const {isModalVisible2, setModalVisible2, toggleModal2} =
@@ -86,7 +87,7 @@ const User = (presse, id1) => {
       )
       .send({
         ders: presse,
-        ogretim_donemi_id: id1,
+        ogretim_donemi_id: id,
       })
       .set('Content-Type', 'application/x-www-form-urlencoded')
       .end((err, res) => {
@@ -148,8 +149,6 @@ const User = (presse, id1) => {
   useEffect(() => {
     if (presse.length !== 0) {
       resultModals();
-    } else {
-      null;
     }
     dispatch({type: ACTIONS.DONE});
   }, [presse]);
@@ -172,25 +171,20 @@ const User = (presse, id1) => {
     },
   };
 
-
   return (
     <View style={{flex: 1}}>
       {loading ? (
-        <View
-          style={{
-            flex: 1,
-            justifyContent: 'center',
-            height: height,
-            width: width,
-          }}>
+        <View style={{...LAYOUT.setFlex1, ...LAYOUT.justifyCenter}}>
           <Modal
-              backdropOpacity={0.4}
-              isVisible={true}>
-          <ActivityIndicator color={'red'} size={'large'} />
-        </Modal>
+            useNativeDriverForBackdrop={true}
+            backdropOpacity={0.4}
+            isVisible={true}>
+            <ActivityIndicator color={'red'} size={'large'} />
+          </Modal>
         </View>
       ) : isModalVisible2 ? (
         <Modal
+          useNativeDriverForBackdrop={true}
           hideModalContentWhileAnimating={true}
           backdropOpacity={0.4}
           onBackdropPress={toggleModal2}
@@ -259,13 +253,9 @@ const User = (presse, id1) => {
                 </View>
               </View>
             </View>
-            <View style={{alignItems: 'center'}}>
+            <View style={LAYOUT.alignCenter}>
               <TouchableOpacity
                 style={[
-                  {
-                    width: width * 0.5,
-                    backgroundColor: '#fff',
-                  },
                   styles.openButton,
                   result[0] === 'BAŞARISIZ'
                     ? styles.buttonRed
@@ -288,7 +278,7 @@ const User = (presse, id1) => {
           </View>
         </Modal>
       ) : (
-        <Text>qwe</Text>
+        <View></View>
       )}
     </View>
   );
@@ -378,6 +368,7 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.red,
   },
   openButton: {
+    width: Dimensions.get('window').width * 0.5,
     backgroundColor: '#fff',
     borderRadius: 20,
     padding: 8,
