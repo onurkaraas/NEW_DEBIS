@@ -10,22 +10,24 @@ const superagent = request.agent();
 export const AuthContext = createContext();
 export const AuthProvider = ({children}) => {
   const [auth, setAuth] = useState(null);
-  const [name, setName] = useState('');
+  const [error, setError] = useState(null);
   const [saveUser, setSaveUser] = useState(false);
-  const [selectedLanguage, setSelectedLanguage] = useState();
+  const [isModalVisible, setModalVisible] = useState(false);
+  const [isModalVisible2, setModalVisible2] = useState(false);
+  const [isModalVisible3, setModalVisible3] = useState(false);
+  const [name, setName] = useState('');
+  const [selectedID, setSelectedID] = useState();
   const [semesterValue, setSemesterValue] = useState([]);
   const [department, setDepartment] = useState('');
   const [studentNumber, setStudentNumber] = useState('');
   const [year, setYear] = useState('');
   const [advisor, setAdvisor] = useState('');
-  const [isModalVisible, setModalVisible] = useState(false);
-  const [isModalVisible2, setModalVisible2] = useState(false);
-  const [press, setTimesPressed] = useState('');
-  const [error, setError] = useState(null);
 
   const toggleModal = () => setModalVisible(!isModalVisible);
 
   const toggleModal2 = () => setModalVisible2(!isModalVisible2);
+
+  const toggleModal3 = () => setModalVisible3(!isModalVisible3);
 
   const gett = () => {
     try {
@@ -33,8 +35,8 @@ export const AuthProvider = ({children}) => {
         let resultScreen = await superagent.get(
           'https://debis.deu.edu.tr/OgrenciIsleri/Ogrenci/OgrenciNotu/index.php',
         );
-        const resultScreenData = await resultScreen.text;
-        const $ = await cheerio.load(resultScreenData);
+        const resultScreenData = resultScreen.text;
+        const $ = cheerio.load(resultScreenData);
 
         const studentName = $(
           'body > table:nth-child(4) > tbody > tr:nth-child(2) > td:nth-child(2) > form > table > tbody > tr:nth-child(1) > td:nth-child(3)',
@@ -54,9 +56,7 @@ export const AuthProvider = ({children}) => {
           const prof = $(
             'body > table:nth-child(4) > tbody > tr:nth-child(2) > td:nth-child(2) > form > table > tbody > tr:nth-child(7) > td:nth-child(3)\n',
           ).text();
-          const semesterSelect = await $(
-            "select[id='ogretim_donemi_id'] > option",
-          );
+          const semesterSelect = $("select[id='ogretim_donemi_id'] > option");
           let semesterValues = [];
           for (let i = 1; i < semesterSelect.length; i++) {
             let item = semesterSelect.eq(i);
@@ -87,33 +87,31 @@ export const AuthProvider = ({children}) => {
   return (
     <AuthContext.Provider
       value={{
-        auth,
-        gett,
-        setAuth,
         name,
-        press,
-        setTimesPressed,
-        semesterValue,
-        setSemesterValue,
         setName,
+        semesterValue,
         studentNumber,
-        setStudentNumber,
         saveUser,
         year,
         advisor,
-        setSelectedLanguage,
-        selectedLanguage,
-        setSaveUser,
         department,
-        setDepartment,
+
+        auth,
+        setAuth,
+        setSelectedID,
+        selectedID,
+        setSaveUser,
         isModalVisible,
-        setModalVisible,
-        toggleModal,
         isModalVisible2,
-        setModalVisible2,
-        toggleModal2,
+        isModalVisible3,
+        setModalVisible3,
         error,
         setError,
+
+        gett,
+        toggleModal,
+        toggleModal2,
+        toggleModal3,
         signIn: async ({username, password}) => {
           try {
             !isNonEmptyString(username && password)
@@ -132,9 +130,9 @@ export const AuthProvider = ({children}) => {
                     tamam: 'Gonder',
                   })
                   .set('Content-Type', 'application/x-www-form-urlencoded')
-                  .end(() => {
-                    gett();
-                    error
+                  .end(async () => {
+                    await gett();
+                    (await error)
                       ? showMessage({
                           message: 'Giriş yaparken hata oluştu.',
                           description:

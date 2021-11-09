@@ -5,7 +5,7 @@ import Pdf from 'react-native-pdf';
 import {COLORS, FONTS, LAYOUT} from '../../constants/theme';
 import {AuthContext} from '../../context/AuthContext';
 
-const ModalPdf = uri => {
+const ModalPdf = (uri, title, toggle) => {
   const [source, setSource] = useState({});
   const {toggleModal} = useContext(AuthContext);
 
@@ -19,11 +19,11 @@ const ModalPdf = uri => {
       <View style={styles.container}>
         <View style={styles.titleContainer}>
           <View style={{marginBottom: 12}}>
-            <Text style={styles.headerTitle}>Yemek Menüsü</Text>
+            <Text style={styles.headerTitle}>{title}</Text>
           </View>
         </View>
         <Pdf fitWidth={true} source={source} style={styles.pdf} />
-        <TouchableOpacity onPress={toggleModal} style={styles.touchableStyle}>
+        <TouchableOpacity onPress={toggle} style={styles.touchableStyle}>
           <Text style={styles.closeButtonText}>X</Text>
         </TouchableOpacity>
       </View>

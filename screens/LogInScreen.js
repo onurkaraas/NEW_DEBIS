@@ -1,23 +1,22 @@
-import React, {useState, useEffect, useContext} from 'react';
-import {Input} from 'react-native-elements';
-import {Keyboard, Text, View, Animated} from 'react-native';
+import React, {useState, useContext} from 'react';
+import {Button, Switch, Input} from 'react-native-elements';
+import {Text, View, Animated} from 'react-native';
 import {TouchableOpacity} from 'react-native-gesture-handler';
-import {SafeAreaView} from 'react-native-safe-area-context';
-import {COLORS, FONTS, SHADOWS} from '../constants/theme';
 import FastImage from 'react-native-fast-image';
+import {SafeAreaView} from 'react-native-safe-area-context';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import {Button, Switch} from 'react-native-elements';
+import {useKeyboard, useDimensions} from '@react-native-community/hooks';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {COLORS, FONTS, SHADOWS} from '../constants/theme';
 import {AuthContext} from '../context/AuthContext';
-import {useKeyboard} from '@react-native-community/hooks';
-import {useDimensions} from '@react-native-community/hooks';
 import {TopBar} from '../components';
 
 const LogInScreen = () => {
-  const {signIn, saveUser, setSaveUser, auth} = useContext(AuthContext);
+  const {signIn, saveUser, setSaveUser} = useContext(AuthContext);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [secureText, setSecureText] = useState(true);
-  const toggleSwitch = () => setSaveUser(previousState => !previousState);
+  const saveUserSwitch = () => setSaveUser(previousState => !previousState);
   const secureTextToggle = () => setSecureText(previousState => !previousState);
   const {width, height} = useDimensions().window;
   const keyboard = useKeyboard();
@@ -198,7 +197,7 @@ const LogInScreen = () => {
                 style={{transform: [{scaleX: 1.4}, {scaleY: 1.4}]}}
                 value={saveUser}
                 color={COLORS.green2}
-                onValueChange={toggleSwitch}
+                onValueChange={saveUserSwitch}
               />
             </View>
           </View>

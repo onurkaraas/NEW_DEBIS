@@ -9,8 +9,7 @@ import RNPickerSelect from 'react-native-picker-select';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const LessonResultScreen = () => {
-  const {selectedLanguage, setSelectedLanguage, semesterValue} =
-    useContext(AuthContext);
+  const {setSelectedID, selectedID, semesterValue} = useContext(AuthContext);
   const [pickerData, setPickerData] = useState([]);
   const placeholder = {
     label: 'Ders Seçiniz',
@@ -48,15 +47,15 @@ const LessonResultScreen = () => {
               );
             }}
             useNativeAndroidPickerStyle={false}
-            selectedValue={selectedLanguage}
-            onValueChange={itemValue => setSelectedLanguage(itemValue)}
+            selectedValue={selectedID}
+            onValueChange={itemValue => setSelectedID(itemValue)}
             items={pickerData}
             textInputProps={styles.pickerStyle}
             placeholder={placeholder}
           />
         </View>
       </View>
-      <View style={{flex: 6}}>{Classes(`${selectedLanguage}`)}</View>
+      <View style={{flex: 6}}>{Classes(`${selectedID}`)}</View>
     </View>
   );
 };

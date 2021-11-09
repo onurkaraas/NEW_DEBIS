@@ -1,13 +1,13 @@
 import React from 'react';
 
-import {AuthProvider} from './AuthContext';
 import FlashMessage from 'react-native-flash-message';
 import {StatusBar} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
+import {useKeyboard} from '@react-native-community/hooks';
 
+import {AuthProvider} from './AuthContext';
 import {COLORS, LAYOUT} from '../constants/theme';
 import Routes from './Routes';
-import {useKeyboard} from '@react-native-community/hooks';
 
 const Providers = () => {
   const keyboard = useKeyboard();

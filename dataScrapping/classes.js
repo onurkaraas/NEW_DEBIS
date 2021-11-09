@@ -4,6 +4,7 @@ import {COLORS, FONTS, LAYOUT} from '../constants/theme';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import resultModal from './resultModal';
 import {AuthContext} from '../context/AuthContext';
+import {useNavigation} from '@react-navigation/native';
 
 const superagent = require('superagent').agent();
 const cheerio = require('cheerio');
@@ -11,49 +12,53 @@ const cheerio = require('cheerio');
 const Classes = id => {
   const [refreshing, setRefreshing] = useState(false);
   const [database, setDatabase] = useState([]);
-  const {toggleModal2} = useContext(AuthContext);
-  const [press, setTimesPressed] = useState('');
+  const {toggleModal2, auth} = useContext(AuthContext);
+  const [selectedClass, setSelectedClass] = useState('');
+  const navigation = useNavigation();
 
   const refresh = () => {
     setRefreshing(!refreshing);
   };
   useEffect(() => {
-    (async function asd() {
-      await superagent
-        .post(
-          'https://debis.deu.edu.tr/OgrenciIsleri/Ogrenci/OgrenciNotu/index.php',
-        )
-        .send({
-          ogretim_donemi_id: id,
-        })
-        .set('Content-Type', 'application/x-www-form-urlencoded')
-        .end(async (err, res) => {
-          if (err) {
-            console.log(err, 'Error while get lessons');
-          }
-          const pickSemesterData = await res.text;
-          const $ = await cheerio.load(`${pickSemesterData}`);
-          const classValue = await $("select[id='ders'] > option");
-          let lessonsObj = [];
-          for (let i = 1; i < classValue.length; i++) {
-            let item = classValue.eq(i);
-            let lessonCode = item.text().slice(0, 8).trim();
-            let title = item.text().slice(8).trim();
-            let value = item.attr('value');
-            lessonsObj.push({
-              value,
-              lessonCode,
-              title,
+    auth
+      ? (async function asd() {
+          await superagent
+            .post(
+              'https://debis.deu.edu.tr/OgrenciIsleri/Ogrenci/OgrenciNotu/index.php',
+            )
+            .send({
+              ogretim_donemi_id: id,
+            })
+            .set('Content-Type', 'application/x-www-form-urlencoded')
+            .end(async (err, res) => {
+              if (err) {
+                console.log(err, 'Error while get lessons');
+              }
+              const pickSemesterData = await res.text;
+              const $ = await cheerio.load(`${pickSemesterData}`);
+              const classValue = await $("select[id='ders'] > option");
+              let lessonsObj = [];
+              for (let i = 1; i < classValue.length; i++) {
+                let item = classValue.eq(i);
+                let lessonCode = item.text().slice(0, 8).trim();
+                let title = item.text().slice(8).trim();
+                let value = item.attr('value');
+                lessonsObj.push({
+                  value,
+                  lessonCode,
+                  title,
+                });
+                setDatabase(lessonsObj);
+              }
             });
-            setDatabase(lessonsObj);
-          }
-        });
-    })();
+        })()
+      : ()=> navigation.navigate('Login');
+
     return setRefreshing(false);
   }, [id, refreshing]);
   const clicked = value => {
     toggleModal2();
-    setTimesPressed(value);
+    setSelectedClass(value);
   };
   const Item = ({title, value, code}) => (
     <TouchableOpacity onPress={() => clicked(value)}>
@@ -82,7 +87,7 @@ const Classes = id => {
           <RefreshControl refreshing={refreshing} onRefresh={refresh} />
         }
       />
-      {resultModal(`${press}`, `${id}`)}
+      {resultModal(`${selectedClass}`, `${id}`)}
     </View>
   );
 };

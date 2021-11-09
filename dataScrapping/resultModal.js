@@ -65,7 +65,7 @@ const initialState = {
   error: null,
 };
 
-const resultModal = (presse, id) => {
+const resultModal = (selectClass, id) => {
   const [state, dispatch] = useReducer(userDetailsReducer, initialState);
   const {datas, tableHead, result, name, loading} = state;
   const {isModalVisible2, setModalVisible2, toggleModal2} =
@@ -85,7 +85,7 @@ const resultModal = (presse, id) => {
         'https://debis.deu.edu.tr/OgrenciIsleri/Ogrenci/OgrenciNotu/index.php',
       )
       .send({
-        ders: presse,
+        ders: selectClass,
         ogretim_donemi_id: id,
       })
       .set('Content-Type', 'application/x-www-form-urlencoded')
@@ -146,11 +146,11 @@ const resultModal = (presse, id) => {
       });
   };
   useEffect(() => {
-    if (presse.length !== 0) {
+    if (selectClass.length !== 0) {
       resultModals();
     }
     dispatch({type: ACTIONS.DONE});
-  }, [presse]);
+  }, [selectClass]);
 
   const modalStyles = {
     colStyle: {
@@ -276,9 +276,7 @@ const resultModal = (presse, id) => {
             </View>
           </View>
         </Modal>
-      ) : (
-        <View></View>
-      )}
+      ) : null}
     </View>
   );
 };

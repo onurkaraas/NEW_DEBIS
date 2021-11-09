@@ -7,12 +7,10 @@ import {
   View,
 } from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import {useDimensions} from '@react-native-community/hooks';
 
 import FastImage from 'react-native-fast-image';
 import {COLORS, FONTS} from '../constants/theme';
 const LoadingScreen = () => {
-  const {width} = useDimensions().window;
 
   return (
     <SafeAreaView style={styles.container}>
@@ -29,7 +27,7 @@ const LoadingScreen = () => {
           <Text style={styles.textStyle}>
             Giriş Bilgileriniz Kontrol Ediliyor
           </Text>
-        <ActivityIndicator size={80} colo={'blue'} />
+        <ActivityIndicator size={60} colo={'blue'} />
       </View>
     </SafeAreaView>
   );

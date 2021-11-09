@@ -6,7 +6,7 @@ import {AuthContext} from '../context/AuthContext';
 
 export const TopBar = headerTitle => {
   const {width, height} = useDimensions().window;
-  const {name, department} = useContext(AuthContext);
+  const {name} = useContext(AuthContext);
   const keyboard = useKeyboard();
 
   return (

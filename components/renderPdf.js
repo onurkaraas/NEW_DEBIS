@@ -1,15 +1,15 @@
 import React, {useEffect, useState} from 'react';
 import {StyleSheet, View, Dimensions} from 'react-native';
 import Pdf from 'react-native-pdf';
-import {COLORS} from '../../constants/theme';
-import {TopBar} from '../../components';
+import {COLORS} from '../constants/theme';
+import {TopBar} from './index';
 
-const PdfFunc = (uri, head) => {
+const RenderPdf = (uri, head) => {
   const [source, setSource] = useState({});
 
   useEffect(() => {
-    const sour = {cache: false, ...uri};
-    setSource(sour);
+    const source = {cache: false, ...uri};
+    setSource(source);
   }, []);
 
   return (
@@ -38,4 +38,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default PdfFunc;
+export default RenderPdf;

@@ -12,25 +12,25 @@ const Schedule = () => {
     (async () => {
       let schedule = await superagent
         .get(
-          'https://debis.deu.edu.tr/OgrenciIsleri/Ogrenci/DersProgrami/index.php',
+          'https://debis.deu.edu.tr/OgrenciIsleri/Ogrenci/OgrenciHarc/index.php',
         )
-        .end(async (err, res) => {
-          if (err) {
-            console.log(err, 'ERRRRRRORRRRRRRRRRRRRRRRRRR');
-          }
 
-          const $ = cheerio.load(res.text);
-          const hours = $(
-            'body > table:nth-child(4) > tbody > tr:nth-child(2) > td:nth-child(2) > table:nth-child(4) > tbody > tr:nth-child(2)',
-          );
+        .end((err, res) => {
+          console.log(res.text);
         });
+
+      const exp = schedule.text;
+      const $ = cheerio.load(exp);
+      const hours = $('option:nth-child(1)');
+      console.log(hours.text());
     })();
   }, []);
+
   return (
     <View style={{flex: 1, backgroundColor: COLORS.primary}}>
       {TopBar('Ders Programı')}
       <ScrollView style={{flex: 1}}>
-        <Text>{c}</Text>
+        <Text style={{color: 'white'}}>{c}</Text>
       </ScrollView>
     </View>
   );
