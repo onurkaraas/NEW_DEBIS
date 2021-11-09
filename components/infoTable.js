@@ -4,7 +4,7 @@ import {FONTS} from '../constants/theme';
 import {AuthContext} from '../context/AuthContext';
 
 export const infoTable = () => {
-  const {studentNumber, year, department, advisor} = useContext(AuthContext);
+  const {studentInfo} = useContext(AuthContext);
 
   return (
     <View style={styles.container}>
@@ -14,7 +14,9 @@ export const infoTable = () => {
             <Text style={styles.titleStyle}>ÖĞRENCİ NO:</Text>
           </View>
           <View>
-            <Text style={styles.infoTextStyle}>{studentNumber}</Text>
+            <Text style={styles.infoTextStyle}>
+              {studentInfo.studentNumber}
+            </Text>
           </View>
         </View>
       </View>
@@ -24,7 +26,7 @@ export const infoTable = () => {
             <Text style={styles.titleStyle}>SINIF:</Text>
           </View>
           <View>
-            <Text style={styles.infoTextStyle}>{year}</Text>
+            <Text style={styles.infoTextStyle}>{studentInfo.year}</Text>
           </View>
         </View>
       </View>
@@ -34,7 +36,7 @@ export const infoTable = () => {
             <Text style={styles.titleStyle}>BÖLÜM:</Text>
           </View>
           <View>
-            <Text style={styles.infoTextStyle}>{department}</Text>
+            <Text style={styles.infoTextStyle}>{studentInfo.department}</Text>
           </View>
         </View>
       </View>
@@ -44,7 +46,7 @@ export const infoTable = () => {
             <Text style={styles.titleStyle}>DANIŞMAN:</Text>
           </View>
           <View>
-            <Text style={styles.infoTextStyle}>{advisor}</Text>
+            <Text style={styles.infoTextStyle}>{studentInfo.advisor}</Text>
           </View>
         </View>
       </View>

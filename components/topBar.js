@@ -6,7 +6,7 @@ import {AuthContext} from '../context/AuthContext';
 
 export const TopBar = headerTitle => {
   const {width, height} = useDimensions().window;
-  const {name} = useContext(AuthContext);
+  const {studentInfo} = useContext(AuthContext);
   const keyboard = useKeyboard();
 
   return (
@@ -15,7 +15,7 @@ export const TopBar = headerTitle => {
         ...styles.container,
         width: width,
         height: keyboard.keyboardShown ? 0 : height * 0.1,
-        justifyContent: name.length === 0 ? 'center' : 'space-between',
+        justifyContent: studentInfo.name.length === 0 ? 'center' : 'space-between',
       }}>
       <View style={{justifyContent: 'center', alignItems: 'center'}}>
         <Text style={{...FONTS.h2, color: COLORS.white, fontWeight: '800'}}>
@@ -28,7 +28,7 @@ export const TopBar = headerTitle => {
           justifyContent: 'center',
         }}>
         <Text style={{...FONTS.h2, color: COLORS.white, fontWeight: '800'}}>
-          {name}
+          {studentInfo.name}
         </Text>
       </View>
     </View>

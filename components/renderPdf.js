@@ -4,7 +4,7 @@ import Pdf from 'react-native-pdf';
 import {COLORS} from '../constants/theme';
 import {TopBar} from './index';
 
-const RenderPdf = (uri, head) => {
+const renderPdf = (uri, head) => {
   const [source, setSource] = useState({});
 
   useEffect(() => {
@@ -38,4 +38,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default RenderPdf;
+export default renderPdf;

@@ -15,14 +15,15 @@ export const AuthProvider = ({children}) => {
   const [isModalVisible, setModalVisible] = useState(false);
   const [isModalVisible2, setModalVisible2] = useState(false);
   const [isModalVisible3, setModalVisible3] = useState(false);
-  const [name, setName] = useState('');
   const [selectedID, setSelectedID] = useState();
   const [semesterValue, setSemesterValue] = useState([]);
-  const [department, setDepartment] = useState('');
-  const [studentNumber, setStudentNumber] = useState('');
-  const [year, setYear] = useState('');
-  const [advisor, setAdvisor] = useState('');
-
+  const [studentInfo, setStudentInfo] = useState({
+    name: '',
+    department: '',
+    studentNumber: '',
+    year: '',
+    advisor: '',
+  });
   const toggleModal = () => setModalVisible(!isModalVisible);
 
   const toggleModal2 = () => setModalVisible2(!isModalVisible2);
@@ -65,11 +66,13 @@ export const AuthProvider = ({children}) => {
             semesterValues.push([values, title]);
           }
           setSemesterValue(semesterValues);
-          setAdvisor(prof);
-          setYear(year1);
-          setStudentNumber(stuNum);
-          setName(studentName);
-          setDepartment(departmentName);
+          setStudentInfo({
+            name: studentName,
+            department: departmentName,
+            studentNumber: stuNum,
+            year: year1,
+            advisor: prof,
+          });
         } else {
           setAuth(false);
           setError(true);
@@ -87,27 +90,22 @@ export const AuthProvider = ({children}) => {
   return (
     <AuthContext.Provider
       value={{
-        name,
-        setName,
-        semesterValue,
-        studentNumber,
-        saveUser,
-        year,
-        advisor,
-        department,
-
         auth,
         setAuth,
-        setSelectedID,
-        selectedID,
+        semesterValue,
+        saveUser,
         setSaveUser,
-        isModalVisible,
-        isModalVisible2,
-        isModalVisible3,
-        setModalVisible3,
+        studentInfo,
+
+        selectedID,
+        setSelectedID,
+
         error,
         setError,
 
+        isModalVisible,
+        isModalVisible2,
+        isModalVisible3,
         gett,
         toggleModal,
         toggleModal2,
@@ -150,7 +148,16 @@ export const AuthProvider = ({children}) => {
             await superagent
               .get('https://debis.deu.edu.tr/php_library/Cikis.php')
               .unset('User-Agent')
-              .then(setAuth(false) && setName(''));
+              .then(() => {
+                setAuth(false);
+                setStudentInfo({
+                  name: '',
+                  department: '',
+                  studentNumber: '',
+                  year: '',
+                  advisor: '',
+                });
+              });
           } catch (e) {
             console.log('giris hata');
           }
