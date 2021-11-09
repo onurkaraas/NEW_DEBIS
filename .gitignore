@@ -29,12 +29,12 @@ build/
 local.properties
 *.iml
 *.hprof
-yarn.lock
 # node.js
 #
 node_modules/
 npm-debug.log
 yarn-error.log
+yarn.lock
 
 # BUCK
 buck-out/
