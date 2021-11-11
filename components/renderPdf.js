@@ -6,7 +6,7 @@ import {TopBar} from './index';
 
 const renderPdf = (uri, head) => {
   const [source, setSource] = useState({});
-
+const {container,pdf} = styles;
   useEffect(() => {
     const source = {cache: false, ...uri};
     setSource(source);
@@ -15,8 +15,8 @@ const renderPdf = (uri, head) => {
   return (
     <View style={{flex: 1, backgroundColor: COLORS.primary, borderRadius: 25}}>
       {TopBar(head)}
-      <View style={styles.container}>
-        <Pdf fitWidth={true} source={source} style={styles.pdf} />
+      <View style={container}>
+        <Pdf fitWidth={true} source={source} style={pdf} />
       </View>
     </View>
   );

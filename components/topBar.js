@@ -6,29 +6,26 @@ import {AuthContext} from '../context/AuthContext';
 
 export const TopBar = headerTitle => {
   const {width, height} = useDimensions().window;
-  const {studentInfo} = useContext(AuthContext);
+  const {states} = useContext(AuthContext);
   const keyboard = useKeyboard();
-
+const {container,textContainer,textStyle } = styles;
   return (
     <View
       style={{
-        ...styles.container,
+        ...container,
         width: width,
         height: keyboard.keyboardShown ? 0 : height * 0.1,
-        justifyContent: studentInfo.name.length === 0 ? 'center' : 'space-between',
+        justifyContent: states.studentInfo.name.length === 0 ? 'center' : 'space-between',
       }}>
-      <View style={{justifyContent: 'center', alignItems: 'center'}}>
-        <Text style={{...FONTS.h2, color: COLORS.white, fontWeight: '800'}}>
+      <View style={textContainer}>
+        <Text style={textStyle}>
           {headerTitle}
         </Text>
       </View>
       <View
-        style={{
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}>
-        <Text style={{...FONTS.h2, color: COLORS.white, fontWeight: '800'}}>
-          {studentInfo.name}
+        style={textContainer}>
+        <Text style={textStyle}>
+          {states.studentInfo.name}
         </Text>
       </View>
     </View>
@@ -43,4 +40,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     paddingHorizontal: 12,
   },
+    textContainer:{justifyContent: 'center', alignItems: 'center'},
+    textStyle:{...FONTS.h2, color: COLORS.white, fontWeight: '800'}
 });

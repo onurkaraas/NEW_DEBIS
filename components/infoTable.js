@@ -4,49 +4,60 @@ import {FONTS} from '../constants/theme';
 import {AuthContext} from '../context/AuthContext';
 
 export const infoTable = () => {
-  const {studentInfo} = useContext(AuthContext);
-
+  const {states} = useContext(AuthContext);
+  const {
+    container,
+    flexContainer,
+    flexDirectionStyle,
+    spaceBetween,
+    titleStyle,
+    infoTextStyle,
+  } = styles;
   return (
-    <View style={styles.container}>
-      <View style={styles.flexContainer}>
-        <View style={styles.flexDirectionStyle}>
-          <View style={styles.spaceBetween}>
-            <Text style={styles.titleStyle}>ÖĞRENCİ NO:</Text>
+    <View style={container}>
+      <View style={flexContainer}>
+        <View style={flexDirectionStyle}>
+          <View style={spaceBetween}>
+            <Text style={titleStyle}>ÖĞRENCİ NO:</Text>
           </View>
           <View>
-            <Text style={styles.infoTextStyle}>
-              {studentInfo.studentNumber}
+            <Text style={infoTextStyle}>
+              {states.studentInfo.studentNumber}
             </Text>
           </View>
         </View>
       </View>
-      <View style={styles.flexContainer}>
-        <View style={styles.flexDirectionStyle}>
-          <View style={styles.spaceBetween}>
-            <Text style={styles.titleStyle}>SINIF:</Text>
+      <View style={flexContainer}>
+        <View style={flexDirectionStyle}>
+          <View style={spaceBetween}>
+            <Text style={titleStyle}>SINIF:</Text>
           </View>
           <View>
-            <Text style={styles.infoTextStyle}>{studentInfo.year}</Text>
+            <Text style={infoTextStyle}>{states.studentInfo.year}</Text>
           </View>
         </View>
       </View>
-      <View style={styles.flexContainer}>
-        <View style={styles.flexDirectionStyle}>
-          <View style={styles.spaceBetween}>
-            <Text style={styles.titleStyle}>BÖLÜM:</Text>
+      <View style={flexContainer}>
+        <View style={flexDirectionStyle}>
+          <View style={spaceBetween}>
+            <Text style={titleStyle}>BÖLÜM:</Text>
           </View>
           <View>
-            <Text style={styles.infoTextStyle}>{studentInfo.department}</Text>
+            <Text style={infoTextStyle}>
+              {states.studentInfo.departmentName}
+            </Text>
           </View>
         </View>
       </View>
-      <View style={styles.flexContainer}>
-        <View style={styles.flexDirectionStyle}>
-          <View style={styles.spaceBetween}>
-            <Text style={styles.titleStyle}>DANIŞMAN:</Text>
+      <View style={flexContainer}>
+        <View style={flexDirectionStyle}>
+          <View style={spaceBetween}>
+            <Text style={titleStyle}>DANIŞMAN:</Text>
           </View>
           <View>
-            <Text style={styles.infoTextStyle}>{studentInfo.advisor}</Text>
+            <Text style={infoTextStyle}>
+              {states.studentInfo.advisor}
+            </Text>
           </View>
         </View>
       </View>

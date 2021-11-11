@@ -9,16 +9,16 @@ import RNPickerSelect from 'react-native-picker-select';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const LessonResultScreen = () => {
-  const {setSelectedID, selectedID, semesterValue} = useContext(AuthContext);
+  const {states} = useContext(AuthContext);
   const [pickerData, setPickerData] = useState([]);
   const placeholder = {
     label: 'Ders Seçiniz',
     value: 0,
     key: 0,
   };
-
+  const {container, pickerView, pickerStyle, pickerContainer} = styles;
   useEffect(() => {
-    const data = semesterValue.map((item, index) => ({
+    const data = states.semesterValue.map((item, index) => ({
       label: item[1],
       value: item[0],
       key: index + 1,
@@ -28,10 +28,10 @@ const LessonResultScreen = () => {
   }, []);
   // );
   return (
-    <View style={styles.container}>
+    <View style={container}>
       {TopBar('Not Bilgileri')}
-      <View style={styles.pickerContainer}>
-        <View style={styles.pickerView}>
+      <View style={pickerContainer}>
+        <View style={pickerView}>
           <RNPickerSelect
             style={{
               iconContainer: {top: 11, right: 20},
@@ -42,20 +42,19 @@ const LessonResultScreen = () => {
                   name="arrow-down"
                   color={'gray'}
                   size={28}
-                  style={styles.iconContainer}
                 />
               );
             }}
             useNativeAndroidPickerStyle={false}
-            selectedValue={selectedID}
-            onValueChange={itemValue => setSelectedID(itemValue)}
+            selectedValue={states.selectedID}
+            onValueChange={itemValue => states.setSelectedID(itemValue)}
             items={pickerData}
-            textInputProps={styles.pickerStyle}
+            textInputProps={pickerStyle}
             placeholder={placeholder}
           />
         </View>
       </View>
-      <View style={{flex: 6}}>{Classes(`${selectedID}`)}</View>
+      <View style={{flex: 6}}>{Classes(`${states.selectedID}`)}</View>
     </View>
   );
 };

@@ -13,7 +13,11 @@ const Tab = createMaterialBottomTabNavigator();
 
 const Tabs = () => {
   const window = useWindowDimensions();
-
+  const icons = {
+    Home: 'home-outline',
+    TranscriptScreen: 'file-document',
+    LessonResultScreen: 'alpha-a-box',
+  };
   return (
     <Tab.Navigator
       activeColor={COLORS.green}
@@ -30,32 +34,13 @@ const Tabs = () => {
       labeled={false}
       screenOptions={({route}) => ({
         tabBarIcon: ({color, size}) => {
-          switch (route.name) {
-            case 'Home':
-              return (
-                <MaterialCommunityIcons
-                  name="home-outline"
-                  color={color}
-                  size={26}
-                />
-              );
-            case 'TranscriptScreen':
-              return (
-                <MaterialCommunityIcons
-                  name="file-document"
-                  color={color}
-                  size={26}
-                />
-              );
-            case 'LessonResultScreen':
-              return (
-                <MaterialCommunityIcons
-                  name="alpha-a-box"
-                  color={color}
-                  size={26}
-                />
-              );
-          }
+          return (
+            <MaterialCommunityIcons
+              name={icons[route.name]}
+              color={color}
+              size={26}
+            />
+          );
         },
       })}>
       <Tab.Screen name="Home" component={Home} />

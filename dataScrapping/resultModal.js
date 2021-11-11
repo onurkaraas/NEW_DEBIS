@@ -68,12 +68,10 @@ const initialState = {
 const resultModal = (selectClass, id) => {
   const [state, dispatch] = useReducer(userDetailsReducer, initialState);
   const {datas, tableHead, result, name, loading} = state;
-  const {isModalVisible2, setModalVisible2, toggleModal2} =
-    useContext(AuthContext);
+  const {modalVisibility, toggleModals} = useContext(AuthContext);
   const {width, height} = useDimensions().window;
-
   const visible = () => {
-    toggleModal2();
+    toggleModals.toggleModal2();
     dispatch({type: ACTIONS.DONE});
   };
 
@@ -169,6 +167,25 @@ const resultModal = (selectClass, id) => {
       justifyContent: 'center',
     },
   };
+  const {
+    container,
+    head,
+    headName,
+    wrapper,
+    text,
+    textNames,
+    text1,
+    text2,
+    modalView,
+    modalGreen,
+    modalRed,
+    openButton,
+    buttonGreen,
+    buttonRed,
+    textStyle,
+    textGreen,
+    textRed,
+  } = styles;
 
   return (
     <View style={{flex: 1}}>
@@ -181,24 +198,24 @@ const resultModal = (selectClass, id) => {
             <ActivityIndicator color={'red'} size={'large'} />
           </Modal>
         </View>
-      ) : isModalVisible2 ? (
+      ) : modalVisibility.isModalVisible2 ? (
         <Modal
           useNativeDriverForBackdrop={true}
           hideModalContentWhileAnimating={true}
           backdropOpacity={0.4}
-          onBackdropPress={toggleModal2}
-          isVisible={isModalVisible2}>
+          onBackdropPress={toggleModals.toggleModal2}
+          isVisible={modalVisibility.isModalVisible2}>
           <View>
             <View
               style={[
-                styles.modalView,
+                modalView,
                 result[0] === 'BAŞARISIZ'
-                  ? styles.modalRed
+                  ? modalRed
                   : result[0] === 'BAŞARILI'
-                  ? styles.modalGreen
-                  : styles.modalView,
+                  ? modalGreen
+                  : modalView,
               ]}>
-              <View style={styles.container}>
+              <View style={container}>
                 <View style={modalStyles.tableView}>
                   <Table
                     borderStyle={{
@@ -207,45 +224,45 @@ const resultModal = (selectClass, id) => {
                     }}>
                     <Row
                       data={name}
-                      style={styles.headName}
+                      style={headName}
                       textStyle={[
-                        styles.text2,
+                        text2,
                         result[0] === 'BAŞARISIZ'
-                          ? styles.textRed
+                          ? textRed
                           : result[0] === 'BAŞARILI'
-                          ? styles.textGreen
-                          : styles.text2,
+                          ? textGreen
+                          : text2,
                       ]}
                     />
                     <Row
                       data={tableHead}
-                      style={styles.head}
-                      textStyle={styles.text}
+                      style={head}
+                      textStyle={text}
                     />
                     <TableWrapper
                       style={{
-                        ...styles.wrapper,
+                        ...wrapper,
                       }}>
                       <Col
                         data={datas[0]}
                         style={modalStyles.colStyle}
-                        textStyle={styles.textNames}
+                        textStyle={textNames}
                       />
                       <Col
                         data={datas[2]}
                         style={modalStyles.colStyle}
-                        textStyle={styles.text}
+                        textStyle={text}
                       />
                       <Col
                         data={datas[1]}
                         style={modalStyles.colStyle}
-                        textStyle={styles.text}
+                        textStyle={text}
                       />
 
                       <Col
                         data={datas[3]}
                         style={modalStyles.colStyle}
-                        textStyle={styles.text1}
+                        textStyle={text1}
                       />
                     </TableWrapper>
                   </Table>
@@ -255,20 +272,20 @@ const resultModal = (selectClass, id) => {
             <View style={LAYOUT.alignCenter}>
               <TouchableOpacity
                 style={[
-                  styles.openButton,
+                  openButton,
                   result[0] === 'BAŞARISIZ'
-                    ? styles.buttonRed
-                    : styles.buttonGreen,
+                    ? buttonRed
+                    : buttonGreen,
                 ]}
                 onPress={visible}>
                 <Text
                   style={[
-                    styles.textStyle,
+                    textStyle,
                     result[0] === 'BAŞARISIZ'
-                      ? styles.textRed
+                      ? textRed
                       : result[0] === 'BAŞARILI'
-                      ? styles.textGreen
-                      : styles.textStyle,
+                      ? textGreen
+                      : textStyle,
                   ]}>
                   {result[0]}
                 </Text>

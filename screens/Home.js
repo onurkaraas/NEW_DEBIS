@@ -5,7 +5,7 @@ import Modal from 'react-native-modal';
 
 import {AuthContext} from '../context/AuthContext';
 import {COLORS, LAYOUT} from '../constants/theme';
-import {TopBar, infoTable, homeButton, RenderPdf, renderPdf} from '../components';
+import {TopBar, infoTable, homeButton, renderPdf} from '../components';
 
 import {
   LoadingScreen,
@@ -16,54 +16,51 @@ import {
 } from '../screens';
 
 const Home = () => {
-  const {isModalVisible, toggleModal, isModalVisible3, toggleModal3, signOut} =
-    useContext(AuthContext);
-
+  const {toggleModals, modalVisibility, signOut} = useContext(AuthContext);
+  const {container, tableView, buttonContainer, buttonFlexStyle} = styles;
   const uri =
     'https://sks.deu.edu.tr/wp-content/uploads/2021/10/11KASIM-AYI-YEMEK-KALORISI-1.pdf';
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={container}>
       {TopBar('Hoşgeldiniz')}
-      <View style={styles.tableView}>{infoTable()}</View>
+      <View style={tableView}>{infoTable()}</View>
 
-      <View style={styles.buttonContainer}>
-        <View style={styles.buttonFlexStyle}>
+      <View style={buttonContainer}>
+        <View style={buttonFlexStyle}>
           {homeButton('calendar', 'Akademik Takvim')}
           {homeButton('calendar-remove', 'Devamsizlik', renderPdf)}
           {homeButton('calendar-check', 'Ders Programi', Schedule)}
         </View>
 
-        <View style={styles.buttonFlexStyle}>
+        <View style={buttonFlexStyle}>
           {homeButton('food', 'Yemek Menusu')}
           {homeButton('message-draw', 'Mesajlar', LoadingScreen)}
           {homeButton('alpha-a-box', 'Not Bilgisi', LessonResultScreen)}
         </View>
-        <Button onPress={() => signOut()} title={'qeqweqw'}>
-          qwe
-        </Button>
+        <Button onPress={() => signOut()} title={'qeqweqw'} />
         <Modal
           hideModalContentWhileAnimating={true}
-          isVisible={isModalVisible}
+          isVisible={modalVisibility.isModalVisible}
           backdropOpacity={0.6}
-          onBackdropPress={toggleModal}>
+          onBackdropPress={toggleModals.toggleModal}>
           <View style={{...LAYOUT.setFlex1, ...LAYOUT.justifyCenter}}>
-            {ModalPdf({uri}, 'Yemek Menusu', toggleModal)}
+            {ModalPdf({uri}, 'Yemek Menusu', toggleModals.toggleModal)}
           </View>
         </Modal>
 
         <Modal
           hideModalContentWhileAnimating={true}
-          isVisible={isModalVisible3}
+          isVisible={modalVisibility.isModalVisible3}
           backdropOpacity={0.6}
-          onBackdropPress={toggleModal3}>
+          onBackdropPress={toggleModals.toggleModal3}>
           <View style={{...LAYOUT.setFlex1, ...LAYOUT.justifyCenter}}>
             {ModalPdf(
               {
                 uri: 'https://ogrenci.deu.edu.tr/wp-content/uploads/2021/08/2021-2022-Akademik-Takvim.pdf',
               },
               'Akademik Takvim',
-              toggleModal3,
+              toggleModals.toggleModal3,
             )}
           </View>
         </Modal>

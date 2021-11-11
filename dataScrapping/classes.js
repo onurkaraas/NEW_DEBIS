@@ -12,16 +12,17 @@ const cheerio = require('cheerio');
 const Classes = id => {
   const [refreshing, setRefreshing] = useState(false);
   const [database, setDatabase] = useState([]);
-  const {toggleModal2, auth} = useContext(AuthContext);
+  const {toggleModals, states} = useContext(AuthContext);
   const [selectedClass, setSelectedClass] = useState('');
   const navigation = useNavigation();
 
+  const {container, flexDirectionColumn, codeTextStyle, titleStyle} = styles;
   const refresh = () => {
     setRefreshing(!refreshing);
   };
   useEffect(() => {
-    auth
-      ? (async function asd() {
+    states.auth
+      ? (async () => {
           await superagent
             .post(
               'https://debis.deu.edu.tr/OgrenciIsleri/Ogrenci/OgrenciNotu/index.php',
@@ -52,21 +53,21 @@ const Classes = id => {
               }
             });
         })()
-      : ()=> navigation.navigate('Login');
+      : navigation.navigate('LoadingScreen');
 
     return setRefreshing(false);
   }, [id, refreshing]);
   const clicked = value => {
-    toggleModal2();
+    toggleModals.toggleModal2();
     setSelectedClass(value);
   };
   const Item = ({title, value, code}) => (
     <TouchableOpacity onPress={() => clicked(value)}>
-      <View style={styles.container}>
-        <View style={styles.flexDirectionColumn}>
+      <View style={container}>
+        <View style={flexDirectionColumn}>
           <View style={LAYOUT.alignCenter}>
-            <Text style={styles.codeTextStyle}>{code}</Text>
-            <Text style={styles.titleStyle}>{title}</Text>
+            <Text style={codeTextStyle}>{code}</Text>
+            <Text style={titleStyle}>{title}</Text>
           </View>
         </View>
       </View>

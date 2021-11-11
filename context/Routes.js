@@ -16,22 +16,22 @@ import {
 const Stack = createStackNavigator();
 
 const Routes = () => {
-  const {auth, gett} = useContext(AuthContext);
+  const {states, getData} = useContext(AuthContext);
 
   useEffect(() => {
-    gett();
+    getData();
     SplashScreen.hide();
   }, []);
 
   return (
     <NavigationContainer>
-      {auth === null ? (
+      {states.auth === null ? (
         <Stack.Navigator
           screenOptions={{headerShown: false}}
           initialRouteName="LoadingScreen">
           <Stack.Screen name={'LoadingScreen'} component={LoadingScreen} />
         </Stack.Navigator>
-      ) : auth === true ? (
+      ) : states.auth === true ? (
         <Stack.Navigator
           screenOptions={{headerShown: false}}
           initialRouteName="Tabs">

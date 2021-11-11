@@ -7,8 +7,14 @@ import {AuthContext} from '../../context/AuthContext';
 
 const ModalPdf = (uri, title, toggle) => {
   const [source, setSource] = useState({});
-  const {toggleModal} = useContext(AuthContext);
-
+  const {
+    container,
+    headerTitle,
+    pdf,
+    touchableStyle,
+    closeButtonText,
+    titleContainer,
+  } = styles;
   useEffect(() => {
     const sour = {cache: false, ...uri};
     setSource(sour);
@@ -16,15 +22,15 @@ const ModalPdf = (uri, title, toggle) => {
 
   return (
     <View style={{flex: 0.65}}>
-      <View style={styles.container}>
-        <View style={styles.titleContainer}>
+      <View style={container}>
+        <View style={titleContainer}>
           <View style={{marginBottom: 12}}>
-            <Text style={styles.headerTitle}>{title}</Text>
+            <Text style={headerTitle}>{title}</Text>
           </View>
         </View>
-        <Pdf fitWidth={true} source={source} style={styles.pdf} />
-        <TouchableOpacity onPress={toggle} style={styles.touchableStyle}>
-          <Text style={styles.closeButtonText}>X</Text>
+        <Pdf fitWidth={true} source={source} style={pdf} />
+        <TouchableOpacity onPress={toggle} style={touchableStyle}>
+          <Text style={closeButtonText}>X</Text>
         </TouchableOpacity>
       </View>
     </View>

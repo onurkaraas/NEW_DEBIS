@@ -29,8 +29,29 @@ export const AuthProvider = ({children}) => {
   const toggleModal2 = () => setModalVisible2(!isModalVisible2);
 
   const toggleModal3 = () => setModalVisible3(!isModalVisible3);
-
-  const gett = () => {
+  const toggleModals = {
+    toggleModal,
+    toggleModal2,
+    toggleModal3,
+  };
+  const modalVisibility = {
+    isModalVisible,
+    isModalVisible2,
+    isModalVisible3,
+  };
+  const states = {
+    auth,
+    setAuth,
+    semesterValue,
+    saveUser,
+    setSaveUser,
+    studentInfo,
+    selectedID,
+    setSelectedID,
+    error,
+    setError,
+  };
+  const getData = () => {
     try {
       (async () => {
         let resultScreen = await superagent.get(
@@ -39,22 +60,22 @@ export const AuthProvider = ({children}) => {
         const resultScreenData = resultScreen.text;
         const $ = cheerio.load(resultScreenData);
 
-        const studentName = $(
+        const name = $(
           'body > table:nth-child(4) > tbody > tr:nth-child(2) > td:nth-child(2) > form > table > tbody > tr:nth-child(1) > td:nth-child(3)',
         ).text();
-        if (studentName.length !== 0) {
-          setError(false);
-          setAuth(true);
+        if (name.length !== 0) {
+          states.setError(false);
+          states.setAuth(true);
           const departmentName = $(
             'body > table:nth-child(4) > tbody > tr:nth-child(2) > td:nth-child(2) > form > table > tbody > tr:nth-child(5) > td:nth-child(3)',
           ).text();
-          const stuNum = $(
+          const studentNumber = $(
             'body > table:nth-child(4) > tbody > tr:nth-child(2) > td:nth-child(2) > form > table > tbody > tr:nth-child(2) > td:nth-child(3)',
           ).text();
-          const year1 = $(
+          const year = $(
             'body > table:nth-child(4) > tbody > tr:nth-child(2) > td:nth-child(2) > form > table > tbody > tr:nth-child(3) > td:nth-child(3)',
           ).text();
-          const prof = $(
+          const advisor = $(
             'body > table:nth-child(4) > tbody > tr:nth-child(2) > td:nth-child(2) > form > table > tbody > tr:nth-child(7) > td:nth-child(3)\n',
           ).text();
           const semesterSelect = $("select[id='ogretim_donemi_id'] > option");
@@ -67,15 +88,15 @@ export const AuthProvider = ({children}) => {
           }
           setSemesterValue(semesterValues);
           setStudentInfo({
-            name: studentName,
-            department: departmentName,
-            studentNumber: stuNum,
-            year: year1,
-            advisor: prof,
+            name,
+            departmentName,
+            studentNumber,
+            year,
+            advisor,
           });
         } else {
-          setAuth(false);
-          setError(true);
+          states.setAuth(false);
+          states.setError(true);
         }
       })();
     } catch (e) {
@@ -90,26 +111,10 @@ export const AuthProvider = ({children}) => {
   return (
     <AuthContext.Provider
       value={{
-        auth,
-        setAuth,
-        semesterValue,
-        saveUser,
-        setSaveUser,
-        studentInfo,
-
-        selectedID,
-        setSelectedID,
-
-        error,
-        setError,
-
-        isModalVisible,
-        isModalVisible2,
-        isModalVisible3,
-        gett,
-        toggleModal,
-        toggleModal2,
-        toggleModal3,
+        states,
+        toggleModals,
+        modalVisibility,
+        getData,
         signIn: async ({username, password}) => {
           try {
             !isNonEmptyString(username && password)
@@ -129,8 +134,8 @@ export const AuthProvider = ({children}) => {
                   })
                   .set('Content-Type', 'application/x-www-form-urlencoded')
                   .end(async () => {
-                    await gett();
-                    (await error)
+                    await getData();
+                    error
                       ? showMessage({
                           message: 'Giriş yaparken hata oluştu.',
                           description:
@@ -149,7 +154,7 @@ export const AuthProvider = ({children}) => {
               .get('https://debis.deu.edu.tr/php_library/Cikis.php')
               .unset('User-Agent')
               .then(() => {
-                setAuth(false);
+                states.setAuth(false);
                 setStudentInfo({
                   name: '',
                   department: '',

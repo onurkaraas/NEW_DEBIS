@@ -12,17 +12,25 @@ import {AuthContext} from '../context/AuthContext';
 import {TopBar} from '../components';
 
 const LogInScreen = () => {
-  const {signIn, saveUser, setSaveUser} = useContext(AuthContext);
+  const {signIn, states} = useContext(AuthContext);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [secureText, setSecureText] = useState(true);
-  const saveUserSwitch = () => setSaveUser(previousState => !previousState);
+  const saveUserSwitch = () =>
+    states.setSaveUser(previousState => !previousState);
   const secureTextToggle = () => setSecureText(previousState => !previousState);
   const {width, height} = useDimensions().window;
   const keyboard = useKeyboard();
-
+  const {
+    container,
+    inputContainer,
+    inputContainerStyle,
+    inputUsernameIcon,
+    inputPasswordIcon,
+    saveText,
+  } = styles;
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={container}>
       {TopBar('Lütfen Giriş Yapınız')}
       <View style={{...LAYOUT.setFlex1, ...LAYOUT.alignCenter}}>
         <Animated.View style={{...LAYOUT.setFlex1, ...LAYOUT.justifyCenter}}>
@@ -39,13 +47,13 @@ const LogInScreen = () => {
           />
         </Animated.View>
 
-        <View style={styles.inputContainer}>
+        <View style={inputContainer}>
           <Input
             onChangeText={setUsername}
             defaultValue={username}
             value={username}
             inputStyle={{color: COLORS.white}}
-            inputContainerStyle={styles.inputContainerStyle}
+            inputContainerStyle={inputContainerStyle}
             containerStyle={{
               marginBottom: 8,
               borderRadius: 12,
@@ -63,7 +71,7 @@ const LogInScreen = () => {
               ...FONTS.body3,
             }}
             leftIcon={
-              <View style={styles.inputUsernameIcon}>
+              <View style={inputUsernameIcon}>
                 <MaterialCommunityIcons
                   name={'account'}
                   color={COLORS.yellow}
@@ -77,10 +85,10 @@ const LogInScreen = () => {
             value={password}
             onChangeText={setPassword}
             defaultValue={password}
-            inputContainerStyle={styles.inputContainerStyle}
+            inputContainerStyle={inputContainerStyle}
             containerStyle={{
-              marginBottom: keyboard.keyboardShown ? 8 : 16,
               ...SHADOWS.input,
+              marginBottom: keyboard.keyboardShown ? 8 : 16,
               borderRadius: 12,
               height: keyboard.keyboardShown ? height * 0.1 : height * 0.095,
               width: keyboard.keyboardShown ? width * 0.95 : width * 0.925,
@@ -95,7 +103,7 @@ const LogInScreen = () => {
               ...FONTS.body3,
             }}
             leftIcon={
-              <View style={styles.inputPasswordIcon}>
+              <View style={inputPasswordIcon}>
                 <MaterialCommunityIcons
                   name={'lock'}
                   color={COLORS.red}
@@ -150,10 +158,10 @@ const LogInScreen = () => {
           </View>
           <View style={{alignItems: 'flex-end', padding: 12}}>
             <View style={{flexDirection: 'row', alignItems: 'flex-end'}}>
-              <Text style={styles.saveText}>Beni Hatırla</Text>
+              <Text style={saveText}>Beni Hatırla</Text>
               <Switch
                 style={{transform: [{scaleX: 1.4}, {scaleY: 1.4}]}}
-                value={saveUser}
+                value={states.saveUser}
                 color={COLORS.green2}
                 onValueChange={saveUserSwitch}
               />
