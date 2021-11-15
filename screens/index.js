@@ -4,9 +4,9 @@ import Schedule from '../screens/Schedule';
 import MealMenu from '../screens/pdfScreens/MealMenu';
 import VeganMenu from '../screens/pdfScreens/VeganMenu';
 import TranscriptScreen from '../screens/TranscriptScreen';
-import LoadingScreen from '../screens/LoadingScreen';
-import LessonResultScreen from "./LessonResultScreen";
-import ModalPdf from '../screens/pdfScreens/ModalPdf';
+import ExitScreen from './ExitScreen';
+import LessonResultScreen from './LessonResultScreen';
+import ModalPdf from '../components/ModalPdf';
 export {
   Tabs,
   LogInScreen,
@@ -14,7 +14,7 @@ export {
   MealMenu,
   VeganMenu,
   TranscriptScreen,
-  LoadingScreen,
-  LessonResultScreen
-    ,ModalPdf
+  ExitScreen,
+  LessonResultScreen,
+  ModalPdf,
 };

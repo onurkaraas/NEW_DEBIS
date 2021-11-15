@@ -1,9 +1,9 @@
 import React, {useState, useEffect, useContext} from 'react';
 import {Text, FlatList, View, RefreshControl, StyleSheet} from 'react-native';
-import {COLORS, FONTS, LAYOUT} from '../constants/theme';
+import {COLORS, FONTS, LAYOUT} from '../../constants/theme';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import resultModal from './resultModal';
-import {AuthContext} from '../context/AuthContext';
+import {AuthContext} from '../../context/AuthContext';
 import {useNavigation} from '@react-navigation/native';
 
 const superagent = require('superagent').agent();
@@ -53,12 +53,12 @@ const Classes = id => {
               }
             });
         })()
-      : navigation.navigate('LoadingScreen');
+      : navigation.navigate('LogInScreen');
 
     return setRefreshing(false);
   }, [id, refreshing]);
   const clicked = value => {
-    toggleModals.toggleModal2();
+    toggleModals.toggleModalLessonResult();
     setSelectedClass(value);
   };
   const Item = ({title, value, code}) => (

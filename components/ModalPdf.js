@@ -2,8 +2,8 @@ import React, {useContext, useEffect, useState} from 'react';
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {Dimensions} from 'react-native';
 import Pdf from 'react-native-pdf';
-import {COLORS, FONTS, LAYOUT} from '../../constants/theme';
-import {AuthContext} from '../../context/AuthContext';
+import {COLORS, FONTS, LAYOUT} from '../constants/theme';
+import {AuthContext} from '../context/AuthContext';
 
 const ModalPdf = (uri, title, toggle) => {
   const [source, setSource] = useState({});

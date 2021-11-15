@@ -2,6 +2,7 @@ import React, {createContext, useState} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {showMessage} from 'react-native-flash-message';
 import {isNonEmptyString} from '../helpers/checks';
+import SplashScreen from 'react-native-splash-screen';
 
 const cheerio = require('cheerio');
 const request = require('superagent');
@@ -17,6 +18,7 @@ export const AuthProvider = ({children}) => {
   const [isModalVisible3, setModalVisible3] = useState(false);
   const [selectedID, setSelectedID] = useState();
   const [semesterValue, setSemesterValue] = useState([]);
+  const [userData, setUserData] = useState([]);
   const [studentInfo, setStudentInfo] = useState({
     name: '',
     department: '',
@@ -24,15 +26,33 @@ export const AuthProvider = ({children}) => {
     year: '',
     advisor: '',
   });
-  const toggleModal = () => setModalVisible(!isModalVisible);
+  const toggleModalMeal = () => setModalVisible(!isModalVisible);
 
-  const toggleModal2 = () => setModalVisible2(!isModalVisible2);
+  const toggleModalLessonResult = () => setModalVisible2(!isModalVisible2);
 
-  const toggleModal3 = () => setModalVisible3(!isModalVisible3);
+  const toggleModalCalendar = () => setModalVisible3(!isModalVisible3);
+  const storeData = async value => {
+    try {
+      await AsyncStorage.setItem('@loginInfo', value);
+    } catch (e) {
+      // saving error
+      console.log(e);
+    }
+  };
+
+  const removeLoginData = async () => {
+    try {
+      await AsyncStorage.removeItem('@loginInfo');
+    } catch (e) {
+      console.log(e);
+    }
+    console.log('Done.');
+  };
+
   const toggleModals = {
-    toggleModal,
-    toggleModal2,
-    toggleModal3,
+    toggleModalMeal,
+    toggleModalLessonResult,
+    toggleModalCalendar,
   };
   const modalVisibility = {
     isModalVisible,
@@ -59,13 +79,13 @@ export const AuthProvider = ({children}) => {
         );
         const resultScreenData = resultScreen.text;
         const $ = cheerio.load(resultScreenData);
-
         const name = $(
           'body > table:nth-child(4) > tbody > tr:nth-child(2) > td:nth-child(2) > form > table > tbody > tr:nth-child(1) > td:nth-child(3)',
         ).text();
         if (name.length !== 0) {
           states.setError(false);
           states.setAuth(true);
+
           const departmentName = $(
             'body > table:nth-child(4) > tbody > tr:nth-child(2) > td:nth-child(2) > form > table > tbody > tr:nth-child(5) > td:nth-child(3)',
           ).text();
@@ -94,9 +114,11 @@ export const AuthProvider = ({children}) => {
             year,
             advisor,
           });
+          SplashScreen.hide();
         } else {
           states.setAuth(false);
           states.setError(true);
+          SplashScreen.hide();
         }
       })();
     } catch (e) {
@@ -135,14 +157,14 @@ export const AuthProvider = ({children}) => {
                   .set('Content-Type', 'application/x-www-form-urlencoded')
                   .end(async () => {
                     await getData();
-                    error
-                      ? showMessage({
-                          message: 'Giriş yaparken hata oluştu.',
-                          description:
-                            'Lütfen bilgileriniz kontrol edip tekrar deneyiniz',
-                          type: 'danger',
-                        })
-                      : null;
+                    if (states.saveUser && states.auth) {
+                      await storeData(
+                        JSON.stringify({
+                          username,
+                          password,
+                        }),
+                      );
+                    }
                   });
           } catch (e) {
             showMessage('Error while trying to sign in');
@@ -153,8 +175,10 @@ export const AuthProvider = ({children}) => {
             await superagent
               .get('https://debis.deu.edu.tr/php_library/Cikis.php')
               .unset('User-Agent')
-              .then(() => {
+              .then(async () => {
+                await removeLoginData();
                 states.setAuth(false);
+                states.setSaveUser(false);
                 setStudentInfo({
                   name: '',
                   department: '',

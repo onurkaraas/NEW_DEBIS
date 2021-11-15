@@ -18,6 +18,7 @@ const Providers = () => {
         <Routes />
         <FlashMessage position="top" />
         <StatusBar
+          animated={true}
           backgroundColor={
             keyboard.keyboardShown ? COLORS.primary : COLORS.secondary
           }

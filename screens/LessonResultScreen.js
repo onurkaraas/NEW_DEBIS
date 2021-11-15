@@ -2,7 +2,7 @@ import React, {useContext, useEffect, useState} from 'react';
 import {StyleSheet} from 'react-native';
 import {COLORS, FONTS} from '../constants/theme';
 import {View} from 'react-native';
-import Classes from '../dataScrapping/classes';
+import Classes from '../components/dataScrapingComponents/classes';
 import {TopBar} from '../components';
 import {AuthContext} from '../context/AuthContext';
 import RNPickerSelect from 'react-native-picker-select';
@@ -10,13 +10,13 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 
 const LessonResultScreen = () => {
   const {states} = useContext(AuthContext);
+  const {container, pickerView, pickerStyle, pickerContainer} = styles;
   const [pickerData, setPickerData] = useState([]);
   const placeholder = {
     label: 'Ders Seçiniz',
     value: 0,
     key: 0,
   };
-  const {container, pickerView, pickerStyle, pickerContainer} = styles;
   useEffect(() => {
     const data = states.semesterValue.map((item, index) => ({
       label: item[1],
@@ -24,9 +24,8 @@ const LessonResultScreen = () => {
       key: index + 1,
     }));
     setPickerData(data);
-    console.log(pickerData);
   }, []);
-  // );
+
   return (
     <View style={container}>
       {TopBar('Not Bilgileri')}

@@ -6,37 +6,49 @@ import SplashScreen from 'react-native-splash-screen';
 import 'react-native-gesture-handler';
 import {
   Tabs,
-  LoadingScreen,
+  ExitScreen,
   Schedule,
   TranscriptScreen,
   MealMenu,
   VeganMenu,
   LogInScreen,
+  LessonResultScreen,
 } from '../screens';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 const Stack = createStackNavigator();
 
 const Routes = () => {
-  const {states, getData} = useContext(AuthContext);
+  const {states, getData, signIn} = useContext(AuthContext);
+  const getLoginData = async () => {
+    try {
+      const value = await AsyncStorage.getItem('@loginInfo');
+      if (value !== null && states.auth !== true) {
+        const valueObject = JSON.parse(value);
+        console.log(valueObject);
+        await signIn(valueObject);
+      } else {
+        getData();
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
 
   useEffect(() => {
-    getData();
-    SplashScreen.hide();
+    getLoginData();
   }, []);
 
   return (
     <NavigationContainer>
-      {states.auth === null ? (
-        <Stack.Navigator
-          screenOptions={{headerShown: false}}
-          initialRouteName="LoadingScreen">
-          <Stack.Screen name={'LoadingScreen'} component={LoadingScreen} />
-        </Stack.Navigator>
-      ) : states.auth === true ? (
+      {states.auth === true ? (
         <Stack.Navigator
           screenOptions={{headerShown: false}}
           initialRouteName="Tabs">
           <Stack.Screen name={'Tabs'} component={Tabs} />
-          <Stack.Screen name={'Schedule'} component={Schedule} />
+          <Stack.Screen
+            name={'LessonResultScreen'}
+            component={LessonResultScreen}
+          />
           <Stack.Screen
             name={'TranscriptScreen'}
             component={TranscriptScreen}

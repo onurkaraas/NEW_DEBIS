@@ -14,9 +14,9 @@ export const homeButton = (name, category, navigate) => {
       style={pressableStyles}
       onPress={
         category === 'Yemek Menusu'
-          ? toggleModals.toggleModal
+          ? toggleModals.toggleModalMeal
           : category === 'Akademik Takvim'
-          ? toggleModals.toggleModal3
+          ? toggleModals.toggleModalCalendar
           : () => navigation.navigate(navigate)
       }>
       <View style={container}>

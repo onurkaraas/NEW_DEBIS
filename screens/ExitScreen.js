@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useContext, useEffect} from 'react';
 import {
   ActivityIndicator,
   Dimensions,
@@ -11,8 +11,14 @@ import {SafeAreaView} from 'react-native-safe-area-context';
 
 import FastImage from 'react-native-fast-image';
 import {COLORS, FONTS} from '../constants/theme';
-const LoadingScreen = () => {
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {AuthContext} from '../context/AuthContext';
+const ExitScreen = () => {
+  const {signOut, states} = useContext(AuthContext);
   const {container, image, textStyle, textContainer} = styles;
+  useEffect(() => {
+    signOut();
+  });
   return (
     <SafeAreaView style={container}>
       <FastImage
@@ -24,7 +30,7 @@ const LoadingScreen = () => {
         resizeMode={'contain'}
       />
       <View style={textContainer}>
-        <Text style={textStyle}>Giriş Bilgileriniz Kontrol Ediliyor</Text>
+        <Text style={textStyle}>Çıkış Yapılıyor </Text>
         <ActivityIndicator size={60} colo={'blue'} />
       </View>
     </SafeAreaView>
@@ -52,4 +58,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default LoadingScreen;
+export default ExitScreen;

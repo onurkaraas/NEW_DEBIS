@@ -9,10 +9,10 @@ import {
 } from 'react-native';
 import {useDimensions} from '@react-native-community/hooks';
 import {showMessage} from 'react-native-flash-message';
-import {COLORS, FONTS, LAYOUT} from '../constants/theme';
+import {COLORS, FONTS, LAYOUT} from '../../constants/theme';
 import Modal from 'react-native-modal';
 import {Col, Row, Table, TableWrapper} from 'react-native-table-component';
-import {AuthContext} from '../context/AuthContext';
+import {AuthContext} from '../../context/AuthContext';
 
 const cheerio = require('cheerio');
 const request = require('superagent');
@@ -71,7 +71,7 @@ const resultModal = (selectClass, id) => {
   const {modalVisibility, toggleModals} = useContext(AuthContext);
   const {width, height} = useDimensions().window;
   const visible = () => {
-    toggleModals.toggleModal2();
+    toggleModals.toggleModalLessonResult();
     dispatch({type: ACTIONS.DONE});
   };
 
@@ -162,7 +162,7 @@ const resultModal = (selectClass, id) => {
         datas[0].length === 0
           ? height * 0.5
           : datas[0].length <= 4
-          ? height * (datas[0].length * 0.1)
+          ? height * (datas[0].length * 0.09)
           : height * (datas[0].length * 0.08),
       justifyContent: 'center',
     },
@@ -192,6 +192,8 @@ const resultModal = (selectClass, id) => {
       {loading ? (
         <View style={{...LAYOUT.setFlex1, ...LAYOUT.justifyCenter}}>
           <Modal
+            useNativeDriver={true}
+            hideModalContentWhileAnimating={true}
             useNativeDriverForBackdrop={true}
             backdropOpacity={0.4}
             isVisible={true}>
@@ -200,10 +202,11 @@ const resultModal = (selectClass, id) => {
         </View>
       ) : modalVisibility.isModalVisible2 ? (
         <Modal
+          useNativeDriver={true}
           useNativeDriverForBackdrop={true}
           hideModalContentWhileAnimating={true}
           backdropOpacity={0.4}
-          onBackdropPress={toggleModals.toggleModal2}
+          onBackdropPress={toggleModals.toggleModalLessonResult}
           isVisible={modalVisibility.isModalVisible2}>
           <View>
             <View
@@ -234,11 +237,7 @@ const resultModal = (selectClass, id) => {
                           : text2,
                       ]}
                     />
-                    <Row
-                      data={tableHead}
-                      style={head}
-                      textStyle={text}
-                    />
+                    <Row data={tableHead} style={head} textStyle={text} />
                     <TableWrapper
                       style={{
                         ...wrapper,
@@ -273,9 +272,7 @@ const resultModal = (selectClass, id) => {
               <TouchableOpacity
                 style={[
                   openButton,
-                  result[0] === 'BAŞARISIZ'
-                    ? buttonRed
-                    : buttonGreen,
+                  result[0] === 'BAŞARISIZ' ? buttonRed : buttonGreen,
                 ]}
                 onPress={visible}>
                 <Text

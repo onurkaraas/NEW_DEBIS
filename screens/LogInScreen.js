@@ -1,6 +1,30 @@
-import React, {useState, useContext} from 'react';
+import React, {useState, useContext, useRef, useEffect} from 'react';
 import {Button, Switch, Input} from 'react-native-elements';
-import {Text, View, Animated, StyleSheet} from 'react-native';
+import {
+  Text,
+  View,
+  StyleSheet,
+  KeyboardAvoidingView,
+  ScrollView,
+  Platform,
+} from 'react-native';
+import Animated, {
+  Easing,
+  EasingNode,
+  Extrapolate,
+  FadeIn,
+  FadeInLeft,
+  FadeOutLeft,
+  FadeOutUp,
+  interpolate,
+  useAnimatedStyle,
+  useSharedValue,
+  withDelay,
+  withRepeat,
+  withSpring,
+  withTiming,
+} from 'react-native-reanimated';
+
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import FastImage from 'react-native-fast-image';
 import {SafeAreaView} from 'react-native-safe-area-context';
@@ -10,17 +34,32 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {COLORS, FONTS, LAYOUT, SHADOWS} from '../constants/theme';
 import {AuthContext} from '../context/AuthContext';
 import {TopBar} from '../components';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 
 const LogInScreen = () => {
   const {signIn, states} = useContext(AuthContext);
+
+  const {width, height} = useDimensions().window;
+
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [secureText, setSecureText] = useState(true);
+  const keyboard = useKeyboard();
+  const scale = useSharedValue(1);
+  const scale2 = useSharedValue(0.1);
+  const scaleFlex = useSharedValue(0.1);
+  const scaleView = useSharedValue(1);
+  const scaleInputView = useSharedValue(1);
+
   const saveUserSwitch = () =>
     states.setSaveUser(previousState => !previousState);
   const secureTextToggle = () => setSecureText(previousState => !previousState);
-  const {width, height} = useDimensions().window;
-  const keyboard = useKeyboard();
+  const AnimatedFastImage = Animated.createAnimatedComponent(FastImage);
+  const AnimatedKeyboardAvoidingView = Animated.createAnimatedComponent(KeyboardAvoidingView);
+
+
+  // animete
+
   const {
     container,
     inputContainer,
@@ -29,25 +68,92 @@ const LogInScreen = () => {
     inputPasswordIcon,
     saveText,
   } = styles;
+
+  const reanimatedStyle = useAnimatedStyle(() => {
+    return {
+      transform: [
+        {
+          scale: withSpring(scale.value),
+        },
+        {translateY: withSpring(scaleView.value)},
+      ],
+    };
+  }, [keyboard.keyboardShown]);
+  const reanimatedInputContainer = useAnimatedStyle(() => {
+    return {
+      transform: [
+        {
+          translateY: withSpring(scaleView.value),
+        },
+      ],
+    };
+  }, [keyboard.keyboardShown]);
+
+  const reanimatedStyleTopBar = useAnimatedStyle(() => {
+    return {
+      transform: [{scale: scale2.value}],
+      height: scale2.value,
+      flex: scaleFlex.value,
+    };
+  }, []);
+  const reanimatedView = useAnimatedStyle(() => {
+    return {
+      flex: scaleView.value,
+    };
+  }, []);
+  useEffect(() => {
+    scale2.value = withTiming(keyboard.keyboardShown ? 0 : 1, {
+      duration: 0,
+      easing: Easing.inOut(Easing.linear),
+    });
+
+    scaleFlex.value = withTiming(keyboard.keyboardShown ? 0.1 : 0.1, {
+      duration: 0,
+      easing: Easing.inOut(Easing.linear),
+    });
+    scaleView.value = withDelay(
+      0,
+      withTiming(keyboard.keyboardShown ? -(height * 0.20) : 1, {
+        duration: 0,
+        easing: Easing.inOut(Easing.linear),
+      }),
+    );
+    scale.value = withDelay(
+      0,
+      withTiming(keyboard.keyboardShown ? 0.75 : 1, {
+        duration: 0,
+        easing: Easing.inOut(Easing.circle),
+      }),
+    );
+  }, [keyboard.keyboardShown]);
   return (
-    <SafeAreaView style={container}>
-      {TopBar('Lütfen Giriş Yapınız')}
-      <View style={{...LAYOUT.setFlex1, ...LAYOUT.alignCenter}}>
-        <Animated.View style={{...LAYOUT.setFlex1, ...LAYOUT.justifyCenter}}>
-          <FastImage
-            style={{
-              width: keyboard.keyboardShown ? width * 0.55 : width * 0.7,
-              height: keyboard.keyboardShown ? width * 0.55 : width * 0.7,
-            }}
+    <KeyboardAvoidingView
+      keyboardVerticalOffset={1}
+      enabled={false}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      style={container}>
+      <Animated.View style={[{flex: 0.1, height: 0.1}, reanimatedStyleTopBar]}>
+        {TopBar('Lütfen Giriş Yapınız')}
+      </Animated.View>
+      <View style={{...LAYOUT.alignCenter, flex: 1}}>
+        <View style={{flex: 1, ...LAYOUT.justifyCenter}}>
+          <AnimatedFastImage
+            style={[
+              {
+                width: width * 0.7,
+                height: width * 0.7,
+              },
+              reanimatedStyle,
+            ]}
             source={{
               uri: 'https://cdn.freelogovectors.net/wp-content/uploads/2020/03/Dokuz_Eylul_Universitesi_Logo.png',
               priority: FastImage.priority.normal,
             }}
             resizeMode={'stretch'}
           />
-        </Animated.View>
+        </View>
 
-        <View style={inputContainer}>
+        <View style={{...inputContainer}}>
           <Input
             onChangeText={setUsername}
             defaultValue={username}
@@ -59,12 +165,12 @@ const LogInScreen = () => {
               borderRadius: 12,
               ...SHADOWS.input,
               backgroundColor: COLORS.primary,
-              height: keyboard.keyboardShown ? height * 0.1 : height * 0.095,
-              width: keyboard.keyboardShown ? width * 0.95 : width * 0.925,
+              height: height * 0.095,
+              width: width * 0.925,
             }}
             style={{
-              height: keyboard.keyboardShown ? height * 0.1 : height * 0.095,
-              width: keyboard.keyboardShown ? width * 0.95 : width * 0.925,
+              height: height * 0.095,
+              width: width * 0.925,
               flex: 1,
               borderRadius: 12,
               padding: 8,
@@ -90,13 +196,13 @@ const LogInScreen = () => {
               ...SHADOWS.input,
               marginBottom: keyboard.keyboardShown ? 8 : 16,
               borderRadius: 12,
-              height: keyboard.keyboardShown ? height * 0.1 : height * 0.095,
-              width: keyboard.keyboardShown ? width * 0.95 : width * 0.925,
+              height: height * 0.095,
+              width: width * 0.925,
               backgroundColor: COLORS.primary,
             }}
             style={{
-              height: keyboard.keyboardShown ? height * 0.095 : height * 0.1,
-              width: keyboard.keyboardShown ? width * 0.925 : width * 0.95,
+              height: height * 0.1,
+              width: width * 0.95,
               flex: 1,
               borderRadius: 12,
               padding: 8,
@@ -169,7 +275,7 @@ const LogInScreen = () => {
           </View>
         </View>
       </View>
-    </SafeAreaView>
+    </KeyboardAvoidingView>
   );
 };
 const styles = StyleSheet.create({

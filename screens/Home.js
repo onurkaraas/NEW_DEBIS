@@ -8,7 +8,7 @@ import {COLORS, LAYOUT} from '../constants/theme';
 import {TopBar, infoTable, homeButton, renderPdf} from '../components';
 
 import {
-  LoadingScreen,
+  ExitScreen,
   TranscriptScreen,
   LessonResultScreen,
   Schedule,
@@ -29,38 +29,39 @@ const Home = () => {
       <View style={buttonContainer}>
         <View style={buttonFlexStyle}>
           {homeButton('calendar', 'Akademik Takvim')}
-          {homeButton('calendar-remove', 'Devamsizlik', renderPdf)}
+          {homeButton('file-document', 'Transcript', TranscriptScreen)}
           {homeButton('calendar-check', 'Ders Programi', Schedule)}
         </View>
 
         <View style={buttonFlexStyle}>
           {homeButton('food', 'Yemek Menusu')}
-          {homeButton('message-draw', 'Mesajlar', LoadingScreen)}
+          {homeButton('message-draw', 'Mesajlar', ExitScreen)}
           {homeButton('alpha-a-box', 'Not Bilgisi', LessonResultScreen)}
         </View>
-        <Button onPress={() => signOut()} title={'qeqweqw'} />
         <Modal
+          useNativeDriver={true}
           hideModalContentWhileAnimating={true}
           isVisible={modalVisibility.isModalVisible}
           backdropOpacity={0.6}
-          onBackdropPress={toggleModals.toggleModal}>
+          onBackdropPress={toggleModals.toggleModalMeal}>
           <View style={{...LAYOUT.setFlex1, ...LAYOUT.justifyCenter}}>
-            {ModalPdf({uri}, 'Yemek Menusu', toggleModals.toggleModal)}
+            {ModalPdf({uri}, 'Yemek Menusu', toggleModals.toggleModalMeal)}
           </View>
         </Modal>
 
         <Modal
+          useNativeDriver={true}
           hideModalContentWhileAnimating={true}
           isVisible={modalVisibility.isModalVisible3}
           backdropOpacity={0.6}
-          onBackdropPress={toggleModals.toggleModal3}>
+          onBackdropPress={toggleModals.toggleModalCalendar}>
           <View style={{...LAYOUT.setFlex1, ...LAYOUT.justifyCenter}}>
             {ModalPdf(
               {
                 uri: 'https://ogrenci.deu.edu.tr/wp-content/uploads/2021/08/2021-2022-Akademik-Takvim.pdf',
               },
               'Akademik Takvim',
-              toggleModals.toggleModal3,
+              toggleModals.toggleModalCalendar,
             )}
           </View>
         </Modal>

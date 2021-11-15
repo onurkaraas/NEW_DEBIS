@@ -8,20 +8,21 @@ import {COLORS} from '../constants/theme';
 import TranscriptScreen from '../screens/TranscriptScreen';
 import LessonResultScreen from '../screens/LessonResultScreen';
 import Home from '../screens/Home';
+import {ExitScreen} from '../screens';
 
 const Tab = createMaterialBottomTabNavigator();
 
 const Tabs = () => {
   const window = useWindowDimensions();
   const icons = {
-    Home: 'home-outline',
-    TranscriptScreen: 'file-document',
-    LessonResultScreen: 'alpha-a-box',
+    Anasayfa: 'home-outline',
+    Çıkış: 'exit-to-app',
   };
   return (
     <Tab.Navigator
       activeColor={COLORS.green}
       inactiveColor={'#96A7AF'}
+      tabBarShowLabel={false}
       barStyle={{
         backgroundColor: COLORS.secondary,
         height: window.height * 0.09,
@@ -31,7 +32,6 @@ const Tabs = () => {
         borderTopRightRadius: 25,
         justifyContent: 'center',
       }}
-      labeled={false}
       screenOptions={({route}) => ({
         tabBarIcon: ({color, size}) => {
           return (
@@ -43,9 +43,8 @@ const Tabs = () => {
           );
         },
       })}>
-      <Tab.Screen name="Home" component={Home} />
-      <Tab.Screen name="TranscriptScreen" component={TranscriptScreen} />
-      <Tab.Screen name="LessonResultScreen" component={LessonResultScreen} />
+      <Tab.Screen name="Anasayfa" component={Home} />
+      <Tab.Screen name="Çıkış" component={ExitScreen} />
     </Tab.Navigator>
   );
 };
