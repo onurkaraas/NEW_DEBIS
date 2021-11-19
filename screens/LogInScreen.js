@@ -37,6 +37,8 @@ import {TopBar} from '../components';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 
 const LogInScreen = () => {
+  const AnimatedFastImage = Animated.createAnimatedComponent(FastImage);
+
   const {signIn, states} = useContext(AuthContext);
 
   const {width, height} = useDimensions().window;
@@ -54,9 +56,6 @@ const LogInScreen = () => {
   const saveUserSwitch = () =>
     states.setSaveUser(previousState => !previousState);
   const secureTextToggle = () => setSecureText(previousState => !previousState);
-  const AnimatedFastImage = Animated.createAnimatedComponent(FastImage);
-  const AnimatedKeyboardAvoidingView = Animated.createAnimatedComponent(KeyboardAvoidingView);
-
 
   // animete
 
@@ -69,82 +68,20 @@ const LogInScreen = () => {
     saveText,
   } = styles;
 
-  const reanimatedStyle = useAnimatedStyle(() => {
-    return {
-      transform: [
-        {
-          scale: withSpring(scale.value),
-        },
-        {translateY: withSpring(scaleView.value)},
-      ],
-    };
-  }, [keyboard.keyboardShown]);
-  const reanimatedInputContainer = useAnimatedStyle(() => {
-    return {
-      transform: [
-        {
-          translateY: withSpring(scaleView.value),
-        },
-      ],
-    };
-  }, [keyboard.keyboardShown]);
-
-  const reanimatedStyleTopBar = useAnimatedStyle(() => {
-    return {
-      transform: [{scale: scale2.value}],
-      height: scale2.value,
-      flex: scaleFlex.value,
-    };
-  }, []);
-  const reanimatedView = useAnimatedStyle(() => {
-    return {
-      flex: scaleView.value,
-    };
-  }, []);
-  useEffect(() => {
-    scale2.value = withTiming(keyboard.keyboardShown ? 0 : 1, {
-      duration: 0,
-      easing: Easing.inOut(Easing.linear),
-    });
-
-    scaleFlex.value = withTiming(keyboard.keyboardShown ? 0.1 : 0.1, {
-      duration: 0,
-      easing: Easing.inOut(Easing.linear),
-    });
-    scaleView.value = withDelay(
-      0,
-      withTiming(keyboard.keyboardShown ? -(height * 0.20) : 1, {
-        duration: 0,
-        easing: Easing.inOut(Easing.linear),
-      }),
-    );
-    scale.value = withDelay(
-      0,
-      withTiming(keyboard.keyboardShown ? 0.75 : 1, {
-        duration: 0,
-        easing: Easing.inOut(Easing.circle),
-      }),
-    );
-  }, [keyboard.keyboardShown]);
   return (
-    <KeyboardAvoidingView
-      keyboardVerticalOffset={1}
-      enabled={false}
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+    <View
+
       style={container}>
-      <Animated.View style={[{flex: 0.1, height: 0.1}, reanimatedStyleTopBar]}>
+      <View style={{flex: 0.1, height: 0.1}}>
         {TopBar('Lütfen Giriş Yapınız')}
-      </Animated.View>
+      </View>
       <View style={{...LAYOUT.alignCenter, flex: 1}}>
         <View style={{flex: 1, ...LAYOUT.justifyCenter}}>
-          <AnimatedFastImage
-            style={[
-              {
-                width: width * 0.7,
-                height: width * 0.7,
-              },
-              reanimatedStyle,
-            ]}
+          <FastImage
+            style={{
+              width: width * 0.7,
+              height: width * 0.7,
+            }}
             source={{
               uri: 'https://cdn.freelogovectors.net/wp-content/uploads/2020/03/Dokuz_Eylul_Universitesi_Logo.png',
               priority: FastImage.priority.normal,
@@ -152,7 +89,6 @@ const LogInScreen = () => {
             resizeMode={'stretch'}
           />
         </View>
-
         <View style={{...inputContainer}}>
           <Input
             onChangeText={setUsername}
@@ -194,7 +130,7 @@ const LogInScreen = () => {
             inputContainerStyle={inputContainerStyle}
             containerStyle={{
               ...SHADOWS.input,
-              marginBottom: keyboard.keyboardShown ? 8 : 16,
+              marginBottom: 8,
               borderRadius: 12,
               height: height * 0.095,
               width: width * 0.925,
@@ -236,31 +172,29 @@ const LogInScreen = () => {
               marginTop: 10,
               alignItems: 'center',
             }}>
-            <View>
-              <Button
-                title={'Giriş Yap'}
-                buttonStyle={{
-                  backgroundColor: COLORS.green,
-                  borderRadius: 10,
-                  height: height * 0.07,
-                  width: width * 0.7,
-                }}
-                titleStyle={{
-                  ...FONTS.h2,
-                  fontWeight: 'bold',
-                }}
-                icon={
-                  <MaterialCommunityIcons
-                    name={'arrow-right'}
-                    color={COLORS.white}
-                    size={26}
-                    style={{padding: 8}}
-                  />
-                }
-                iconPosition={'right'}
-                onPress={() => signIn({username, password})}
-              />
-            </View>
+            <Button
+              title={'Giriş Yap'}
+              buttonStyle={{
+                backgroundColor: COLORS.green,
+                borderRadius: 10,
+                height: height * 0.07,
+                width: width * 0.7,
+              }}
+              titleStyle={{
+                ...FONTS.h2,
+                fontWeight: 'bold',
+              }}
+              icon={
+                <MaterialCommunityIcons
+                  name={'arrow-right'}
+                  color={COLORS.white}
+                  size={26}
+                  style={{padding: 8}}
+                />
+              }
+              iconPosition={'right'}
+              onPress={() => console.log('SA')}
+            />
           </View>
           <View style={{alignItems: 'flex-end', padding: 12}}>
             <View style={{flexDirection: 'row', alignItems: 'flex-end'}}>
@@ -275,7 +209,7 @@ const LogInScreen = () => {
           </View>
         </View>
       </View>
-    </KeyboardAvoidingView>
+    </View>
   );
 };
 const styles = StyleSheet.create({
