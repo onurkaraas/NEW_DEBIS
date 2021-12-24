@@ -247,8 +247,8 @@ const styles = StyleSheet.create({
     width:  Dimensions.get('screen').width * 0.925,
   },
   inputStyle:{
-    height: height * 0.095,
-    width: width * 0.925,
+    height: Dimensions.get('screen').height * 0.095,
+    width: Dimensions.get('screen').width * 0.925,
     flex: 1,
     borderRadius: 12,
     padding: 8,

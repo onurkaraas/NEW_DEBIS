@@ -38,41 +38,6 @@ export const SIZES = {
   width,
   height,
 };
-export const FONTS = {
-  largeTitle: {
-    fontFamily: 'SF-Pro-Display-Bold',
-    fontSize: SIZES.largeTitle,
-    lineHeight: 55,
-  },
-  h1: {fontFamily: 'SF-Pro-Display-Bold', fontSize: SIZES.h1, lineHeight: 36},
-  h2: {fontFamily: 'SF-Pro-Display-Bold', fontSize: SIZES.h2, lineHeight: 30},
-  h3: {fontFamily: 'SF-Pro-Display-Bold', fontSize: SIZES.h3, lineHeight: 22},
-  h4: {
-    fontFamily: 'SF-Pro-Display-Medium',
-    fontSize: SIZES.h4,
-    lineHeight: 22,
-  },
-  body1: {
-    fontFamily: 'SF-Pro-Display-Medium',
-    fontSize: SIZES.body1,
-    lineHeight: 36,
-  },
-  body2: {
-    fontFamily: 'SF-Pro-Display-Medium',
-    fontSize: SIZES.body2,
-    lineHeight: 30,
-  },
-  body3: {
-    fontFamily: 'SF-Pro-Display-Medium',
-    fontSize: SIZES.body3,
-    lineHeight: 22,
-  },
-  body4: {
-    fontFamily: 'SF-Pro-Display-Medium',
-    fontSize: SIZES.body4,
-    lineHeight: 22,
-  },
-};
 export const SHADOWS = {
   shadow1: {
     shadowColor: '#000',
@@ -95,6 +60,41 @@ export const SHADOWS = {
     elevation: 5,
   },
 };
+export const FONTS = {
+  largeTitle: {
+    fontFamily: "SF-Pro-Display",
+    fontSize: SIZES.largeTitle,
+    lineHeight: 55,
+  },
+  h1: { fontFamily: "SF-Pro-Display-Bold", fontSize: SIZES.h1, lineHeight: 36 },
+  h2: { fontFamily: "SF-Pro-Display-Bold", fontSize: SIZES.h2, lineHeight: 30 },
+  h3: { fontFamily: "SF-Pro-Display-Bold", fontSize: SIZES.h3, lineHeight: 22 },
+  h4: {
+    fontFamily: "SF-Pro-Display-Medium",
+    fontSize: SIZES.h4,
+    lineHeight: 22,
+  },
+  body1: {
+    fontFamily: "SF-Pro-Display-Medium",
+    fontSize: SIZES.body1,
+    lineHeight: 36,
+  },
+  body2: {
+    fontFamily: "SF-Pro-Display-Medium",
+    fontSize: SIZES.body2,
+    lineHeight: 30,
+  },
+  body3: {
+    fontFamily: "SF-Pro-Display-Medium",
+    fontSize: SIZES.body3,
+    lineHeight: 22,
+  },
+  body4: {
+    fontFamily: "SF-Pro-Display-Medium",
+    fontSize: SIZES.body4,
+    lineHeight: 22,
+  },
+};
 export const LAYOUT = {
   alignCenter: {
     alignItems: 'center',
@@ -109,6 +109,6 @@ export const LAYOUT = {
     marginBottom: Dimensions.get('window').height * 0.09,
   },
 };
-const appTheme = {COLORS, SIZES, FONTS, SHADOWS};
+const appTheme = {COLORS, SIZES, SHADOWS, FONTS, LAYOUT};
 
 export default appTheme;
