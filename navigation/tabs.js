@@ -2,13 +2,9 @@ import React from 'react';
 import 'react-native-gesture-handler';
 import {useWindowDimensions} from 'react-native';
 import {createMaterialBottomTabNavigator} from '@react-navigation/material-bottom-tabs';
-
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {COLORS} from '../constants/theme';
-import TranscriptScreen from '../screens/TranscriptScreen';
-import LessonResultScreen from '../screens/LessonResultScreen';
-import Home from '../screens/Home';
-import {ExitScreen} from '../screens';
+import {ExitScreen,Home} from '../screens';
 
 const Tab = createMaterialBottomTabNavigator();
 

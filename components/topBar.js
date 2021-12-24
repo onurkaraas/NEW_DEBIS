@@ -7,14 +7,14 @@ export const TopBar = headerTitle => {
   const {width, height} = useDimensions().window;
   const {states} = useContext(AuthContext);
   const {container, textContainer, textStyle} = styles;
-  const keyboard = useKeyboard();
+    const keyboard = useKeyboard();
 
   return (
     <View
       style={{
         ...container,
         width: width,
-        height: height * 0.1,
+        height: keyboard.keyboardShown ? 0 : height * 0.1,
         justifyContent:
           states.studentInfo.name.length === 0 ? 'center' : 'space-between',
       }}>

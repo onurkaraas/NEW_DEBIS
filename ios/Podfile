@@ -16,6 +16,8 @@ target 'NEW_DEBIS' do
 
   pod 'react-native-blob-util', :path => '../node_modules/react-native-blob-util'
 
+  pod 'RNCAsyncStorage', :path => '../node_modules/@react-native-async-storage/async-storage'
+
   target 'NEW_DEBISTests' do
     inherit! :complete
     # Pods for testing

@@ -1,17 +1,22 @@
 import React, {useContext, useEffect, useState} from 'react';
-import {StyleSheet} from 'react-native';
+import {StyleSheet, Text} from 'react-native';
 import {COLORS, FONTS} from '../constants/theme';
 import {View} from 'react-native';
 import Classes from '../components/dataScrapingComponents/classes';
-import {TopBar} from '../components';
+import {screenTopBar} from '../components';
 import {AuthContext} from '../context/AuthContext';
 import RNPickerSelect from 'react-native-picker-select';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import {useDimensions, useKeyboard} from '@react-native-community/hooks';
+import {Button, IconButton} from 'react-native-paper';
+import {useNavigation} from '@react-navigation/native';
 
 const LessonResultScreen = () => {
   const {states} = useContext(AuthContext);
   const {container, pickerView, pickerStyle, pickerContainer} = styles;
   const [pickerData, setPickerData] = useState([]);
+  const navigation = useNavigation();
+
   const placeholder = {
     label: 'Ders Seçiniz',
     value: 0,
@@ -25,10 +30,12 @@ const LessonResultScreen = () => {
     }));
     setPickerData(data);
   }, []);
+  const keyboard = useKeyboard();
+  const {width, height} = useDimensions().window;
 
   return (
     <View style={container}>
-      {TopBar('Not Bilgileri')}
+      {screenTopBar('Not Bilgisi')}
       <View style={pickerContainer}>
         <View style={pickerView}>
           <RNPickerSelect

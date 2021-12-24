@@ -58,7 +58,6 @@ const userDetailsReducer = (state, action) => {
 
 const initialState = {
   datas: [''],
-  tableHead: ['Sinav', 'Sinif Ort.', 'ORT2*', 'Notunuz'],
   result: '',
   name: '',
   loading: null,
@@ -67,7 +66,7 @@ const initialState = {
 
 const resultModal = (selectClass, id) => {
   const [state, dispatch] = useReducer(userDetailsReducer, initialState);
-  const {datas, tableHead, result, name, loading} = state;
+  const {datas, result, name, loading} = state;
   const {modalVisibility, toggleModals} = useContext(AuthContext);
   const {width, height} = useDimensions().window;
   const visible = () => {
@@ -106,6 +105,7 @@ const resultModal = (selectClass, id) => {
           'body > table:nth-child(4) > tbody > tr:nth-child(2) > td:nth-child(2) > table:nth-child(3) > tbody > tr:nth-child(3) > td > table:nth-child(1) > tbody > tr:nth-child(1)',
         );
         const reso = [];
+        const announceDate = [];
         const examNames = [];
         const classAverages = [];
         const finalAverages = [];
@@ -120,6 +120,7 @@ const resultModal = (selectClass, id) => {
           const classAverage = $$$(tds[2]).text();
           const finalAverage = $$$(tds[3]).text();
           const studentResult = $$$(tds[4]).text();
+          announceDate.push(listingDate);
           examNames.push(examName);
           classAverages.push(classAverage);
           finalAverages.push(finalAverage);
@@ -152,6 +153,7 @@ const resultModal = (selectClass, id) => {
 
   const modalStyles = {
     colStyle: {
+      marginTop: 8,
       marginBottom: 6,
       width: width * 0.2,
       height: height * (datas[0].length * 0.06),
@@ -162,11 +164,12 @@ const resultModal = (selectClass, id) => {
         datas[0].length === 0
           ? height * 0.5
           : datas[0].length <= 4
-          ? height * (datas[0].length * 0.09)
-          : height * (datas[0].length * 0.08),
+          ? height * (datas[0].length * 0.1025)
+          : height * (datas[0].length * 0.0925),
       justifyContent: 'center',
     },
   };
+
   const {
     container,
     head,
@@ -186,6 +189,7 @@ const resultModal = (selectClass, id) => {
     textGreen,
     textRed,
   } = styles;
+  const tableHead = ['Sinav', 'Sinif Ort.', 'ORT2*', 'Notunuz'];
 
   return (
     <View style={{flex: 1}}>
@@ -308,7 +312,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 2,
     borderColor: 'white',
     padding: 12,
-    marginBottom: 6,
+
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 25,
@@ -356,6 +360,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 4,
     fontWeight: 'bold',
     textAlign: 'center',
+    alignItems: 'center',
   },
   modalView: {
     backgroundColor: COLORS.gray,

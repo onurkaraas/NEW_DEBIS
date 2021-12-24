@@ -118,15 +118,22 @@ export const AuthProvider = ({children}) => {
         } else {
           states.setAuth(false);
           states.setError(true);
+          showMessage({
+            message: 'Hata',
+            description: 'Beklenmedik bir hata oluştu.',
+            type: 'danger',
+          });
           SplashScreen.hide();
         }
       })();
     } catch (e) {
-      showMessage({
-        message: 'Hata',
-        description: 'Beklenmedik bir hata oluştu.',
-        type: 'danger',
-      });
+      if (e) {
+        showMessage({
+          message: 'Hata',
+          description: 'Beklenmedik bir hata oluştu.',
+          type: 'danger',
+        });
+      }
     }
   };
 
@@ -149,7 +156,7 @@ export const AuthProvider = ({children}) => {
                   .post('https://debis.deu.edu.tr/debis.php')
                   .unset('User-Agent')
                   .send({
-                    username: `${username}`,
+                    username: `${username.toLowerCase()}`,
                     password: `${password}`,
                     emailHost: 'ogr.deu.edu.tr',
                     tamam: 'Gonder',
@@ -167,7 +174,11 @@ export const AuthProvider = ({children}) => {
                     }
                   });
           } catch (e) {
-            showMessage('Error while trying to sign in');
+            showMessage({
+              message: 'Hata',
+              description: 'Beklenmedik bir hata oluştu.',
+              type: 'danger',
+            });
           }
         },
         signOut: async () => {

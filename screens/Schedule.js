@@ -1,42 +1,51 @@
 import React, {useEffect, useState} from 'react';
 
 import {ScrollView, Text, View} from 'react-native';
-import {TopBar} from '../components';
+import {screenTopBar, TopBar} from '../components';
 import {COLORS} from '../constants/theme';
 const cheerio = require('cheerio');
 const request = require('superagent');
 const superagent = request.agent();
 const Schedule = () => {
-  const [c, setC] = useState('');
   useEffect(() => {
     (async () => {
-      let schedule = await superagent
-        .post('https://online.deu.edu.tr/portal/xlogin')
+      await superagent
+        .post(
+          'https://debis.deu.edu.tr/OgrenciIsleri/Ogrenci/DersProgrami/index.php',
+        )
         .send({
-          eid: '2015469025@ogr.deu.edu.tr',
-          pw: '080103003On',
-          submit: 'Giriş'
-        }).set('Content-Type', 'application/x-www-form-urlencoded')
+          ogretim_donemi_id: '283',
+          hafta: '29%2F11%2F2021-04%2F12%2F2021',
+        })  .set('Content-Type', 'application/x-www-form-urlencoded')
 
-        .end((err, res) => {
-          console.log(res);
-          console.log(err);
+        .end(async (err, res) => {
+          // console.log(err);
+          const exp = await res.text;
+          const $$ = await  cheerio.load(exp);
+          const reso = [];
+          const hours = await $$(
+            'body',
+          );
 
+        await  console.log(exp);
+          $$(hours).each((index, element) => {
+            const tds = $$(element).find('table tbody tr td ');
+            //3 4 5
+            const ress = $$(tds[0]).text();
 
+            reso.push(ress);
+          });
         });
-
-      const exp = schedule.text;
-      const $ = cheerio.load(exp);
-      const hours = $('option:nth-child(1)');
-      console.log(exp);
     })();
   }, []);
 
+  // parse HTML
+
   return (
     <View style={{flex: 1, backgroundColor: COLORS.primary}}>
-      {TopBar('Ders Programı')}
+      {screenTopBar('Ders Programı')}
       <ScrollView style={{flex: 1}}>
-        <Text style={{color: 'white'}}>{c}</Text>
+        <Text style={{color: 'white'}}>qwe</Text>
       </ScrollView>
     </View>
   );

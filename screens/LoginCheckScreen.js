@@ -7,16 +7,33 @@ import {
   View,
 } from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
-
 import FastImage from 'react-native-fast-image';
 import {COLORS, FONTS} from '../constants/theme';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import {AuthContext} from '../context/AuthContext';
-const ExitScreen = () => {
-  const {signOut, states} = useContext(AuthContext);
+import {useNavigation} from "@react-navigation/native";
+const LoginCheckScreen = () => {
+  const {getData, signIn, states} = useContext(AuthContext);
   const {container, image, textStyle, textContainer} = styles;
-useEffect(() => {
-  signOut()
-})
+  const navigation = useNavigation();
+
+  const getLoginData = async () => {
+    try {
+      const value = await AsyncStorage.getItem('@loginInfo');
+      if (value !== null && states.auth !== true) {
+        const valueObject = JSON.parse(value);
+        await signIn(valueObject);
+      } else {
+        getData();
+        navigation.navigate('LogInScreen');
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
+  useEffect(() => {
+    getLoginData().catch(e => console.log(e));
+  }, []);
   return (
     <SafeAreaView style={container}>
       <FastImage
@@ -28,7 +45,7 @@ useEffect(() => {
         resizeMode={'contain'}
       />
       <View style={textContainer}>
-        <Text style={textStyle}>Çıkış Yapılıyor </Text>
+        <Text style={textStyle}>Bilgileriniz Kontrol Ediliyor</Text>
         <ActivityIndicator size={60} colo={'blue'} />
       </View>
     </SafeAreaView>
@@ -53,9 +70,8 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom:Dimensions.get('window').height *0.09,
-
+    marginBottom: Dimensions.get('window').height * 0.09,
   },
 });
 
-export default ExitScreen;
+export default LoginCheckScreen;

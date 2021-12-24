@@ -5,6 +5,7 @@ import {TouchableOpacity} from 'react-native-gesture-handler';
 import resultModal from './resultModal';
 import {AuthContext} from '../../context/AuthContext';
 import {useNavigation} from '@react-navigation/native';
+import {showMessage} from 'react-native-flash-message';
 
 const superagent = require('superagent').agent();
 const cheerio = require('cheerio');
@@ -33,7 +34,11 @@ const Classes = id => {
             .set('Content-Type', 'application/x-www-form-urlencoded')
             .end(async (err, res) => {
               if (err) {
-                console.log(err, 'Error while get lessons');
+                showMessage({
+                  message: 'Hata',
+                  description: 'Beklenmedik bir hata oluştu.',
+                  type: 'danger',
+                });
               }
               const pickSemesterData = await res.text;
               const $ = await cheerio.load(`${pickSemesterData}`);
@@ -49,6 +54,7 @@ const Classes = id => {
                   lessonCode,
                   title,
                 });
+
                 setDatabase(lessonsObj);
               }
             });
@@ -78,7 +84,7 @@ const Classes = id => {
   );
 
   return (
-    <View style={LAYOUT.marginBottomNavigator}>
+    <View>
       <FlatList
         showsVerticalScrollIndicator={false}
         data={database}

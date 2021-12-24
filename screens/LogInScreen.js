@@ -6,41 +6,29 @@ import {
   StyleSheet,
   KeyboardAvoidingView,
   ScrollView,
-  Platform,
+  Platform, Dimensions,
 } from 'react-native';
 import Animated, {
   Easing,
-  EasingNode,
-  Extrapolate,
-  FadeIn,
-  FadeInLeft,
-  FadeOutLeft,
-  FadeOutUp,
-  interpolate,
+
   useAnimatedStyle,
   useSharedValue,
   withDelay,
-  withRepeat,
   withSpring,
   withTiming,
 } from 'react-native-reanimated';
 
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import FastImage from 'react-native-fast-image';
-import {SafeAreaView} from 'react-native-safe-area-context';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {useKeyboard, useDimensions} from '@react-native-community/hooks';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import {COLORS, FONTS, LAYOUT, SHADOWS} from '../constants/theme';
 import {AuthContext} from '../context/AuthContext';
 import {TopBar} from '../components';
-import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 
 const LogInScreen = () => {
-  const AnimatedFastImage = Animated.createAnimatedComponent(FastImage);
-
   const {signIn, states} = useContext(AuthContext);
-
+  const AnimatedFastImage = Animated.createAnimatedComponent(FastImage);
   const {width, height} = useDimensions().window;
 
   const [username, setUsername] = useState('');
@@ -48,17 +36,44 @@ const LogInScreen = () => {
   const [secureText, setSecureText] = useState(true);
   const keyboard = useKeyboard();
   const scale = useSharedValue(1);
-  const scale2 = useSharedValue(0.1);
-  const scaleFlex = useSharedValue(0.1);
   const scaleView = useSharedValue(1);
-  const scaleInputView = useSharedValue(1);
 
   const saveUserSwitch = () =>
     states.setSaveUser(previousState => !previousState);
   const secureTextToggle = () => setSecureText(previousState => !previousState);
 
-  // animete
+  // animate
+  const reanimatedStyle = useAnimatedStyle(() => {
+    return {
+      transform: [
+        {
+          scale: withSpring(scale.value),
+        },
+      ],
+    };
+  }, [keyboard.keyboardShown]);
 
+  const reanimatedView = useAnimatedStyle(() => {
+    return {
+      flex: scaleView.value,
+    };
+  }, []);
+  useEffect(() => {
+    scaleView.value = withDelay(
+      0,
+      withTiming(keyboard.keyboardShown ? 0.35 : 1, {
+        duration: 200,
+        easing: Easing.inOut(Easing.linear),
+      }),
+    );
+    scale.value = withDelay(
+      0,
+      withTiming(keyboard.keyboardShown ? 0.625 : 1, {
+        duration: 0,
+        easing: Easing.inOut(Easing.circle),
+      }),
+    );
+  }, [keyboard.keyboardShown]);
   const {
     container,
     inputContainer,
@@ -66,29 +81,42 @@ const LogInScreen = () => {
     inputUsernameIcon,
     inputPasswordIcon,
     saveText,
+    inputContainerStyle2,
+    inputStyle,
+      buttonStyle
   } = styles;
 
   return (
-    <View
-
+    <KeyboardAvoidingView
+      keyboardVerticalOffset={1}
+      enabled={false}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       style={container}>
-      <View style={{flex: 0.1, height: 0.1}}>
+      <View
+        style={{
+          flex: keyboard.keyboardShown ? 0 : 0.1,
+          height: keyboard.keyboardShown ? 0 : height * 0.1,
+        }}>
         {TopBar('Lütfen Giriş Yapınız')}
       </View>
       <View style={{...LAYOUT.alignCenter, flex: 1}}>
-        <View style={{flex: 1, ...LAYOUT.justifyCenter}}>
-          <FastImage
-            style={{
-              width: width * 0.7,
-              height: width * 0.7,
-            }}
+        <Animated.View
+          style={[{flex: 1, ...LAYOUT.justifyCenter}, reanimatedView]}>
+          <AnimatedFastImage
+            style={[
+              {
+                width: width * 0.7,
+                height: width * 0.7,
+              },
+              reanimatedStyle,
+            ]}
             source={{
               uri: 'https://cdn.freelogovectors.net/wp-content/uploads/2020/03/Dokuz_Eylul_Universitesi_Logo.png',
               priority: FastImage.priority.normal,
             }}
             resizeMode={'stretch'}
           />
-        </View>
+        </Animated.View>
         <View style={{...inputContainer}}>
           <Input
             onChangeText={setUsername}
@@ -96,22 +124,8 @@ const LogInScreen = () => {
             value={username}
             inputStyle={{color: COLORS.white}}
             inputContainerStyle={inputContainerStyle}
-            containerStyle={{
-              marginBottom: 8,
-              borderRadius: 12,
-              ...SHADOWS.input,
-              backgroundColor: COLORS.primary,
-              height: height * 0.095,
-              width: width * 0.925,
-            }}
-            style={{
-              height: height * 0.095,
-              width: width * 0.925,
-              flex: 1,
-              borderRadius: 12,
-              padding: 8,
-              ...FONTS.body3,
-            }}
+            containerStyle={inputContainerStyle2}
+            style={inputStyle}
             leftIcon={
               <View style={inputUsernameIcon}>
                 <MaterialCommunityIcons
@@ -128,22 +142,8 @@ const LogInScreen = () => {
             onChangeText={setPassword}
             defaultValue={password}
             inputContainerStyle={inputContainerStyle}
-            containerStyle={{
-              ...SHADOWS.input,
-              marginBottom: 8,
-              borderRadius: 12,
-              height: height * 0.095,
-              width: width * 0.925,
-              backgroundColor: COLORS.primary,
-            }}
-            style={{
-              height: height * 0.1,
-              width: width * 0.95,
-              flex: 1,
-              borderRadius: 12,
-              padding: 8,
-              ...FONTS.body3,
-            }}
+            containerStyle={inputContainerStyle2}
+            style={inputStyle}
             leftIcon={
               <View style={inputPasswordIcon}>
                 <MaterialCommunityIcons
@@ -174,12 +174,7 @@ const LogInScreen = () => {
             }}>
             <Button
               title={'Giriş Yap'}
-              buttonStyle={{
-                backgroundColor: COLORS.green,
-                borderRadius: 10,
-                height: height * 0.07,
-                width: width * 0.7,
-              }}
+              buttonStyle={buttonStyle}
               titleStyle={{
                 ...FONTS.h2,
                 fontWeight: 'bold',
@@ -193,7 +188,7 @@ const LogInScreen = () => {
                 />
               }
               iconPosition={'right'}
-              onPress={() => console.log('SA')}
+              onPress={() => signIn({username, password})}
             />
           </View>
           <View style={{alignItems: 'flex-end', padding: 12}}>
@@ -209,12 +204,12 @@ const LogInScreen = () => {
           </View>
         </View>
       </View>
-    </View>
+    </KeyboardAvoidingView>
   );
 };
 const styles = StyleSheet.create({
   container: {flex: 1, backgroundColor: COLORS.primary},
-  inputContainer: {flex: 1, flexDirection: 'column'},
+  inputContainer: {flex: 0.85, flexDirection: 'column'},
   inputContainerStyle: {
     borderBottomWidth: 0,
     alignItems: 'center',
@@ -240,9 +235,31 @@ const styles = StyleSheet.create({
   saveText: {
     color: COLORS.white,
     ...FONTS.body3,
-    fontWeight: 'bold',
+    fontWeight: '600',
     marginRight: 12,
   },
+  inputContainerStyle2 :{
+    marginBottom: 8,
+    borderRadius: 12,
+    ...SHADOWS.input,
+    backgroundColor: COLORS.primary,
+    height:  Dimensions.get('screen').height * 0.095,
+    width:  Dimensions.get('screen').width * 0.925,
+  },
+  inputStyle:{
+    height: height * 0.095,
+    width: width * 0.925,
+    flex: 1,
+    borderRadius: 12,
+    padding: 8,
+    ...FONTS.body3,
+  },
+  buttonStyle: {
+    backgroundColor: COLORS.green,
+    borderRadius: 10,
+    height: Dimensions.get('screen').height * 0.07,
+    width:  Dimensions.get('screen').width * 0.7,
+  }
 });
 
 export default LogInScreen;

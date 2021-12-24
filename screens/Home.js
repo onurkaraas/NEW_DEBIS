@@ -11,8 +11,8 @@ import {
   ExitScreen,
   TranscriptScreen,
   LessonResultScreen,
-  Schedule,
-  ModalPdf,
+
+  ModalPdf, LoanCheckScreen,
 } from '../screens';
 
 const Home = () => {
@@ -30,7 +30,7 @@ const Home = () => {
         <View style={buttonFlexStyle}>
           {homeButton('calendar', 'Akademik Takvim')}
           {homeButton('file-document', 'Transcript', TranscriptScreen)}
-          {homeButton('calendar-check', 'Ders Programi', Schedule)}
+          {homeButton('calendar-check', 'Ders Programı', LoanCheckScreen)}
         </View>
 
         <View style={buttonFlexStyle}>

@@ -1,12 +1,19 @@
 import React, {useEffect, useState} from 'react';
-import {StyleSheet, View, Dimensions} from 'react-native';
+import {StyleSheet, View, Dimensions, Text} from 'react-native';
 import Pdf from 'react-native-pdf';
-import {COLORS} from '../constants/theme';
-import {TopBar} from './index';
+import {COLORS, FONTS} from '../constants/theme';
+import {screenTopBar} from './index';
+import {IconButton} from 'react-native-paper';
+import {useNavigation} from '@react-navigation/native';
+import {useDimensions, useKeyboard} from '@react-native-community/hooks';
 
 const renderPdf = (uri, head) => {
   const [source, setSource] = useState({});
-const {container,pdf} = styles;
+  const navigation = useNavigation();
+  const {width, height} = useDimensions().window;
+  const keyboard = useKeyboard();
+
+  const {container, pdf} = styles;
   useEffect(() => {
     const source = {cache: false, ...uri};
     setSource(source);
@@ -14,7 +21,7 @@ const {container,pdf} = styles;
 
   return (
     <View style={{flex: 1, backgroundColor: COLORS.primary, borderRadius: 25}}>
-      {TopBar(head)}
+      {screenTopBar('Transkript')}
       <View style={container}>
         <Pdf fitWidth={true} source={source} style={pdf} />
       </View>
